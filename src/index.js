@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import React, { Component } from 'react';
 import './index.css';
 import Map from './Map.jsx'
-
+import 'bootstrap/dist/css/bootstrap.css';
 import * as serviceWorker from './serviceWorker';
 
 

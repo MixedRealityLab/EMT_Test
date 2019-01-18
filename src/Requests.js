@@ -356,8 +356,8 @@ export const locReq = [
       "type": "S"
     },
     {
-      lat: 52.947270,
-      lng: -1.184728
+      lat: 52.943513,
+      lng: -1.186406
     }
   ]
 ]
