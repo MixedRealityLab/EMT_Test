@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Marker, Polyline } from 'react-google-maps';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Axios from 'axios';
-import { reqBod, reqPlan, stopList, locReq } from './Requests'
+import { reqBod, reqPlan, stopList, coordsArriva, coordsLatLng, tempLocs} from './Requests'
 
 const google = window.google;
 var polyline = require('@mapbox/polyline');
@@ -31,12 +31,11 @@ class Plan extends Component{
         url: process.env.PUBLIC_URL + '/images/mylocation.gif',
         anchor: new google.maps.Point(8,8)
       },
-      polyOptsWalk:{
-        strokeColor:"red"
-      },
-      polyOptsBus:{
-        strokeColor:"green"
-      },
+      polyOptsWalk:{ strokeColor:"red"  },
+      polyOptsBus:[ { strokeColor:"green" },
+                    { strokeColor:"blue" },
+                    { strokeColor:"black" },
+                    { strokeColor:"orange" }],
       dropdownOpen: false
       }
     
@@ -56,26 +55,28 @@ class Plan extends Component{
       dropdownOpen: !prevState.dropdownOpen
     }))
   }
-
+  
   switch(){
-    let temp = !this.state.walk
-    this.setState({
-      walk: temp
-    })
+    this.setState(prevState => ({
+      walk: !prevState.walk
+    }))
   }
 
   getRoute(){  
     if(this.state.dep !== -1){
       if(this.state.arr !== -1) 
         var journey = this.setJourney()
+        //Get bus journey, which can have walking sections
         this.getJourney(journey)
+        //Get walking journey
         this.polyDirections(journey[0],journey[3],true, true, true)
     }
   }
   clearRoute(){
+    //Reset route and redraw
     this.setState({
       jStart:   [],
-      jMiddle:  [],
+      jMiddle:  [[]],
       jEnd:     [],
       jWalk:    [],
       show:     false,
@@ -85,47 +86,42 @@ class Plan extends Component{
     })
     this.forceUpdate()
   }
+
   setJourney(){
     var temp = [this.state.dep,-1,-1,this.state.arr]
-    if(this.state.dep > locReq.length-2){
-      let close = 0
-      for(let i = 0; i < locReq.length -1; i++){
-        if(geolib.getDistance(locReq[this.state.dep][1], locReq[i][1]) < geolib.getDistance(locReq[this.state.dep][1],locReq[close][1])){
-          close = i
-        }
-      }
-      temp[1] = close
+    //If start point is not a bus stop, find the closest bus stop to it
+    if(this.state.dep > coordsLatLng.length-1){
+      let dLoc = tempLocs[this.state.dep === "13"? 0 : 1]
+      let close = geolib.findNearest(dLoc, coordsLatLng, 0)
+      temp[1] = close.key
     }
-    else{ temp[1] = temp[0]}
-
-    if(this.state.arr > locReq.length-2){
-      let close = 0
-      for(let i = 0; i < locReq.length -1; i++){
-        if(geolib.getDistance(locReq[this.state.arr][1], locReq[i][1]) < geolib.getDistance(locReq[this.state.arr][1],locReq[close][1])){
-          close = i
-        }
-      }
-      temp[2] = close
+    else{ temp[1] = temp[0] }
+    //If end point is not a bus stop, find the closest bus stop to it
+    if(this.state.arr > coordsLatLng.length-1){
+      let aLoc = tempLocs[this.state.arr === "13"? 0 : 1]
+      let close = geolib.findNearest(aLoc, coordsLatLng, 0)
+      temp[2] = close.key
     }
     else{ temp[2] = temp[3] }
-
     return temp
   }
+
   getJourney(journey){
-    if( geolib.getDistance(locReq[journey[0]][1], locReq[journey[3]][1]) < 400){
+    let start = this.state.dep > coordsLatLng.length-1 ? tempLocs[this.state.dep === "13"? 0 : 1]: coordsLatLng[journey[0]]
+    let stop  = this.state.arr > coordsLatLng.length-1 ? tempLocs[this.state.arr === "13"? 0 : 1]: coordsLatLng[journey[3]]
+    if(geolib.getDistance(start, stop) < 400){
       this.polyDirections(journey[0],journey[3], true, true, false)
     }
     else{
-    //Start of journey, walking to nearest stop
-    if(journey[0] !== journey[1]){
-      this.polyDirections(journey[0],journey[1], true, false, false)
-    }
-    //Bus route of journey
-    this.polyArriva(journey[1],journey[2])
-    //Walking from stop to destination
-    if(journey[2] !== journey[3]){
-      this.polyDirections(journey[2],journey[3], false, false, false)
-    }
+      if(journey[0] !== journey[1]){
+        this.polyDirections(journey[0],journey[1], true, false, false)
+      }
+      //Bus route of journey
+      this.polyArriva(journey[1],journey[2])
+      //Walking from stop to destination
+      if(journey[2] !== journey[3]){
+        this.polyDirections(journey[2],journey[3], false, false, false)
+      }
     }
     this.setState({
       show: true
@@ -134,17 +130,14 @@ class Plan extends Component{
   }
   setDepArr(props){
     if(this.state.dep < 0){
-      console.log(props.target.id)
       this.setState({
         dep: props.target.id
       })
-
     }
     else if(this.state.dep === props.target.id){
       console.log("Select Different Location")
     }
     else if(this.state.arr < 0){
-      console.log(props.target.id)
       this.setState({
         arr: props.target.id
       })
@@ -157,8 +150,8 @@ class Plan extends Component{
     var DirectionsService = new google.maps.DirectionsService();
     DirectionsService.route(
       {
-        origin: locReq[start][1],
-        destination: locReq[stop][1],
+        origin: start > coordsLatLng.length-1? start === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[start],
+        destination: stop > coordsLatLng.length-1? stop === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[stop],
         travelMode: "WALKING"
       },
       (response, status) =>
@@ -177,17 +170,17 @@ class Plan extends Component{
           )
          
           let pointsS = simplify(points,0.0001)
-          isWalk ?
+          isWalk ? //Is it a walking journey?
             this.setState({
               jWalk: pointsS
             })
           :
-          isClose ?
+          isClose ? //Are the points close?
           this.setState({
             jMiddle: pointsS
           })
           :
-          isStart ?
+          isStart ? //Is it the start or the end of the journey?
             this.setState({
               jStart: pointsS
             })
@@ -205,8 +198,8 @@ class Plan extends Component{
     )
   }
   polyArriva(start, stop){
-    Object.assign(reqPlan.svcReqL[0].req.arrLocL[0], locReq[stop][0])
-    Object.assign(reqPlan.svcReqL[0].req.depLocL[0], locReq[start][0])
+    Object.assign(reqPlan.svcReqL[0].req.arrLocL[0], coordsArriva[stop])
+    Object.assign(reqPlan.svcReqL[0].req.depLocL[0], coordsArriva[start])
     Axios.post(
       'https://inmyseat.chronicle.horizon.ac.uk/proxy/', Object.assign(reqBod, reqPlan)
     )
@@ -217,42 +210,52 @@ class Plan extends Component{
 
       for(let i = 0; i < sections.length; i++){
         let temp = polyline.decode(data.common.polyL[i].crdEncYX)
+        points.push(
+          temp.map(item => 
+            ({
+              lat: item[0],
+              lng: item[1],
+              y: item[0],
+              x: item[1]
+            })
+          )
+        ) 
+      }
+      /*let temp = polyline.decode(data.common.polyL[0].crdEncYX)
         temp.map(item => 
           points.push({
             lat: item[0],
             lng: item[1],
             y: item[0],
             x: item[1]
-          }))
-      }
+          }))*/
       //Simplify Polyline
       return simplify(points,0.0001)}
       )
       .then( data => this.setState({
         jMiddle: data
-      })
+      }),
       )
   }
 
   render(){
       return(
         <div>
-        {this.state.show ?
+        {//Only show markers and polyline if a route has been selected
+        this.state.show ?
           <div>
           <Marker
-            name={"dep"}
             position={
               this.state.jStart.length !== 0 ? {lat: this.state.jStart[0].lat,
                 lng: this.state.jStart[0].lng}
               :
-              this.state.jMiddle.length !== 0 ? {lat: this.state.jMiddle[0].lat,
-                lng: this.state.jMiddle[0].lng}
+              this.state.jMiddle.length !== 0 ? {lat: this.state.jMiddle[0][0].lat,
+                lng: this.state.jMiddle[0][0].lng}
               : {lat: 0, lng: 0}
             }
             icon={this.state.iconD}
           />
           <Marker
-            name={"arr"}
             position={this.state.jEnd.length !== 0 ? {lat: this.state.jEnd[this.state.jEnd.length-1].lat,
               lng: this.state.jEnd[this.state.jEnd.length-1].lng}
             :
@@ -262,54 +265,42 @@ class Plan extends Component{
             }
             icon= {this.state.iconA}
           />
-          {
+          {//Display either the walking route or the bus route, which can have walking sections
             this.state.walk ? 
-            <Polyline
-            path={this.state.jWalk}
-            options = {this.state.polyOptsWalk}
-            />
+            <Polyline path={this.state.jWalk}   options = {this.state.polyOptsWalk}/>
             :
             <>
-            <Polyline
-            path={this.state.jStart}
-            options = {this.state.polyOptsWalk}
-            />
-            <Polyline
-              path={this.state.jMiddle}
-              options = {this.state.polyOptsBus}
-            />
-            <Polyline
-              path={this.state.jEnd}
-              options = {this.state.polyOptsWalk}
-            />
+            <Polyline path={this.state.jStart}  options = {this.state.polyOptsWalk}/>
+            {
+              this.state.jMiddle.map( (item, i) => ( <Polyline key={i} path={item} options = {this.state.polyOptsBus[i]}/>) )
+            }
+            <Polyline path={this.state.jEnd}    options = {this.state.polyOptsWalk}/>
             </>
           }
-          </div>
-          : null}
-
+          </div> 
+        : null}
         <table>
         <tbody>
           <tr>
             <td>
               <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
-                <DropdownToggle caret>
-                  Locations
-                </DropdownToggle>
+                <DropdownToggle caret> Locations </DropdownToggle>
                 <DropdownMenu onClick={this.setDepArr}>
-                  <DropdownItem id="0" >Innovation Park </DropdownItem>
-                  <DropdownItem id="1" >Newark Hall</DropdownItem>
-                  <DropdownItem id="2" >Exchange Building</DropdownItem>
-                  <DropdownItem id="3" >Lenton Hillside</DropdownItem>
-                  <DropdownItem id="4" >Dunkirk East Entrance</DropdownItem>
-                  <DropdownItem id="5" >George Green Library</DropdownItem>
-                  <DropdownItem id="6" >Campus Arts Centre</DropdownItem>
-                  <DropdownItem id="7" >Lincon Hall</DropdownItem>
-                  <DropdownItem id="8" >East Entrance</DropdownItem>
-                  <DropdownItem id="9" >Campus Union Shop</DropdownItem>
-                  <DropdownItem id="10">Derby Hall</DropdownItem>
-                  <DropdownItem id="11">Kings Meadow Campus</DropdownItem>
-                  <DropdownItem id="12">East Midlands Coference Centre</DropdownItem>
-                  <DropdownItem id="13">Current Location</DropdownItem>
+                  <DropdownItem id="0" >Innovation Park                 </DropdownItem>
+                  <DropdownItem id="1" >Newark Hall                     </DropdownItem>
+                  <DropdownItem id="2" >Exchange Building               </DropdownItem>
+                  <DropdownItem id="3" >Lenton Hillside                 </DropdownItem>
+                  <DropdownItem id="4" >Dunkirk East Entrance           </DropdownItem>
+                  <DropdownItem id="5" >George Green Library            </DropdownItem>
+                  <DropdownItem id="6" >Campus Arts Centre              </DropdownItem>
+                  <DropdownItem id="7" >Lincon Hall                     </DropdownItem>
+                  <DropdownItem id="8" >East Entrance                   </DropdownItem>
+                  <DropdownItem id="9" >Campus Union Shop               </DropdownItem>
+                  <DropdownItem id="10">Derby Hall                      </DropdownItem>
+                  <DropdownItem id="11">Kings Meadow Campus             </DropdownItem>
+                  <DropdownItem id="12">East Midlands Coference Centre  </DropdownItem>
+                  <DropdownItem id="13">Current Location                </DropdownItem>
+                  <DropdownItem id="14">Current Location 2              </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </td>
@@ -324,8 +315,8 @@ class Plan extends Component{
           </tr>
           <tr>
             <td><button onClick={this.getRoute}>Get Route </button></td>
-            <td><button onClick={this.clearRoute}>Clear</button></td>
-            <td><button onClick={this.switch}>Toggle</button></td>
+            <td><button onClick={this.clearRoute}>Clear   </button></td>
+            <td><button onClick={this.switch}>Toggle      </button></td>
           </tr>
         </tbody>
       </table>
