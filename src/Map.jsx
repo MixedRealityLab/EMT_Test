@@ -30,7 +30,8 @@ class Map extends Component {
         defaultZoom = { 14 }
         
       >
-      
+      <Stops/>
+      <Buses/>
       <Plan />
     </GoogleMap>
    ));

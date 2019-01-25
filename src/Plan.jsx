@@ -18,6 +18,7 @@ class Plan extends Component{
       jMiddle:  [],
       jEnd:     [],
       jWalk:    [],
+      changes:  [],
       show:     false,
       dep:      -1,
       arr:      -1,
@@ -30,6 +31,11 @@ class Plan extends Component{
       iconD: {
         url: process.env.PUBLIC_URL + '/images/mylocation.gif',
         anchor: new google.maps.Point(8,8)
+      },
+      iconC: {
+        url: process.env.PUBLIC_URL + '/images/couple-of-arrows-changing-places.png',
+        scaledSize: new google.maps.Size(32,32),
+        anchor: new google.maps.Point(16,16)
       },
       polyOptsWalk:{ strokeColor:"red"  },
       polyOptsBus:[ { strokeColor:"green" },
@@ -79,6 +85,7 @@ class Plan extends Component{
       jMiddle:  [[]],
       jEnd:     [],
       jWalk:    [],
+      changes:  [],
       show:     false,
       dep:      -1,
       arr:      -1,
@@ -206,10 +213,15 @@ class Plan extends Component{
     .then(response =>{
       let points = []
       let data = response.data.svcResL[0].res
+      console.log(data)
       let sections = data.outConL[0].secL
-
+      var jnySec = 0
       for(let i = 0; i < sections.length; i++){
         let temp = polyline.decode(data.common.polyL[i].crdEncYX)
+        if(sections[i].type === "JNY"){
+          console.log(data.common.prodL[jnySec])
+          jnySec++
+        }
         points.push(
           temp.map(item => 
             ({
@@ -219,16 +231,8 @@ class Plan extends Component{
               x: item[1]
             })
           )
-        ) 
+        )
       }
-      /*let temp = polyline.decode(data.common.polyL[0].crdEncYX)
-        temp.map(item => 
-          points.push({
-            lat: item[0],
-            lng: item[1],
-            y: item[0],
-            x: item[1]
-          }))*/
       //Simplify Polyline
       return simplify(points,0.0001)}
       )
@@ -237,7 +241,6 @@ class Plan extends Component{
       }),
       )
   }
-
   render(){
       return(
         <div>
@@ -245,31 +248,24 @@ class Plan extends Component{
         this.state.show ?
           <div>
           <Marker
-            position={
-              this.state.jStart.length !== 0 ? {lat: this.state.jStart[0].lat,
-                lng: this.state.jStart[0].lng}
-              :
-              this.state.jMiddle.length !== 0 ? {lat: this.state.jMiddle[0][0].lat,
-                lng: this.state.jMiddle[0][0].lng}
-              : {lat: 0, lng: 0}
-            }
-            icon={this.state.iconD}
+            position={ this.state.dep > coordsLatLng.length-1? this.state.dep === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.state.dep] }
+            icon={ this.state.iconD }
           />
           <Marker
-            position={this.state.jEnd.length !== 0 ? {lat: this.state.jEnd[this.state.jEnd.length-1].lat,
-              lng: this.state.jEnd[this.state.jEnd.length-1].lng}
-            :
-            this.state.jMiddle.length !== 0 ? {lat: this.state.jMiddle[this.state.jMiddle.length-1].lat,
-              lng: this.state.jMiddle[this.state.jMiddle.length-1].lng}
-            : {lat: 0, lng: 0}
-            }
-            icon= {this.state.iconA}
+            position={ this.state.arr > coordsLatLng.length-1? this.state.arr === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.state.arr] }
+            icon= { this.state.iconA }
           />
           {//Display either the walking route or the bus route, which can have walking sections
             this.state.walk ? 
             <Polyline path={this.state.jWalk}   options = {this.state.polyOptsWalk}/>
             :
             <>
+            {
+              this.state.jStart.length > 0 ? <Marker position={this.state.jStart[this.state.jStart.length-1]} icon={this.state.iconC} /> : null
+            }
+            {
+              this.state.jMiddle.length > 1 ? this.state.jMiddle.map( (item, i) => ( <Marker key={i} position={item[item.length-1]} icon={this.state.iconC} />) ): null
+            }
             <Polyline path={this.state.jStart}  options = {this.state.polyOptsWalk}/>
             {
               this.state.jMiddle.map( (item, i) => ( <Polyline key={i} path={item} options = {this.state.polyOptsBus[i]}/>) )

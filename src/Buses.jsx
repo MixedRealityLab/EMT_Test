@@ -38,7 +38,7 @@ class Buses extends Component{
     }
   
     render(){
-      console.log(this.state.buses)
+      //console.log(this.state.buses)
       return(
         this.state.buses.map((item, i) =>{
           return(

@@ -1,0 +1,21 @@
+
+TODO::
+if less than x time/distance, just walk
+
+fix short distance display
+
+combine buses with next depature
+
+Description is html formatted
+
+start toggle for journey
+
+facticle: has movement from previous pos to current towards nucleus?: client side calculation
+
+dont re-trigger points for same journey
+
+only use first triggier point for facticale
+
+switch between plan view and normal view
+
+focus for android ******
