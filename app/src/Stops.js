@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Marker} from 'react-native-maps';
+import {Text} from 'react-native'
+import {Marker, Callout } from 'react-native-maps';
 import Axios from 'axios';
-import { reqStop, reqBod } from './Requests';
+import { reqStop, reqBod, stopList } from './Requests';
 
 export default class Stops extends Component{
 
@@ -50,7 +51,13 @@ export default class Stops extends Component{
                     name={item.name}
                     coordinate={{latitude: item.lat, longitude: item.lng}}
                     image={require('../assets/icon-bus-stop-64.png')}
-                  />
+                    >
+                    <Callout>
+                      <Text>
+                        {stopList[i]}
+                      </Text>
+                    </Callout>
+                </Marker>  
               )
             })
           )

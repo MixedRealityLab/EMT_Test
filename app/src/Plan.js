@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Marker, Polyline } from 'react-native-maps';
+import { Text } from 'react-native'
+import { Marker, Polyline, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios';
 import { reqBod, reqPlan, stopList, coordsArriva, coordsLatLng, tempLocs} from './Requests'
@@ -95,12 +96,9 @@ export default class Plan extends Component{
   getJourney(journey){
     let start = this.props.childDep > coordsLatLng.length-1 ? tempLocs[this.props.childDep === "13"? 0 : 1]: coordsLatLng[journey[0]]
     let stop  = this.props.childArr > coordsLatLng.length-1 ? tempLocs[this.props.childArr === "13"? 0 : 1]: coordsLatLng[journey[3]]
-    if(geolib.getDistance(start, stop) < 400){
-    //placeholder
-    }
-    else{
+    
     this.polyArriva(journey[1],journey[2]) 
-    }
+    
     this.setState({
       show: true
     })
@@ -143,9 +141,11 @@ export default class Plan extends Component{
       .then( data => this.setState({
         jMiddle: data
       }),
+      console.log(this.state.jMiddle.length)
       )
   }
   render(){
+    console.log(this.state.jMiddle.length)
       return(
         <>
         {//Only show markers and polyline if a route has been selected
@@ -153,15 +153,30 @@ export default class Plan extends Component{
           <>
           <Marker
             coordinate={ this.props.childDep > coordsLatLng.length-1? this.props.childDep === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.props.childDep] }
-            image={ require('../assets/mylocation.gif') }
-          />
+            image={ require('../assets/mylocation.gif') }>
+            <Callout>
+              <Text>
+                Start
+              </Text>
+            </Callout>
+            </Marker>
+          
           <Marker
             coordinate={ this.props.childArr > coordsLatLng.length-1? this.props.childArr === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.props.childArr] }
             image= { require('../assets/icon-target.png') }
-          />
+          >
+            <Callout>
+              <Text>
+                End
+              </Text>
+            </Callout>
+          </Marker>
           {//Display either the walking route or the bus route, which can have walking sections
             this.state.walk ? 
-            <MapViewDirections origin={coordsLatLng[this.props.childDep]} destination={coordsLatLng[this.props.childArr]} apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}/>
+            <MapViewDirections origin={coordsLatLng[this.props.childDep]} 
+              destination={coordsLatLng[this.props.childArr]} 
+              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'} 
+              mode={'walking'}/>
             :
             <>
             {
@@ -169,14 +184,16 @@ export default class Plan extends Component{
             }
             
             <MapViewDirections origin={coordsLatLng[this.props.childDep]} 
-              destination={this.state.jMiddle.length > 10 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
-              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}/>
+              destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
+              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
+              mode={'walking'}/>
             {
-              this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {2}/>) )
+              this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
             }
-             <MapViewDirections origin={this.state.jMiddle > 10 ? this.state.jMiddle[this.state.jMiddle.length-1][this.state.jMiddle[this.state.jMiddle.length-1].length-1] :this.state.jMiddle[this.state.jMiddle.length-1]} 
+             <MapViewDirections origin={this.state.jMiddle.length > 1 ? this.state.jMiddle.slice(-1)[this.state.jMiddle.length-1] : this.state.jMiddle[this.state.jMiddle.length-1]} 
               destination={coordsLatLng[this.props.childArr]} 
-              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}/>
+              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
+              mode={'walking'}/>
             </>
           }
           </> 

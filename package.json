@@ -10,10 +10,14 @@
     "@mapbox/polyline": "^1.0.0",
     "axios": "^0.18.0",
     "geolib": "^2.0.24",
+    "node-libs-react-native": "^1.0.3",
     "react": "16.6.3",
-    "react-native": "0.58.3",
+    "react-native": "^0.58.3",
+    "react-native-cli": "^2.0.1",
+    "react-native-gesture-handler": "^1.0.15",
     "react-native-maps": "^0.23.0",
     "react-native-maps-directions": "^1.6.0",
+    "react-navigation": "^3.2.1",
     "simplify-js": "^1.2.3"
   },
   "devDependencies": {
