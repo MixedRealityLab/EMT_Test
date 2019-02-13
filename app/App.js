@@ -8,15 +8,15 @@ class HomeScreen extends React.Component {
     super(props)
   }
 
-  static navigationOptions = {
-    headerTitle: "In My Seat",
-    headerRight: (
-      <Button
-        onPress={() => alert('This is a button!')}
-        title="Info"
-        color="#000"
-      />
-    ),
+  static navigationOptions = ({ navigation }) => {
+    return{
+      title: 'In My Seat',
+      headerRight: <Button
+      onPress={() => alert('This is a button!')}
+      title="Info"
+      color="#000"
+    />
+    }
   };
   render() {
     return (
@@ -24,6 +24,16 @@ class HomeScreen extends React.Component {
     );
   }
 }
+/*
+headerTitle: "In My Seat",
+    headerRight: (
+      <Button
+        onPress={() => alert('This is a button!')}
+        title="Info"
+        color="#000"
+      />
+    ),
+*/
 
 class DetailsScreen extends React.Component {
   render() {
