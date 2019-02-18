@@ -1,18 +1,50 @@
 import React from "react";
-import { Button, View, Text } from "react-native";
+import { Button, View, Text, PermissionsAndroid } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import Map from './src/Map.js'
+
+
+async function requestLocationPermission() {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'In My Seat',
+        message:
+          'In My Seat needs access to your current location ' +
+          'so that it can give you information about the ' +
+          'surrounding area.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Access granded');
+      
+    } else {
+      console.log('Access denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+}
 
 class HomeScreen extends React.Component {
   constructor(props){
     super(props)
+    
+  }
+
+  componentDidMount(){
+    requestLocationPermission()
   }
 
   static navigationOptions = ({ navigation }) => {
     return{
       title: 'In My Seat',
       headerRight: <Button
-      onPress={() => alert('This is a button!')}
+      onPress={() => navigation.navigate('Details')}
       title="Info"
       color="#000"
     />
@@ -24,26 +56,13 @@ class HomeScreen extends React.Component {
     );
   }
 }
-/*
-headerTitle: "In My Seat",
-    headerRight: (
-      <Button
-        onPress={() => alert('This is a button!')}
-        title="Info"
-        color="#000"
-      />
-    ),
-*/
 
 class DetailsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Details Screen</Text>
-        <Button
-          title="Go to Details... again"
-          onPress={() => this.props.navigation.navigate('Details')}
-        />
+        
       </View>
     );
   }

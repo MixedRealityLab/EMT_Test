@@ -4,6 +4,8 @@ import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Stops from './Stops'
 import Buses from './Buses'
 import Plan from './Plan'
+import Geolocation from 'react-native-geolocation-service';
+
 export default class Map extends Component {
 
     constructor(props){
@@ -13,7 +15,7 @@ export default class Map extends Component {
         arr:      -1,
         walk:     false,
       }
-      
+      this.getLoc = this.getLoc.bind(this)
     }
   
     switch = () => {
@@ -28,7 +30,19 @@ export default class Map extends Component {
       this.child.getRoute()
     }
   
-  
+    getLoc(){
+      Geolocation.getCurrentPosition(
+        (position) => {
+            console.log(position);
+        },
+        (error) => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+    }
+
     render() {
       return (
       <View style={styles.containerP}>
@@ -111,7 +125,7 @@ export default class Map extends Component {
               </TouchableOpacity>
             </View>
             <View style={styles.tRow}>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={this.getLoc}>
                 <Text style={styles.text}>Begin Route</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.button} onPress={this.switch}>

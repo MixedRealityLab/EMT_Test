@@ -5,7 +5,6 @@ import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios';
 import { reqBod, reqPlan, stopList, coordsArriva, coordsLatLng, tempLocs} from './Requests'
 
-var google = window.google;
 var polyline = require('@mapbox/polyline');
 var simplify = require('simplify-js');
 var geolib = require('geolib');
@@ -52,20 +51,24 @@ export default class Plan extends Component{
     }))
   }
 
-  getRoute(){  
+  getRoute(){
+    console.log("Dep: " + this.props.childDep)
+    console.log("Arr: " + this.props.childArr)  
     if(this.props.childDep !== -1){
-      if(this.props.childArr !== -1) 
+      console.log("Dep correct")
+      if(this.props.childArr !== -1){
+        console.log("Arr correct")
         var journey = this.setJourney()
         //Get bus journey, which can have walking sections
         this.getJourney(journey)
+      }
     }
+    
   }
   clearRoute(){
     //Reset route and redraw
     this.setState({
-      //jStart:   [],
       jMiddle:  [[]],
-      //jEnd:     [],
       jWalk:    [],
       changes:  [],
       show:     false,
@@ -133,7 +136,6 @@ export default class Plan extends Component{
             })
           )
         )
-        console.log(points)
       }
       //Simplify Polyline
       return simplify(points,0.0001)}
@@ -141,11 +143,9 @@ export default class Plan extends Component{
       .then( data => this.setState({
         jMiddle: data
       }),
-      console.log(this.state.jMiddle.length)
       )
   }
   render(){
-    console.log(this.state.jMiddle.length)
       return(
         <>
         {//Only show markers and polyline if a route has been selected
@@ -180,9 +180,11 @@ export default class Plan extends Component{
             :
             <>
             {
-              this.state.jMiddle.length > 1 ? this.state.jMiddle.map( (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../assets/couple-of-arrows-changing-places.png')} />) ): null
+              this.state.jMiddle.length > 1 ? 
+                this.state.jMiddle.map( 
+                  (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../assets/icons8-synchronize-filled-96.png')} />) )
+              : null
             }
-            
             <MapViewDirections origin={coordsLatLng[this.props.childDep]} 
               destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}

@@ -27,7 +27,6 @@ export default class Buses extends Component{
         )
         .then(response =>{
           let loc = response.data.svcResL[0].res.jnyL
-          console.log(response.data)
           return loc})
         
         .then(data =>this.setState(
