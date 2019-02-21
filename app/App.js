@@ -2,6 +2,7 @@ import React from "react";
 import { Button, View, Text, PermissionsAndroid } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import Map from './src/Map.js'
+import Info from './src/Info.js'
 
 
 async function requestLocationPermission() {
@@ -20,7 +21,7 @@ async function requestLocationPermission() {
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Access granded');
+      console.log('Access granted');
       
     } else {
       console.log('Access denied');
@@ -61,7 +62,7 @@ class DetailsScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Details Screen</Text>
+        <Info />
         
       </View>
     );

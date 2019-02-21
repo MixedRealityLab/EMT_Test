@@ -4,7 +4,6 @@ import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Stops from './Stops'
 import Buses from './Buses'
 import Plan from './Plan'
-import Geolocation from 'react-native-geolocation-service';
 
 export default class Map extends Component {
 
@@ -15,7 +14,7 @@ export default class Map extends Component {
         arr:      -1,
         walk:     false,
       }
-      this.getLoc = this.getLoc.bind(this)
+      
     }
   
     switch = () => {
@@ -29,18 +28,9 @@ export default class Map extends Component {
     getRoute = () => {
       this.child.getRoute()
     }
-  
-    getLoc(){
-      Geolocation.getCurrentPosition(
-        (position) => {
-            console.log(position);
-        },
-        (error) => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    );
+
+    beginRoute = () => {
+      this.child.beginRoute()
     }
 
     render() {
@@ -87,7 +77,6 @@ export default class Map extends Component {
                 <Picker.Item label="Kings Meadow Campus"              value="11" />
                 <Picker.Item label="East Midlands Coference Centre"   value="12" />
                 <Picker.Item label="Current Location"                 value="13" />
-                <Picker.Item label="Current Location 2"               value="14" />
             </Picker>
   
             <Picker
@@ -111,7 +100,6 @@ export default class Map extends Component {
                 <Picker.Item label="Kings Meadow Campus"              value="11" />
                 <Picker.Item label="East Midlands Coference Centre"   value="12" />
                 <Picker.Item label="Current Location"                 value="13" />
-                <Picker.Item label="Current Location 2"               value="14" />
             </Picker>
           </View>
   
@@ -125,7 +113,7 @@ export default class Map extends Component {
               </TouchableOpacity>
             </View>
             <View style={styles.tRow}>
-            <TouchableOpacity style={styles.button} onPress={this.getLoc}>
+            <TouchableOpacity style={styles.button} onPress={this.beginRoute}>
                 <Text style={styles.text}>Begin Route</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.button} onPress={this.switch}>

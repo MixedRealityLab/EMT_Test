@@ -21,8 +21,6 @@ export default class Stops extends Component{
           )
           .then(response =>{
             let loc = response.data.svcResL[0].res.locL
-            console.log("Stops")
-            console.log(response.data.svcResL)
             let points = []
             for (var i = 0; i < loc.length; i++){
               points.push({

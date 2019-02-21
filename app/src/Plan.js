@@ -1,22 +1,31 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native'
-import { Marker, Polyline, Callout } from 'react-native-maps';
+import { AsyncStorage, Text } from 'react-native'
+import { Marker, Polyline, Callout } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
-import Axios from 'axios';
-import { reqBod, reqPlan, stopList, coordsArriva, coordsLatLng, tempLocs} from './Requests'
+import Axios from 'axios'
+import { reqBod, reqPlan, coordsArriva, coordsLatLng, tempLocs, stopList} from './Requests'
+import Geolocation from 'react-native-geolocation-service'
 
-var polyline = require('@mapbox/polyline');
-var simplify = require('simplify-js');
-var geolib = require('geolib');
+var polyline = require('@mapbox/polyline')
+var simplify = require('simplify-js')
+var geolib = require('geolib')
+var RNFS = require('react-native-fs')
+//Storage Directory
+var path = RNFS.ExternalDirectoryPath + '/test.txt';
+
+//AsyncStorage.setItem("Temp","21")
+//AsyncStorage.clear()
+AsyncStorage.getAllKeys((err,res) =>{
+  console.log(res)
+})
 
 export default class Plan extends Component{
   constructor(props) {
     super(props);
 
     this.state = {
-      jStart:   [],
+      currentPos: {},
       jMiddle:  [],
-      jEnd:     [],
       jWalk:    [],
       changes:  [],
       show:     false,
@@ -34,21 +43,88 @@ export default class Plan extends Component{
     this.polyArriva = this.polyArriva.bind(this)
     this.setJourney = this.setJourney.bind(this)
     this.getJourney = this.getJourney.bind(this)
+    this.getLoc = this.getLoc.bind(this)
+    this.writeFile = this.writeFile.bind(this)
+    this.beginRoute = this.beginRoute.bind(this)
+  }
+
+  writeFile(){
+    RNFS.writeFile(path, JSON.stringify(this.state.jMiddle), 'utf8')
+    .then((success) => {
+      console.log('FILE WRITTEN!');
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
   }
 
   componentDidMount(){
     this.props.onRef(this)
-   
+    this.getLoc()
+    this.intervalID = setInterval( () => this.getLoc(), 5000);
   }
 
   componentWillUnmount(){
+    clearInterval(this.intervalID)
     this.props.onRef(undefined)
   }
-  
+
   switch(){
     this.setState(prevState => ({
       walk: !prevState.walk
     }))
+  }
+
+  getLoc(){
+    Geolocation.getCurrentPosition(
+      (position) => {
+          this.setState({
+            currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
+          })
+      },
+      (error) => {
+          // See error code charts below.
+          console.log(error.code, error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+  );
+  }
+
+  beginRoute(){
+    var Journey = {
+      //Is it a walking journey?
+      walk: this.state.walk,
+      //Bus route
+      route: this.state.jMiddle,
+      //Bus Changes
+      changes: this.state.changes,
+      //Start point
+      start: (this.props.childDep > coordsLatLng.length -1 ? "Location" : stopList[this.props.childDep]),
+      //End point
+      end: (this.props.childArr > coordsLatLng.length -1 ? "Location" : stopList[this.props.childArr])
+    }
+    AsyncStorage.getAllKeys((err,keys)=>{
+      console.log(keys)
+      var keyLen = keys.length
+      if(keyLen === 0){
+        AsyncStorage.setItem('0000', JSON.stringify(Journey))
+      }
+      else{
+        var newKey
+        switch (String(keyLen).length){
+          case 1:
+            newKey = '000' + keyLen
+            break;
+          case 2:
+            newKey = '00' + keyLen
+            break;
+          case 3:
+            newKey = '0' + keyLen
+            break;
+        }
+        AsyncStorage.setItem(newKey, JSON.stringify(Journey))
+      }
+    })
   }
 
   getRoute(){
@@ -58,6 +134,9 @@ export default class Plan extends Component{
       console.log("Dep correct")
       if(this.props.childArr !== -1){
         console.log("Arr correct")
+        if(this.props.childDep > coordsLatLng.length -1){
+          this.getLoc()
+        }
         var journey = this.setJourney()
         //Get bus journey, which can have walking sections
         this.getJourney(journey)
@@ -81,8 +160,7 @@ export default class Plan extends Component{
     var temp = [this.props.childDep,-1,-1,this.props.childArr]
     //If start point is not a bus stop, find the closest bus stop to it
     if(this.props.childDep > coordsLatLng.length-1){
-      let dLoc = tempLocs[this.props.childDep === "13"? 0 : 1]
-      let close = geolib.findNearest(dLoc, coordsLatLng, 0)
+      let close = geolib.findNearest(this.state.currentPos, coordsLatLng, 0)
       temp[1] = close.key
     }
     else{ temp[1] = temp[0] }
@@ -97,9 +175,6 @@ export default class Plan extends Component{
   }
 
   getJourney(journey){
-    let start = this.props.childDep > coordsLatLng.length-1 ? tempLocs[this.props.childDep === "13"? 0 : 1]: coordsLatLng[journey[0]]
-    let stop  = this.props.childArr > coordsLatLng.length-1 ? tempLocs[this.props.childArr === "13"? 0 : 1]: coordsLatLng[journey[3]]
-    
     this.polyArriva(journey[1],journey[2]) 
     
     this.setState({
@@ -143,16 +218,20 @@ export default class Plan extends Component{
       .then( data => this.setState({
         jMiddle: data
       }),
+      
       )
   }
   render(){
+    /*if(this.state.jMiddle.length != 0){
+      this.writeFile()
+    }*/
       return(
         <>
         {//Only show markers and polyline if a route has been selected
         this.state.show ?
           <>
           <Marker
-            coordinate={ this.props.childDep > coordsLatLng.length-1? this.props.childDep === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.props.childDep] }
+            coordinate={ this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep] }
             image={ require('../assets/mylocation.gif') }>
             <Callout>
               <Text>
@@ -162,7 +241,7 @@ export default class Plan extends Component{
             </Marker>
           
           <Marker
-            coordinate={ this.props.childArr > coordsLatLng.length-1? this.props.childArr === "13" ? tempLocs[0] : tempLocs[1] :coordsLatLng[this.props.childArr] }
+            coordinate={ this.props.childArr > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childArr] }
             image= { require('../assets/icon-target.png') }
           >
             <Callout>
@@ -173,7 +252,7 @@ export default class Plan extends Component{
           </Marker>
           {//Display either the walking route or the bus route, which can have walking sections
             this.state.walk ? 
-            <MapViewDirections origin={coordsLatLng[this.props.childDep]} 
+            <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]} 
               destination={coordsLatLng[this.props.childArr]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'} 
               mode={'walking'}/>
@@ -185,7 +264,7 @@ export default class Plan extends Component{
                   (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../assets/icons8-synchronize-filled-96.png')} />) )
               : null
             }
-            <MapViewDirections origin={coordsLatLng[this.props.childDep]} 
+            <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]} 
               destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
               mode={'walking'}/>
