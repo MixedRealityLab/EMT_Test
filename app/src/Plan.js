@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Text } from 'react-native'
+import { AsyncStorage, Alert, Text } from 'react-native'
 import { Marker, Polyline, Callout } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios'
@@ -91,40 +91,51 @@ export default class Plan extends Component{
   }
 
   beginRoute(){
-    var Journey = {
-      //Is it a walking journey?
-      walk: this.state.walk,
-      //Bus route
-      route: this.state.jMiddle,
-      //Bus Changes
-      changes: this.state.changes,
-      //Start point
-      start: (this.props.childDep > coordsLatLng.length -1 ? "Location" : stopList[this.props.childDep]),
-      //End point
-      end: (this.props.childArr > coordsLatLng.length -1 ? "Location" : stopList[this.props.childArr])
-    }
-    AsyncStorage.getAllKeys((err,keys)=>{
-      console.log(keys)
-      var keyLen = keys.length
-      if(keyLen === 0){
-        AsyncStorage.setItem('0000', JSON.stringify(Journey))
+    if(this.state.jMiddle.length !== 0){
+      var Journey = {
+        //Is it a walking journey?
+        walk: this.state.walk,
+        //Bus route
+        route: this.state.jMiddle,
+        //Bus Changes
+        changes: this.state.changes,
+        //Start point
+        start: (this.props.childDep > coordsLatLng.length -1 ? "Location" : stopList[this.props.childDep]),
+        //End point
+        end: (this.props.childArr > coordsLatLng.length -1 ? "Location" : stopList[this.props.childArr])
       }
-      else{
-        var newKey
-        switch (String(keyLen).length){
-          case 1:
-            newKey = '000' + keyLen
-            break;
-          case 2:
-            newKey = '00' + keyLen
-            break;
-          case 3:
-            newKey = '0' + keyLen
-            break;
+      console.log(Journey)
+      console.log(JSON.stringify(Journey))
+      AsyncStorage.getAllKeys((err,keys)=>{
+        console.log(keys)
+        var keyLen = keys.length
+        if(keyLen === 0){
+          AsyncStorage.setItem('0000', JSON.stringify(Journey))
         }
-        AsyncStorage.setItem(newKey, JSON.stringify(Journey))
-      }
-    })
+        else{
+          var newKey
+          switch (String(keyLen).length){
+            case 1:
+              newKey = '000' + keyLen
+              break;
+            case 2:
+              newKey = '00' + keyLen
+              break;
+            case 3:
+              newKey = '0' + keyLen
+              break;
+          }
+          AsyncStorage.setItem(newKey, JSON.stringify(Journey))
+        }
+      })
+    }
+    else{
+      Alert.alert(
+        "Warning",
+        "A route needs to be selected in order to begin a journey"
+      )
+    }
+    
   }
 
   getRoute(){
@@ -134,13 +145,34 @@ export default class Plan extends Component{
       console.log("Dep correct")
       if(this.props.childArr !== -1){
         console.log("Arr correct")
-        if(this.props.childDep > coordsLatLng.length -1){
-          this.getLoc()
+
+        if(this.props.childDep === this.props.childArr){
+          Alert.alert(
+            "Warning",
+            "Start point and End point cannot be the same"
+          )
         }
-        var journey = this.setJourney()
-        //Get bus journey, which can have walking sections
-        this.getJourney(journey)
+        else{
+          if(this.props.childDep > coordsLatLng.length -1){
+            this.getLoc()
+          }
+          var journey = this.setJourney()
+          //Get bus journey, which can have walking sections
+          this.getJourney(journey)
+        }
       }
+      else{
+        Alert.alert(
+          "Warning",
+          "Please select End point"
+        )
+      }
+    }
+    else{
+      Alert.alert(
+        "Warning",
+        "Please select Start and End points"
+      )
     }
     
   }
@@ -232,7 +264,7 @@ export default class Plan extends Component{
           <>
           <Marker
             coordinate={ this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep] }
-            image={ require('../assets/mylocation.gif') }>
+            image={ require('../assets/icons8-current-location-96.png') }>
             <Callout>
               <Text>
                 Start
@@ -242,7 +274,7 @@ export default class Plan extends Component{
           
           <Marker
             coordinate={ this.props.childArr > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childArr] }
-            image= { require('../assets/icon-target.png') }
+            image= { require('../assets/icons8-destination-96.png') }
           >
             <Callout>
               <Text>
@@ -252,10 +284,14 @@ export default class Plan extends Component{
           </Marker>
           {//Display either the walking route or the bus route, which can have walking sections
             this.state.walk ? 
-            <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]} 
+            <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos : coordsLatLng[this.props.childDep]} 
               destination={coordsLatLng[this.props.childArr]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'} 
-              mode={'walking'}/>
+              mode={'walking'}
+              //Get polyline coords for walking
+              onReady={(props) =>{ this.setState({jMiddle: props.coordinates}) } }
+              strokeColor={this.state.polyOptsWalk}
+              strokeWidth = {3}/>
             :
             <>
             {
@@ -267,14 +303,19 @@ export default class Plan extends Component{
             <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]} 
               destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
-              mode={'walking'}/>
+              mode={'walking'}
+              strokeColor={this.state.polyOptsWalk}
+              strokeWidth = {3}/>
             {
               this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
             }
              <MapViewDirections origin={this.state.jMiddle.length > 1 ? this.state.jMiddle.slice(-1)[this.state.jMiddle.length-1] : this.state.jMiddle[this.state.jMiddle.length-1]} 
               destination={coordsLatLng[this.props.childArr]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
-              mode={'walking'}/>
+              mode={'walking'}
+              strokeColor={this.state.polyOptsWalk}
+              strokeWidth = {3}
+              anchor={(1,1)}/>
             </>
           }
           </> 

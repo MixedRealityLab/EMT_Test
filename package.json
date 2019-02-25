@@ -19,6 +19,9 @@
     "react-native-gesture-handler": "^1.0.15",
     "react-native-maps": "^0.23.0",
     "react-native-maps-directions": "^1.6.0",
+    "react-native-notifications": "^1.2.52",
+    "react-native-render-html": "^4.1.1",
+    "react-native-webview": "^5.2.1",
     "react-navigation": "^3.3.0",
     "simplify-js": "^1.2.3"
   },

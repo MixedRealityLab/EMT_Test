@@ -1,8 +1,10 @@
 import React from "react";
 import { Button, View, Text, PermissionsAndroid } from "react-native";
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import { createAppContainer, createBottomTabNavigator } from "react-navigation";
 import Map from './src/Map.js'
 import Info from './src/Info.js'
+import MapSimple from "./src/MapSimple.js";
+
 
 
 async function requestLocationPermission() {
@@ -34,16 +36,30 @@ async function requestLocationPermission() {
 class HomeScreen extends React.Component {
   constructor(props){
     super(props)
-    
+    this.nav = this.nav.bind(this)
+  }
+
+  nav(){
+    this.props.navigation.openDrawer();
   }
 
   componentDidMount(){
     requestLocationPermission()
   }
+  render() {
+    return (
+      <><Text>Hi</Text>
+      <Button onPress={this.nav} title={"Push Me"}></Button></>
+      
+      
+    );
+  }
+}
 
+class PlanScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     return{
-      title: 'In My Seat',
+      title: 'Plan',
       headerRight: <Button
       onPress={() => navigation.navigate('Details')}
       title="Info"
@@ -58,7 +74,18 @@ class HomeScreen extends React.Component {
   }
 }
 
-class DetailsScreen extends React.Component {
+class ViewScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <MapSimple />
+        
+      </View>
+    );
+  }
+}
+
+class InfoScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -69,13 +96,15 @@ class DetailsScreen extends React.Component {
   }
 }
 
-const AppNavigator = createStackNavigator(
+const AppNavigator = createBottomTabNavigator(
   {
     Home: HomeScreen,
-    Details: DetailsScreen
+    Plan: PlanScreen,
+    View: ViewScreen,
+    Info: InfoScreen
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'View',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',
@@ -84,6 +113,13 @@ const AppNavigator = createStackNavigator(
       headerTitleStyle: {
         fontWeight: 'bold',
       },
+    },
+    tabBarOptions: {
+      activeTintColor: '#fff',
+      inactiveTintColor: 'gray',
+      inactiveBackgroundColor: 'black',
+      activeBackgroundColor: '#add8e6',
+      labelStyle:{fontSize:16}
     },
   }
 );

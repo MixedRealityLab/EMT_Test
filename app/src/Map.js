@@ -13,10 +13,8 @@ export default class Map extends Component {
         dep:      -1,
         arr:      -1,
         walk:     false,
-      }
-      
+      } 
     }
-  
     switch = () => {
       this.child.switch()
     }
@@ -99,7 +97,6 @@ export default class Map extends Component {
                 <Picker.Item label="Derby Hall"                       value="10" />
                 <Picker.Item label="Kings Meadow Campus"              value="11" />
                 <Picker.Item label="East Midlands Coference Centre"   value="12" />
-                <Picker.Item label="Current Location"                 value="13" />
             </Picker>
           </View>
   

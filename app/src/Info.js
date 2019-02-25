@@ -13,13 +13,13 @@ export default class Info extends Component{
     
     componentDidMount(){
         AsyncStorage.getAllKeys((err,res) =>{ this.setState({keys: res}) })
-        
+        AsyncStorage.getItem("0000", (err,res) =>{ let obj = JSON.parse(res); console.log(obj)})
     }
     render(){
         console.log(this.state.keys)
         return(
             <>
-                <ScrollView contentContainerStyle={styles.container}>
+                <ScrollView contentContainerStyle={styles.scrollCont}>
                     <Text>Keys:</Text> 
                     {this.state.keys.map( (item,i) =>(<Text key={i}>{item}</Text>) )}
                 </ScrollView>
@@ -29,8 +29,7 @@ export default class Info extends Component{
 }
 
 const styles = StyleSheet.create({
-    container:{
-       
+    scrollCont:{
         paddingVertical: 20
       },
 })
