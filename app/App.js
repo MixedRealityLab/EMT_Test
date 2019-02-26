@@ -33,54 +33,24 @@ async function requestLocationPermission() {
   }
 }
 
-class HomeScreen extends React.Component {
-  constructor(props){
-    super(props)
-    this.nav = this.nav.bind(this)
-  }
-
-  nav(){
-    this.props.navigation.openDrawer();
-  }
-
+class ViewScreen extends React.Component {
   componentDidMount(){
     requestLocationPermission()
   }
+
   render() {
     return (
-      <><Text>Hi</Text>
-      <Button onPress={this.nav} title={"Push Me"}></Button></>
-      
-      
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <MapSimple />
+      </View>
     );
   }
 }
 
 class PlanScreen extends React.Component {
-  static navigationOptions = ({ navigation }) => {
-    return{
-      title: 'Plan',
-      headerRight: <Button
-      onPress={() => navigation.navigate('Details')}
-      title="Info"
-      color="#000"
-    />
-    }
-  };
   render() {
     return (
       <Map/>
-    );
-  }
-}
-
-class ViewScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <MapSimple />
-        
-      </View>
     );
   }
 }
@@ -90,18 +60,28 @@ class InfoScreen extends React.Component {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Info />
-        
       </View>
+    );
+  }
+}
+
+class SetScreen extends React.Component {
+  render() {
+    return (
+      <>
+      <Button onPress={this.nav} title={"Push Me"}></Button>
+      </>
     );
   }
 }
 
 const AppNavigator = createBottomTabNavigator(
   {
-    Home: HomeScreen,
-    Plan: PlanScreen,
     View: ViewScreen,
-    Info: InfoScreen
+    Plan: PlanScreen,
+    Info: InfoScreen,
+    Settings: SetScreen
+    
   },
   {
     initialRouteName: 'View',
@@ -125,3 +105,16 @@ const AppNavigator = createBottomTabNavigator(
 );
 
 export default createAppContainer(AppNavigator);
+
+/*
+static navigationOptions = ({ navigation }) => {
+    return{
+      title: 'Plan',
+      headerRight: <Button
+      onPress={() => navigation.navigate('Details')}
+      title="Info"
+      color="#000"
+    />
+    }
+  };
+*/
