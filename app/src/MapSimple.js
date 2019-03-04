@@ -3,11 +3,15 @@ import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform} from 'react-
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Stops from './Stops'
 import POIS from './POIS'
+import { mapStyle } from './Requests'
 
 export default class MapSimple extends Component {
 
     constructor(props){
       super(props) 
+      this.state ={
+        filter: "N/A"
+      }
     }
 
     render() {
@@ -17,6 +21,7 @@ export default class MapSimple extends Component {
        <MapView
          provider={PROVIDER_GOOGLE}
          style={styles.map}
+         customMapStyle={mapStyle}
          onMapReady={this.ready}
          initialRegion={{
            latitude: 52.944351,
@@ -26,9 +31,19 @@ export default class MapSimple extends Component {
          }}
        >
         <Stops/>
-        <POIS />
+        <POIS filter={this.state.filter}/>
        </MapView>
       </View>
+            <Picker
+                selectedValue={this.state.filter}
+                style={styles.picker}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({filter: itemValue})
+                }>
+                <Picker.Item label="Select Filter"      value="N/A" />
+                <Picker.Item label="Gardens"            value="Gardens" />
+                <Picker.Item label="Food and Drink"     value="Food and Drink" />
+            </Picker>
     </View>
       );
     }
@@ -36,7 +51,7 @@ export default class MapSimple extends Component {
   
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 2
+      flex: 8
     },
     containerP:{
       flex: 1,

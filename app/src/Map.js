@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform} from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
+import { mapStyle } from './Requests'
 import Stops from './Stops'
 import Buses from './Buses'
 import Plan from './Plan'
@@ -37,6 +38,7 @@ export default class Map extends Component {
         <View style={styles.mapContainer}>
        <MapView
          provider={PROVIDER_GOOGLE}
+         customMapStyle={mapStyle}
          style={styles.map}
          onMapReady={this.ready}
          initialRegion={{

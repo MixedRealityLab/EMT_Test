@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, TextInput, Button } from 'react-native'
 import { WebView } from "react-native-webview";
 import HTML from 'react-native-render-html'
+
+const test = `https://lh3.googleusercontent.com/C30oIeZuBAHGBQvyoTOgsPyTfY8CgJ9jTLgBslHnAY1RD-aXgBEJlvoFXvJ37kVXFQw4DYzBy-0iUrNgBth8IcXLar95fAtkQf8HQDZzh5BAAP442u4bQtLWbtt5B4PrD6BbxQ`
 
 export default class POISCallout extends Component{
 
@@ -35,17 +37,17 @@ export default class POISCallout extends Component{
 
     }
 
-
     render(){
-        //console.log(this.state.img)
-        //console.log(this.state.text)
-        this.temp
+        //console.log(this.state.clean[0])
         return(
             this.props.render ? 
+
             <View style={styles.containerP}>
                 <Text>{this.props.item.name}</Text>
-                <HTML html={this.state.clean[1]} />
+                {this.state.clean.map( (item, i) => { return( String(item).substr(0,4) === "<img" ? null : <HTML key={i} html={item} imagesMaxWidth={200} imagesMaxHeight={200}/> ) } )}
+                
             </View>
+
             :
             null
         )
@@ -54,13 +56,16 @@ export default class POISCallout extends Component{
 
 const styles = StyleSheet.create({
     containerP:{
-      flex: 1
-    }
+        flexDirection: 'column',
+        alignSelf: 'flex-start',
+        width: 200
+    },
   });
   /*
+  <HTML html={this.state.clean[0]} imagesMaxWidth={200} imagesMaxHeight={200}/>
   <WebView  
                 originWhitelist={['*']}
                 allowUniversalAccessFromFileURLs={true}
                 domStorageEnabled={true}
-                source={{html: this.props.item.description , baseUrl: ''}} style={styles.containerP}
+                source={{html: this.state.clean[1] , baseUrl: ''}} style={styles.containerP}
                 />*/

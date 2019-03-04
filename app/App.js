@@ -5,8 +5,6 @@ import Map from './src/Map.js'
 import Info from './src/Info.js'
 import MapSimple from "./src/MapSimple.js";
 
-
-
 async function requestLocationPermission() {
   try {
     const granted = await PermissionsAndroid.request(
@@ -41,7 +39,7 @@ class ViewScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <MapSimple />
+        <MapSimple mainStack={AppNavigator}/>
       </View>
     );
   }
@@ -71,6 +69,20 @@ class SetScreen extends React.Component {
       <>
       <Button onPress={this.nav} title={"Push Me"}></Button>
       </>
+    );
+  }
+}
+
+class ModalScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 30 }}>This is a modal!</Text>
+        <Button
+          onPress={() => this.props.navigation.goBack()}
+          title="Dismiss"
+        />
+      </View>
     );
   }
 }
