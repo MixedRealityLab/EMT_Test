@@ -4,6 +4,8 @@ import { createAppContainer, createBottomTabNavigator } from "react-navigation";
 import Map from './src/Map.js'
 import Info from './src/Info.js'
 import MapSimple from "./src/MapSimple.js";
+import Settings from './src/Settings'
+import TravelMap from './src/Travel'
 
 async function requestLocationPermission() {
   try {
@@ -46,9 +48,32 @@ class ViewScreen extends React.Component {
 }
 
 class PlanScreen extends React.Component {
+  constructor(props){
+    super(props) 
+    this.state ={
+      changeView: true,
+      journeyKey: ''
+    }
+    this.change = this.change.bind(this)
+  }
+
+  change(jKey){
+    this.setState(
+      {
+        changeView: !this.state.begin,
+        journeyKey: jKey
+      }
+    )
+  }
   render() {
+    console.log(this.state.changeView)
+    console.log(this.state.journeyKey)
     return (
-      <Map/>
+      this.state.changeView ? 
+      <TravelMap change={this.change} jKey={this.state.journeyKey} />
+      :
+      <Map change={this.change}/>
+      
     );
   }
 }
@@ -66,26 +91,13 @@ class InfoScreen extends React.Component {
 class SetScreen extends React.Component {
   render() {
     return (
-      <>
-      <Button onPress={this.nav} title={"Push Me"}></Button>
-      </>
-    );
-  }
-}
-
-class ModalScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 30 }}>This is a modal!</Text>
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          title="Dismiss"
-        />
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Settings />
       </View>
     );
   }
 }
+
 
 const AppNavigator = createBottomTabNavigator(
   {
@@ -96,7 +108,7 @@ const AppNavigator = createBottomTabNavigator(
     
   },
   {
-    initialRouteName: 'View',
+    initialRouteName: 'Plan',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',

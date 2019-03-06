@@ -3,6 +3,7 @@ package com.inmyseat;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
@@ -30,13 +31,15 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new VectorIconsPackage(),
             new ReactNativePushNotificationPackage(),
             new RNCWebViewPackage(),
           new RNGestureHandlerPackage(),
           new MapsPackage(),
           new RNFusedLocationPackage(),
+          //new RNNotificationsPackage(MainApplication.this),
           new RNFSPackage()
-          //new RNNotificationsPackage(MainApplication.this)
+          
       );
     }
 

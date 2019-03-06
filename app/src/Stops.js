@@ -50,7 +50,7 @@ export default class Stops extends Component{
                     coordinate={{latitude: item.lat, longitude: item.lng}}
                     image={require('../assets/icon-bus-stop-64.png')}
                     >
-                    <Callout>
+                    <Callout onPress={ ()=>{ console.log("I am: " + stopList[i]) } }>
                       <Text>
                         {stopList[i]}
                       </Text>

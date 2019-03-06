@@ -3,8 +3,6 @@ import { Text, StyleSheet, View, TextInput, Button } from 'react-native'
 import { WebView } from "react-native-webview";
 import HTML from 'react-native-render-html'
 
-const test = `https://lh3.googleusercontent.com/C30oIeZuBAHGBQvyoTOgsPyTfY8CgJ9jTLgBslHnAY1RD-aXgBEJlvoFXvJ37kVXFQw4DYzBy-0iUrNgBth8IcXLar95fAtkQf8HQDZzh5BAAP442u4bQtLWbtt5B4PrD6BbxQ`
-
 export default class POISCallout extends Component{
 
     constructor(props){
@@ -17,7 +15,6 @@ export default class POISCallout extends Component{
     componentDidMount(){
         let temp = this.props.item.description
         var split = temp.split("<br>")
-        //console.log(split)
 
         var clean = []
         split.map(

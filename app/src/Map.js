@@ -50,7 +50,7 @@ export default class Map extends Component {
        >
         <Stops/>
         <Buses/>
-        <Plan onRef={ref => (this.child = ref)} childDep={this.state.dep} childArr={this.state.arr}/>
+        <Plan onRef={ref => (this.child = ref)} childDep={this.state.dep} childArr={this.state.arr} change={this.props.change}/>
        </MapView>
      </View>
     
