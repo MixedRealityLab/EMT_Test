@@ -3,7 +3,6 @@ import { Text, View } from 'react-native'
 import { Marker, Callout } from 'react-native-maps'
 import Axios from 'axios';
 import POISCallout from './POISCallout'
-import {NotificationsAndroid} from 'react-native-notifications';
 
 export default class POIS extends Component{
 
@@ -35,8 +34,6 @@ export default class POIS extends Component{
           return render
         })
         .then(data => this.setState({render: data}))
-
-        
     }
 
     render(){
@@ -57,7 +54,7 @@ export default class POIS extends Component{
                   }
                   name={item.name}
                   coordinate={{latitude: item.latitude, longitude: item.longitude}}
-                  image={require('../assets/icons8-point-of-interest-52.png')}
+                  image={require('../../assets/icons8-point-of-interest-52.png')}
                   >
                   <Callout onPress={()=>{ console.log("I am: " + i), this.returnInfo() }}>
                       <POISCallout item={item} render={this.state.render[i]} />

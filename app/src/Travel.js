@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform, AsyncStorage} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Polyline }  from 'react-native-maps';
-import Stops from './Stops'
-import POIS from './POIS'
-import { mapStyle } from './Requests'
+import POIS from './components/POIS'
+import { mapStyle } from './components/Requests'
 import MapViewDirections from 'react-native-maps-directions'
 
 export default class TravelMap extends Component {

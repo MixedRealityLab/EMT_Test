@@ -41,7 +41,7 @@ class ViewScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <MapSimple mainStack={AppNavigator}/>
+        <MapSimple />
       </View>
     );
   }
@@ -51,16 +51,18 @@ class PlanScreen extends React.Component {
   constructor(props){
     super(props) 
     this.state ={
-      changeView: true,
+      changeView: false,
+      route:{},
       journeyKey: ''
     }
     this.change = this.change.bind(this)
   }
 
-  change(jKey){
+  change(route, jKey){
     this.setState(
       {
         changeView: !this.state.begin,
+        route: route,
         journeyKey: jKey
       }
     )
@@ -108,7 +110,7 @@ const AppNavigator = createBottomTabNavigator(
     
   },
   {
-    initialRouteName: 'Plan',
+    initialRouteName: 'View',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',

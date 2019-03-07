@@ -126,7 +126,7 @@ export default class Plan extends Component{
               break;
           }
           AsyncStorage.setItem(newKey, JSON.stringify(Journey))
-          this.props.change(newKey)
+          this.props.change(journey, newKey)
         }
       })
     }
@@ -265,7 +265,7 @@ export default class Plan extends Component{
           <>
           <Marker
             coordinate={ this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep] }
-            image={ require('../assets/icons8-current-location-96.png') }>
+            image={ require('../../assets/icons8-current-location-96.png') }>
             <Callout>
               <Text>
                 Start
@@ -275,7 +275,7 @@ export default class Plan extends Component{
           
           <Marker
             coordinate={ this.props.childArr > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childArr] }
-            image= { require('../assets/icons8-destination-96.png') }
+            image= { require('../../assets/icons8-destination-96.png') }
           >
             <Callout>
               <Text>
@@ -298,7 +298,7 @@ export default class Plan extends Component{
             {
               this.state.jMiddle.length > 1 ? 
                 this.state.jMiddle.map( 
-                  (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../assets/icons8-synchronize-filled-96.png')} />) )
+                  (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../../assets/icons8-synchronize-filled-96.png')} />) )
               : null
             }
             <MapViewDirections origin={this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]} 

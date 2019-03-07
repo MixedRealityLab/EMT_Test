@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform} from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
-import { mapStyle } from './Requests'
-import Stops from './Stops'
-import Buses from './Buses'
-import Plan from './Plan'
+import { mapStyle } from './components/Requests'
+import Stops from './components/Stops'
+import Buses from './components/Buses'
+import Plan from './components/Plan'
 
 export default class Map extends Component {
 

@@ -1,17 +1,30 @@
 import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform} from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
-import Stops from './Stops'
-import POIS from './POIS'
-import { mapStyle } from './Requests'
+import Stops from './components/Stops'
+import POIS from './components/POIS'
+import { mapStyle } from './components/Requests'
+import Search from './components/Search'
 
 export default class MapSimple extends Component {
 
     constructor(props){
       super(props) 
       this.state ={
-        filter: "N/A"
+        filter: "N/A",
+        region:{
+          latitude: 52.944351,
+          longitude: -1.190312,
+          latitudeDelta: 0.020,
+          longitudeDelta: 0.0121
+        }
       }
+
+      this.viewPOI = this.viewPOI.bind(this)
+    }
+
+    viewPOI(lat, lon) {
+      this.mView.animateCamera({center:{latitude: lat, longitude: lon}})
     }
 
     render() {
@@ -19,21 +32,18 @@ export default class MapSimple extends Component {
       <View style={styles.containerP}>
       <View style={styles.mapContainer}>
        <MapView
+         ref={mView => this.mView = mView}
          provider={PROVIDER_GOOGLE}
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
-         initialRegion={{
-           latitude: 52.944351,
-           longitude: -1.190312,
-           latitudeDelta: 0.020,
-           longitudeDelta: 0.0121,
-         }}
+         region={this.state.region}
        >
         <Stops/>
         <POIS filter={this.state.filter}/>
        </MapView>
       </View>
+          <View style={styles.tRow}>
             <Picker
                 selectedValue={this.state.filter}
                 style={styles.picker}
@@ -44,11 +54,15 @@ export default class MapSimple extends Component {
                 <Picker.Item label="Gardens"            value="Gardens" />
                 <Picker.Item label="Food and Drink"     value="Food and Drink" />
             </Picker>
+            <Search viewPOI={this.viewPOI} filter={this.state.filter}/>
+          </View>
     </View>
       );
     }
   }
   
+
+
   const styles = StyleSheet.create({
     mapContainer: {
       flex: 8
@@ -59,12 +73,6 @@ export default class MapSimple extends Component {
       justifyContent: 'flex-start',
       alignItems: 'stretch',
       alignSelf: 'stretch'
-    },
-    containerL:{
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'stretch',
     },
     map: {
       ...StyleSheet.absoluteFillObject,
@@ -77,22 +85,9 @@ export default class MapSimple extends Component {
       left:0,
       right:0,
       left:0,
-      flex: 3,
+      flex: 1,
       flexDirection: 'row',
       justifyContent: 'center',
     },
-    button:{
-      flex:1,
-      backgroundColor: '#add8e6',
-      borderColor: 'black',
-      borderWidth: 1
-    },
-    text:{
-      fontSize: 14,
-      fontWeight: 'bold',
-      alignSelf: 'center',
-      color: 'white',
-      
-    }
   });
   

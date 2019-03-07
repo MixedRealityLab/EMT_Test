@@ -44,7 +44,7 @@ export default class Buses extends Component{
             <Marker 
               key={i}
               coordinate={{latitude: item.pos.y / 1000000, longitude: item.pos.x / 1000000}}
-              image={require('../assets/icon-bus-64.png')}
+              image={require('../../assets/icon-bus-64.png')}
             />
           )
         })
