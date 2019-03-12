@@ -96,7 +96,7 @@ export default class Plan extends Component{
         //Is it a walking journey?
         walk: this.state.walk,
         //Bus route
-        route: this.state.jMiddle,
+        route: this.state.walk ? this.state.jWalk : this.state.jMiddle,
         //Bus Changes
         changes: this.state.changes,
         //Start point
@@ -290,7 +290,7 @@ export default class Plan extends Component{
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'} 
               mode={'walking'}
               //Get polyline coords for walking
-              onReady={(props) =>{ this.setState({jMiddle: props.coordinates}) } }
+              onReady={(props) =>{ this.setState({jWalk: props.coordinates}) } }
               strokeColor={this.state.polyOptsWalk}
               strokeWidth = {3}/>
             :

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Text, View } from 'react-native'
 import { Marker, Callout } from 'react-native-maps'
+import { SearchBar, Overlay  } from 'react-native-elements'
 import Axios from 'axios';
 import POISCallout from './POISCallout'
 

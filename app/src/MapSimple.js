@@ -5,6 +5,7 @@ import Stops from './components/Stops'
 import POIS from './components/POIS'
 import { mapStyle } from './components/Requests'
 import Search from './components/Search'
+import Selector from './components/Selector'
 
 export default class MapSimple extends Component {
 
@@ -21,10 +22,15 @@ export default class MapSimple extends Component {
       }
 
       this.viewPOI = this.viewPOI.bind(this)
+      this.setFilter = this.setFilter.bind(this)
     }
 
     viewPOI(lat, lon) {
-      this.mView.animateCamera({center:{latitude: lat, longitude: lon}})
+      this.mView.animateCamera({center:{latitude: lat, longitude: lon}, zoom: 17})
+    }
+
+    setFilter(filter){
+      this.setState({filter: filter})
     }
 
     render() {
@@ -43,7 +49,19 @@ export default class MapSimple extends Component {
         <POIS filter={this.state.filter}/>
        </MapView>
       </View>
-          <View style={styles.tRow}>
+          <Selector 
+          mode={'View'} 
+          viewPOI={this.viewPOI} 
+          setFilter={this.setFilter} 
+          filter={this.state.filter} 
+          />
+    </View>
+      );
+    }
+  }
+  
+/*
+<View style={styles.tRow}>
             <Picker
                 selectedValue={this.state.filter}
                 style={styles.picker}
@@ -56,12 +74,7 @@ export default class MapSimple extends Component {
             </Picker>
             <Search viewPOI={this.viewPOI} filter={this.state.filter}/>
           </View>
-    </View>
-      );
-    }
-  }
-  
-
+*/
 
   const styles = StyleSheet.create({
     mapContainer: {
@@ -76,18 +89,6 @@ export default class MapSimple extends Component {
     },
     map: {
       ...StyleSheet.absoluteFillObject,
-    },
-    picker:{
-      flex:1
-    },
-    tRow:{
-      top:0,
-      left:0,
-      right:0,
-      left:0,
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
+    }
   });
   

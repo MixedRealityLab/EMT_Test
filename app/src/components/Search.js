@@ -30,7 +30,7 @@ export default class Search extends Component {
 
     render() {
       const { search } = this.state
-      console.log(search)
+      //console.log(search)
       return (
       <View style={{flex:1}}>
         <TouchableOpacity style={styles.button} onPress={()=>{this.setState({show: true})}}>

@@ -10,14 +10,16 @@ export default class TravelMap extends Component {
     constructor(props){
       super(props) 
       this.state ={
-        route: {}
+        route: {},
+        points: []
       }
     }
 
     componentDidMount(){
         AsyncStorage.getItem(
             //this.props.jKey
-            '0006', (err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj})})
+            '0000'
+            ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})})
     }
 
     render() {
@@ -38,12 +40,14 @@ export default class TravelMap extends Component {
          }}
        >
        {
-           this.state.route === null ? console.log("full") : console.log("empty") //this.state.route.route.map( (item,i) => { return( <Polyline key={i} coordinates={item}/> ) } )
+           this.state.route === null ? 
+            console.log("empty"): 
+            <>
+              <Polyline coordinates={this.state.points} />
+            </>
        }
-
        </MapView>
       </View>
-            
     </View>
       )
     }
