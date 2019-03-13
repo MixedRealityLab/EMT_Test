@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {TouchableOpacity, View, Picker, Text, StyleSheet} from 'react-native'
+import {TouchableOpacity, View, Picker, Text, StyleSheet, Alert} from 'react-native'
+import { Overlay  } from 'react-native-elements'
 import Search from './Search'
 
 export default class Selector extends Component{
@@ -8,14 +9,36 @@ export default class Selector extends Component{
         super(props);
 
         this.state = {
-            mode: 'View'
+            mode: 'View',
+            show: false,
+            filter: 'N/A'
         }
 
         this.modeSel = this.modeSel.bind(this)
+        this.poiSet = this.poiSet.bind(this)
     }
     
     componentDidMount(){
 
+    }
+
+    poiSet(lat, lon){
+        console.log("Lat: " + lat)
+        console.log("Lon: " + lon)
+        Alert.alert(
+            "Point",
+            "Set as Start point or End point",
+            [
+                {text: 'Start', onPress: () => {console.log('Start pressed')}},
+                {text: 'End', onPress: () => console.log('End Pressed')},
+                {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                },
+            ],
+            {cancelable: false},
+        )
     }
 
     modeSel(){
@@ -40,6 +63,15 @@ export default class Selector extends Component{
                 )
             case 'Plan':
                 return(
+                    <View style={styles.containerP} >
+                    <TouchableOpacity style={styles.button} onPress={()=>{this.setState({show: true})}}>
+                        <Text style={styles.text}>Route</Text>
+                    </TouchableOpacity>
+                    <Overlay 
+                            animationType="fade"
+                            isVisible={this.state.show}
+                            onBackdropPress={() => this.setState({ show: false })}
+                    >
                     <View style={styles.containerP} >
                     <View style={styles.containerP} >
                     <Picker
@@ -106,11 +138,31 @@ export default class Selector extends Component{
                         </TouchableOpacity>
                         </View>
                     </View>
+                    <View style={styles.tRow}>
+                        <Picker
+                            selectedValue={this.state.filter}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) =>
+                            {
+                                this.setState({filter: itemValue})
+                            }
+                            }>
+                            <Picker.Item label="Select Filter"      value="N/A" />
+                            <Picker.Item label="Gardens"            value="Gardens" />
+                            <Picker.Item label="Food and Drink"     value="Food and Drink" />
+                        </Picker>
+                        <Search viewPOI={this.poiSet} filter={this.state.filter}/>
+                    </View>
+                    </View>
+                    </Overlay>
                     </View>
                 )
             case 'Travel':
-
-            break
+                return(
+                    <TouchableOpacity style={styles.button} onPress={this.props.change('')}>
+                        <Text style={styles.text}>End Journey</Text>
+                    </TouchableOpacity>
+                )
         }
     }
 

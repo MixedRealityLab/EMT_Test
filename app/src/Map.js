@@ -87,7 +87,7 @@ export default class Map extends Component {
   
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 2
+      flex: 8
     },
     containerP:{
       flex: 1,

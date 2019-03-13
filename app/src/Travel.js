@@ -4,6 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Polyline }  from 'react-native-maps';
 import POIS from './components/POIS'
 import { mapStyle } from './components/Requests'
 import MapViewDirections from 'react-native-maps-directions'
+import Selector from './components/Selector'
 
 export default class TravelMap extends Component {
 
@@ -17,8 +18,8 @@ export default class TravelMap extends Component {
 
     componentDidMount(){
         AsyncStorage.getItem(
-            //this.props.jKey
-            '0000'
+            this.props.jKey
+            //'0000'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})})
     }
 
@@ -43,11 +44,17 @@ export default class TravelMap extends Component {
            this.state.route === null ? 
             console.log("empty"): 
             <>
-              <Polyline coordinates={this.state.points} />
+              {
+                this.state.points.length > 6 ?
+                <Polyline coordinates={this.state.points} />
+                :
+                this.state.points.map( (item, i) => {item.map( (item, i) => {<Polyline key={i} coordinates={item} />} ) } )
+              }
             </>
        }
        </MapView>
       </View>
+      <Selector change={this.props.change}/>
     </View>
       )
     }

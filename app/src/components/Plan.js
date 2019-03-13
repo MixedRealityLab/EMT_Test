@@ -126,7 +126,7 @@ export default class Plan extends Component{
               break;
           }
           AsyncStorage.setItem(newKey, JSON.stringify(Journey))
-          this.props.change(journey, newKey)
+          this.props.change(newKey)
         }
       })
     }

@@ -59,22 +59,6 @@ export default class MapSimple extends Component {
       );
     }
   }
-  
-/*
-<View style={styles.tRow}>
-            <Picker
-                selectedValue={this.state.filter}
-                style={styles.picker}
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({filter: itemValue})
-                }>
-                <Picker.Item label="Select Filter"      value="N/A" />
-                <Picker.Item label="Gardens"            value="Gardens" />
-                <Picker.Item label="Food and Drink"     value="Food and Drink" />
-            </Picker>
-            <Search viewPOI={this.viewPOI} filter={this.state.filter}/>
-          </View>
-*/
 
   const styles = StyleSheet.create({
     mapContainer: {
