@@ -1,10 +1,14 @@
-import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform, AsyncStorage} from 'react-native';
-import MapView, { PROVIDER_GOOGLE, Polyline }  from 'react-native-maps';
-import POIS from './components/POIS'
+import React, {Component} from 'react'
+import {StyleSheet, View, AsyncStorage} from 'react-native'
+import MapView, { PROVIDER_GOOGLE, Polyline }  from 'react-native-maps'
 import { mapStyle } from './components/Requests'
-import MapViewDirections from 'react-native-maps-directions'
 import Selector from './components/Selector'
+import Geolocation from 'react-native-geolocation-service'
+import { Button } from 'react-native-elements';
+
+var PushNotification = require('react-native-push-notification');
+
+
 
 export default class TravelMap extends Component {
 
@@ -12,24 +16,109 @@ export default class TravelMap extends Component {
       super(props) 
       this.state ={
         route: {},
-        points: []
+        points: [],
+        currentPos: {},
+        following: true,
+        polyOptsBus:['#00ff00' ,
+                     '#0000ff' ,
+                     '#000000' ,
+                     '#fff000' ]
       }
+      this.notif = this.notif.bind(this)
+    }
+    viewPOI() {
+      this.mView.animateCamera({center:this.state.currentPos, zoom: 17})
+    }
+
+    getLoc(){
+      Geolocation.getCurrentPosition(
+        (position) => {
+            this.setState({
+              currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
+            }), this.state.following ? this.viewPOI() : console.log("freecam")
+        },
+        (error) => {
+            // See error code charts below.
+            console.log(error.code, error.message);
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+    }
+
+    notif(){ 
+      console.log("Hey")
+      PushNotification.localNotification({
+        /* Android Only Properties */
+        ticker: "My Notification Ticker", // (optional)
+        autoCancel: true, // (optional) default: true
+        largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+        smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+        bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
+        subText: "This is a subText", // (optional) default: none
+        color: "red", // (optional) default: system default
+        vibrate: true, // (optional) default: true
+        vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+        tag: 'some_tag', // (optional) add tag to message
+        group: "group", // (optional) add group to message
+        ongoing: false, // (optional) set whether this is an "ongoing" notification
+
+        /* iOS and Android properties */
+        title: "Local Notification", // (optional)
+        message: "My Notification Message", // (required)
+        playSound: false, // (optional) default: true
+        soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+        number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+        actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
+      });
     }
 
     componentDidMount(){
+      PushNotification.configure({
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+          console.log( 'NOTIFICATION:', notification );
+      }
+ 
+      });
+        this.getLoc()
+        this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
-            this.props.jKey
-            //'0000'
-            ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})})
+            //this.props.jKey
+            '0021'
+            ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
+            )
+            .then(
+              () => {
+              var temp = []
+              if(this.state.points.length < 6){
+                for(let i = 0; i < this.state.points.length; i++){
+                  let part = []
+                  this.state.points[i].map( (item,i) => { part.push({latitude: item.latitude, longitude: item.longitude}) } )
+                  temp.push( part )
+                }
+              }
+              else temp = this.state.points
+              return temp  
+              }
+            )
+            .then( (res) => this.setState({points: res}) )
+    }
+
+    componentWillUnmount(){
+      clearInterval(this.intervalID)
     }
 
     render() {
-        console.log(this.state.route)
+      console.log(this.state.currentPos)
       return (
       <View style={styles.containerP}>
+      <View style={styles.containerP}>
+        <Button title={"Hi"} onPress={ () => this.notif() }/>
+      </View>
       <View style={styles.mapContainer}>
        <MapView
          provider={PROVIDER_GOOGLE}
+         ref={mView => this.mView = mView}
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
@@ -43,18 +132,13 @@ export default class TravelMap extends Component {
        {
            this.state.route === null ? 
             console.log("empty"): 
-            <>
-              {
-                this.state.points.length > 6 ?
-                <Polyline coordinates={this.state.points} />
-                :
-                this.state.points.map( (item, i) => {item.map( (item, i) => {<Polyline key={i} coordinates={item} />} ) } )
-              }
-            </>
+            this.state.points > 6 ? 
+            <Polyline coordinates={this.state.points} /> : 
+            this.state.points.map( (item, i) => { return( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3} /> ) } )
        }
        </MapView>
       </View>
-      <Selector change={this.props.change}/>
+      <Selector change={this.props.change} mode={'Travel'}/>
     </View>
       )
     }
@@ -62,7 +146,7 @@ export default class TravelMap extends Component {
   
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 8
+      flex: 7
     },
     containerP:{
       flex: 1,
@@ -71,39 +155,9 @@ export default class TravelMap extends Component {
       alignItems: 'stretch',
       alignSelf: 'stretch'
     },
-    containerL:{
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'stretch',
-    },
     map: {
       ...StyleSheet.absoluteFillObject,
     },
-    picker:{
-      flex:1
-    },
-    tRow:{
-      top:0,
-      left:0,
-      right:0,
-      left:0,
-      flex: 3,
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-    button:{
-      flex:1,
-      backgroundColor: '#add8e6',
-      borderColor: 'black',
-      borderWidth: 1
-    },
-    text:{
-      fontSize: 14,
-      fontWeight: 'bold',
-      alignSelf: 'center',
-      color: 'white',
-      
-    }
-  });
+    
+  })
   

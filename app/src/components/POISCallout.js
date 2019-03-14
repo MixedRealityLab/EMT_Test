@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import { Text, StyleSheet, View, TextInput, Button } from 'react-native'
-import { WebView } from "react-native-webview";
+import { Text, StyleSheet, View } from 'react-native'
 import HTML from 'react-native-render-html'
 
 export default class POISCallout extends Component{
@@ -35,7 +34,6 @@ export default class POISCallout extends Component{
     }
 
     render(){
-        //console.log(this.state.clean[0])
         return(
             this.props.render ? 
 

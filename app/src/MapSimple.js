@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, View, Picker, Text, Platform} from 'react-native';
+import {StyleSheet, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import Stops from './components/Stops'
 import POIS from './components/POIS'
 import { mapStyle } from './components/Requests'
-import Search from './components/Search'
 import Selector from './components/Selector'
 
 export default class MapSimple extends Component {

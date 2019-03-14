@@ -9,9 +9,6 @@ import Geolocation from 'react-native-geolocation-service'
 var polyline = require('@mapbox/polyline')
 var simplify = require('simplify-js')
 var geolib = require('geolib')
-var RNFS = require('react-native-fs')
-//Storage Directory
-var path = RNFS.ExternalDirectoryPath + '/test.txt';
 
 //AsyncStorage.setItem("Temp","21")
 //AsyncStorage.clear()
@@ -44,18 +41,7 @@ export default class Plan extends Component{
     this.setJourney = this.setJourney.bind(this)
     this.getJourney = this.getJourney.bind(this)
     this.getLoc = this.getLoc.bind(this)
-    this.writeFile = this.writeFile.bind(this)
     this.beginRoute = this.beginRoute.bind(this)
-  }
-
-  writeFile(){
-    RNFS.writeFile(path, JSON.stringify(this.state.jMiddle), 'utf8')
-    .then((success) => {
-      console.log('FILE WRITTEN!');
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
   }
 
   componentDidMount(){
@@ -227,12 +213,14 @@ export default class Plan extends Component{
       let data = response.data.svcResL[0].res
       console.log(data)
       let sections = data.outConL[0].secL
-      var jnySec = 0
+      var jnySec = []
+      var jnyCount = 0
       for(let i = 0; i < sections.length; i++){
         let temp = polyline.decode(data.common.polyL[i].crdEncYX)
         if(sections[i].type === "JNY"){
-          console.log(data.common.prodL[jnySec])
-          jnySec++
+          console.log(data.common.prodL[jnyCount])
+          jnySec.push(data.common.prodL[jnyCount])
+          jnyCount++
         }
         points.push(
           temp.map(item => 
@@ -245,6 +233,7 @@ export default class Plan extends Component{
           )
         )
       }
+      this.setState({changes: jnySec})
       //Simplify Polyline
       return simplify(points,0.0001)}
       )
@@ -255,9 +244,6 @@ export default class Plan extends Component{
       )
   }
   render(){
-    /*if(this.state.jMiddle.length != 0){
-      this.writeFile()
-    }*/
       return(
         <>
         {//Only show markers and polyline if a route has been selected

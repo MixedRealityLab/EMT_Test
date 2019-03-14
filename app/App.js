@@ -1,9 +1,9 @@
-import React from "react";
-import { Button, View, Text, PermissionsAndroid } from "react-native";
-import { createAppContainer, createBottomTabNavigator } from "react-navigation";
+import React from "react"
+import { View, PermissionsAndroid } from "react-native"
+import { createAppContainer, createBottomTabNavigator } from "react-navigation"
 import Map from './src/Map.js'
 import Info from './src/Info.js'
-import MapSimple from "./src/MapSimple.js";
+import MapSimple from "./src/MapSimple.js"
 import Settings from './src/Settings'
 import TravelMap from './src/Travel'
 
@@ -29,11 +29,11 @@ async function requestLocationPermission() {
       console.log('Access denied');
     }
   } catch (err) {
-    console.warn(err);
+    console.warn(err)
   }
 }
 
-class ViewScreen extends React.Component {
+class ExploreScreen extends React.Component {
   componentDidMount(){
     requestLocationPermission()
   }
@@ -43,7 +43,7 @@ class ViewScreen extends React.Component {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <MapSimple />
       </View>
-    );
+    )
   }
 }
 
@@ -51,7 +51,7 @@ class PlanScreen extends React.Component {
   constructor(props){
     super(props) 
     this.state ={
-      changeView: false,
+      changeView: true,
       journeyKey: ''
     }
     this.change = this.change.bind(this)
@@ -60,31 +60,29 @@ class PlanScreen extends React.Component {
   change(jKey){
     this.setState(
       {
-        changeView: !this.state.begin,
+        changeView: !this.state.changeView,
         journeyKey: jKey
       }
     )
   }
   render() {
-    console.log(this.state.changeView)
-    console.log(this.state.journeyKey)
     return (
       this.state.changeView ? 
       <TravelMap change={this.change} jKey={this.state.journeyKey} />
       :
       <Map change={this.change}/>
       
-    );
+    )
   }
 }
 
-class InfoScreen extends React.Component {
+class HistoryScreen extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Info />
       </View>
-    );
+    )
   }
 }
 
@@ -94,21 +92,20 @@ class SetScreen extends React.Component {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Settings />
       </View>
-    );
+    )
   }
 }
 
 
 const AppNavigator = createBottomTabNavigator(
   {
-    View: ViewScreen,
+    Explore: ExploreScreen,
     Plan: PlanScreen,
-    Info: InfoScreen,
+    History: HistoryScreen,
     Settings: SetScreen
-    
   },
   {
-    initialRouteName: 'View',
+    initialRouteName: 'Plan',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',
@@ -126,7 +123,7 @@ const AppNavigator = createBottomTabNavigator(
       labelStyle:{fontSize:16}
     },
   }
-);
+)
 
 export default createAppContainer(AppNavigator);
 

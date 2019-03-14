@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {TouchableOpacity, View, Picker, Text, StyleSheet, Alert} from 'react-native'
-import { Overlay  } from 'react-native-elements'
+import { Overlay } from 'react-native-elements'
 import Search from './Search'
 
 export default class Selector extends Component{
@@ -16,6 +16,7 @@ export default class Selector extends Component{
 
         this.modeSel = this.modeSel.bind(this)
         this.poiSet = this.poiSet.bind(this)
+        this.endJour = this.endJour.bind(this)
     }
     
     componentDidMount(){
@@ -29,7 +30,7 @@ export default class Selector extends Component{
             "Point",
             "Set as Start point or End point",
             [
-                {text: 'Start', onPress: () => {console.log('Start pressed')}},
+                {text: 'Start', onPress: () => { console.log('Start pressed') }},
                 {text: 'End', onPress: () => console.log('End Pressed')},
                 {
                     text: 'Cancel',
@@ -38,6 +39,17 @@ export default class Selector extends Component{
                 },
             ],
             {cancelable: false},
+        )
+    }
+
+    endJour(){
+        Alert.alert(
+            "End Journey",
+            "Are you sure?",
+            [
+                {text: 'Yes', onPress: () => this.props.change('') },
+                {text: 'No', onPress: () => console.log('Do nothing') },
+            ]
         )
     }
 
@@ -77,8 +89,7 @@ export default class Selector extends Component{
                     <Picker
                             selectedValue={this.props.dep}
                             style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) =>
-                            this.props.setDep(itemValue)
+                            onValueChange={(itemValue, itemIndex) => this.props.setDep(itemValue)
                             }>
                             <Picker.Item label="Select Departure"                 value="-1" />
                             <Picker.Item label="Innovation Park"                  value="0"  />
@@ -100,10 +111,9 @@ export default class Selector extends Component{
                         <Picker
                             selectedValue={this.props.arr}
                             style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) =>
-                            this.props.setArr(itemValue)
+                            onValueChange={(itemValue, itemIndex) => this.props.setArr(itemValue)
                             }>
-                            <Picker.Item label="Select Departure"                 value="-1" />
+                            <Picker.Item label="Select Destination"               value="-1" />
                             <Picker.Item label="Innovation Park"                  value="0"  />
                             <Picker.Item label="Newark Hall"                      value="1"  />
                             <Picker.Item label="Exchange Building"                value="2"  />
@@ -142,10 +152,7 @@ export default class Selector extends Component{
                         <Picker
                             selectedValue={this.state.filter}
                             style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) =>
-                            {
-                                this.setState({filter: itemValue})
-                            }
+                            onValueChange={(itemValue, itemIndex) => {this.setState({filter: itemValue})}
                             }>
                             <Picker.Item label="Select Filter"      value="N/A" />
                             <Picker.Item label="Gardens"            value="Gardens" />
@@ -159,7 +166,7 @@ export default class Selector extends Component{
                 )
             case 'Travel':
                 return(
-                    <TouchableOpacity style={styles.button} onPress={this.props.change('')}>
+                    <TouchableOpacity style={styles.button} onPress={ () => this.endJour() }>
                         <Text style={styles.text}>End Journey</Text>
                     </TouchableOpacity>
                 )
