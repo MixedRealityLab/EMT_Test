@@ -46,7 +46,7 @@ export default class Map extends Component {
     render() {
       return (
       <View style={styles.containerP}>
-        <View style={styles.mapContainer}>
+      <View style={styles.mapContainer}>
        <MapView
          provider={PROVIDER_GOOGLE}
          customMapStyle={mapStyle}
@@ -68,8 +68,7 @@ export default class Map extends Component {
           change={this.props.change}        //Pass function to change from plan view to travel view
         />
        </MapView>
-     </View>
-         <Selector 
+       <Selector 
             mode={'Plan'}                 //Tell component what to return
             setDep={this.setDep}          //Pass function to change start point
             dep={this.state.dep}          //Pass selected start point to component
@@ -80,7 +79,8 @@ export default class Map extends Component {
             beginRoute={this.beginRoute}  //Pass refrence to child function
             switch={this.switch}          //Pass refrence to child function
           />
-      </View>
+     </View>
+     </View>
       );
     }
   }

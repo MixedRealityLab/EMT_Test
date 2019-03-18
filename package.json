@@ -13,6 +13,7 @@
     "node-libs-react-native": "^1.0.3",
     "react": "16.6.3",
     "react-native": "^0.58.6",
+    "react-native-action-button": "^2.8.5",
     "react-native-cli": "^2.0.1",
     "react-native-elements": "^1.1.0",
     "react-native-fs": "^2.13.3",

@@ -4,11 +4,9 @@ import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 import Geolocation from 'react-native-geolocation-service'
-import { Button } from 'react-native-elements';
+import { Button } from 'react-native-elements'
 
 var PushNotification = require('react-native-push-notification');
-
-
 
 export default class TravelMap extends Component {
 
@@ -85,7 +83,7 @@ export default class TravelMap extends Component {
         this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
             this.props.jKey
-            //'0000'
+            //'0001'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
             )
             .then(
@@ -111,7 +109,7 @@ export default class TravelMap extends Component {
       clearInterval(this.intervalID)
     }
 
-    render() {  
+    render() {
       return (
       <View style={styles.containerP}>
       <View style={styles.containerP}>
@@ -124,6 +122,7 @@ export default class TravelMap extends Component {
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
+         onPanDrag={ () => { if(this.state.following) this.setState({following: false}) } }
          initialRegion={{
            latitude: 52.944351,
            longitude: -1.190312,
@@ -148,8 +147,8 @@ export default class TravelMap extends Component {
          //<Marker coordinate={this.state.currentPos} />
        }
        </MapView>
+       <Selector change={this.props.change} mode={'Travel'} following={ () => { this.setState({following: true}), this.viewPOI() } }/>
       </View>
-      <Selector change={this.props.change} mode={'Travel'}/>
     </View>
       )
     }

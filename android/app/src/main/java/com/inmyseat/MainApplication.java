@@ -1,8 +1,15 @@
 package com.inmyseat;
 
 import android.app.Application;
+import android.content.Context;
+import android.os.Bundle;
+import android.content.Intent;
+
+import java.util.Arrays;
+import java.util.List;
 
 import com.facebook.react.ReactApplication;
+import com.facebook.react.HeadlessJsTaskService;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
@@ -13,8 +20,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
-import java.util.Arrays;
-import java.util.List;
+import com.inmyseat.NotifService;
 
 public class MainApplication extends Application implements ReactApplication {
 

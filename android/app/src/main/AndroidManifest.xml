@@ -37,7 +37,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-      <service android:name=".NotifService" android:enabled="true" android:label="NotifService" />
+
+      <service android:name="com.inmyseat.NotifService" />
 
       <activity
         android:name=".MainActivity"

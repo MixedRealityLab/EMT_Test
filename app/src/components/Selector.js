@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {TouchableOpacity, View, Picker, Text, StyleSheet, Alert} from 'react-native'
 import { Overlay } from 'react-native-elements'
 import Search from './Search'
+import ActionButton from 'react-native-action-button'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 export default class Selector extends Component{
 
@@ -76,9 +78,11 @@ export default class Selector extends Component{
             case 'Plan':
                 return(
                     <View style={styles.containerP} >
-                    <TouchableOpacity style={styles.button} onPress={()=>{this.setState({show: true})}}>
-                        <Text style={styles.text}>Route</Text>
-                    </TouchableOpacity>
+                   <ActionButton buttonColor="#000">
+                        <ActionButton.Item buttonColor='#add8e6' title="Route" onPress={() => this.setState({show: true})}>
+                        <Icon name="md-flag" style={styles.actionButtonIcon} />
+                        </ActionButton.Item>
+                    </ActionButton>
                     <Overlay 
                             animationType="fade"
                             isVisible={this.state.show}
@@ -166,9 +170,14 @@ export default class Selector extends Component{
                 )
             case 'Travel':
                 return(
-                    <TouchableOpacity style={styles.button} onPress={ () => this.endJour() }>
-                        <Text style={styles.text}>End Journey</Text>
-                    </TouchableOpacity>
+                    <ActionButton buttonColor="#000">
+                        <ActionButton.Item buttonColor='#add8e6' title="Recenter" onPress={() => this.props.following() }>
+                        <Icon name="md-locate" style={styles.actionButtonIcon} />
+                        </ActionButton.Item>
+                        <ActionButton.Item buttonColor='#add8e6' title="End Journey" onPress={ () => this.endJour() }>
+                        <Icon name="md-flag" style={styles.actionButtonIcon} />
+                        </ActionButton.Item>
+                    </ActionButton>
                 )
         }
     }

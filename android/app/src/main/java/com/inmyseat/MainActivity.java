@@ -4,7 +4,10 @@ import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
-
+import com.inmyseat.NotifService;
+import android.content.Context;
+import android.os.Bundle;
+import android.content.Intent;
 public class MainActivity extends ReactActivity {
 
     /**
@@ -23,5 +26,13 @@ public class MainActivity extends ReactActivity {
         return new RNGestureHandlerEnabledRootView(MainActivity.this);
         }
         };
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Intent service = new Intent(getApplicationContext(), NotifService.class);
+
+        getApplicationContext().startService(service);
     }
 }
