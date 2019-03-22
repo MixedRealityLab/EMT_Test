@@ -8,6 +8,10 @@ import android.content.Intent;
 import java.util.Arrays;
 import java.util.List;
 
+import android.location.LocationManager;
+import android.location.LocationListener;
+import android.location.Location;
+
 import com.facebook.react.ReactApplication;
 import com.facebook.react.HeadlessJsTaskService;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -23,6 +27,25 @@ import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
 import com.inmyseat.NotifService;
 
 public class MainApplication extends Application implements ReactApplication {
+
+  private final LocationListener listener = new LocationListener() {
+  @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    }
+    
+  @Override
+    public void onProviderEnabled(String provider) {
+    }
+  @Override
+    public void onProviderDisabled(String provider) {
+    }
+  @Override
+      public void onLocationChanged(Location location) {
+        Intent myIntent = new Intent(getApplicationContext(), NotifService.class);
+          getApplicationContext().startService(myIntent);
+        HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
+      }
+  };
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
@@ -59,6 +82,11 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+
+    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);     
+    // Start requesting for location
+    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, listener);
+
     SoLoader.init(this, /* native exopackage */ false);
   }
 }

@@ -82,8 +82,8 @@ export default class TravelMap extends Component {
         this.getLoc()
         this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
-            this.props.jKey
-            //'0001'
+            //this.props.jKey
+            '0000'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
             )
             .then(
