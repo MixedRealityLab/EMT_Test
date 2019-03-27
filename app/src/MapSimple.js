@@ -61,7 +61,8 @@ export default class MapSimple extends Component {
 
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 8
+      flex: 8,
+      borderWidth: 4
     },
     containerP:{
       flex: 1,

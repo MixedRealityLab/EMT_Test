@@ -22,7 +22,7 @@ export default class POIS extends Component{
     }
 
     componentDidMount(){
-        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/allpois")
+        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois")
         .then(response =>{
           return response.data
         })

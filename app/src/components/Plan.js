@@ -10,12 +10,6 @@ var polyline = require('@mapbox/polyline')
 var simplify = require('simplify-js')
 var geolib = require('geolib')
 
-//AsyncStorage.setItem("Temp","21")
-//AsyncStorage.clear()
-AsyncStorage.getAllKeys((err,res) =>{
-  console.log(res)
-})
-
 export default class Plan extends Component{
   constructor(props) {
     super(props);
@@ -48,6 +42,7 @@ export default class Plan extends Component{
     this.props.onRef(this)
     this.getLoc()
     this.intervalID = setInterval( () => this.getLoc(), 5000);
+    AsyncStorage.setItem('travel', 'false')
   }
 
   componentWillUnmount(){
@@ -112,6 +107,7 @@ export default class Plan extends Component{
               break;
           }
           AsyncStorage.setItem(newKey, JSON.stringify(Journey))
+          AsyncStorage.setItem('travel', 'true')
           this.props.change(newKey)
         }
       })

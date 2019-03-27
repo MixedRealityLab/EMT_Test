@@ -1,43 +1,15 @@
 import React from "react"
-import { View, PermissionsAndroid } from "react-native"
+import { View } from "react-native"
 import { createAppContainer, createBottomTabNavigator } from "react-navigation"
 import Map from './src/Map.js'
-import Info from './src/Info.js'
 import MapSimple from "./src/MapSimple.js"
-import Settings from './src/Settings'
 import TravelMap from './src/Travel'
 
-async function requestLocationPermission() {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'In My Seat',
-        message:
-          'In My Seat needs access to your current location ' +
-          'so that it can give you information about the ' +
-          'surrounding area.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('Access granted');
-      
-    } else {
-      console.log('Access denied');
-    }
-  } catch (err) {
-    console.warn(err)
-  }
-}
+/**
+ * Tab Navigation Screens
+ */
 
 class ExploreScreen extends React.Component {
-  componentDidMount(){
-    requestLocationPermission()
-  }
-
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -77,33 +49,10 @@ class PlanScreen extends React.Component {
   }
 }
 
-class HistoryScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Info />
-      </View>
-    )
-  }
-}
-
-class SetScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Settings />
-      </View>
-    )
-  }
-}
-
-
 const AppNavigator = createBottomTabNavigator(
   {
     Explore: ExploreScreen,
-    Plan: PlanScreen,
-    History: HistoryScreen,
-    Settings: SetScreen
+    Plan: PlanScreen
   },
   {
     initialRouteName: 'Plan',

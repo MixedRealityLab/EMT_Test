@@ -40,7 +40,8 @@ export default class Map extends Component {
     }
 
     setArr(arr){
-      this.setState({arr: arr})
+      //this.setState({arr: arr})
+      console.log(arr)
     }
 
     render() {
@@ -87,7 +88,8 @@ export default class Map extends Component {
   
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 8
+      flex: 8,
+      borderWidth: 4
     },
     containerP:{
       flex: 1,

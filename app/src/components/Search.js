@@ -16,7 +16,7 @@ export default class Search extends Component {
     }
 
     componentDidMount(){
-      Axios.get("https://inmyseat.chronicle.horizon.ac.uk/allpois")
+      Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois")
       .then(response =>{
         return response.data
       })
@@ -30,7 +30,6 @@ export default class Search extends Component {
 
     render() {
       const { search } = this.state
-      //console.log(search)
       return (
       <View style={{flex:1}}>
         <TouchableOpacity style={styles.button} onPress={()=>{this.setState({show: true})}}>
@@ -56,7 +55,10 @@ export default class Search extends Component {
                             <Text 
                               key={i}
                               style={styles.textList}
-                              onPress={()=>{this.props.viewPOI(item.latitude, item.longitude); this.setState({ show: false })}}
+                              onPress={()=>{ 
+                                this.props.viewPOI(item.latitude, item.longitude, item.name, i) 
+                                this.setState({ show: false })
+                               }}
                             >
                             {item.name}</Text>
                           )

@@ -83,7 +83,7 @@ export default class TravelMap extends Component {
         this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
             //this.props.jKey
-            '0000'
+            '0004'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
             )
             .then(
@@ -112,9 +112,6 @@ export default class TravelMap extends Component {
     render() {
       return (
       <View style={styles.containerP}>
-      <View style={styles.containerP}>
-        <Button title={"Hi"} onPress={ () => this.notif(0) }/>
-      </View>
       <View style={styles.mapContainer}>
        <MapView
          provider={PROVIDER_GOOGLE}
@@ -138,10 +135,13 @@ export default class TravelMap extends Component {
             : console.log("empty")
             
        }
+       {console.log(this.state.currentPos.latitude)}
        {
          this.state.loaded ?
-         //<Marker coordinate={this.state.currentPos} />
-         console.log(this.state.currentPos)
+         this.state.currentPos.latitude === undefined ? console.log("empty")
+         : <Marker coordinate={ this.state.currentPos }
+            image={ require('../assets/mylocation.gif') } />
+         //console.log(this.state.currentPos)
          :
          console.log("empty")
          //<Marker coordinate={this.state.currentPos} />
@@ -156,7 +156,8 @@ export default class TravelMap extends Component {
   
   const styles = StyleSheet.create({
     mapContainer: {
-      flex: 7
+      flex: 8,
+      borderWidth: 4
     },
     containerP:{
       flex: 1,

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {TouchableOpacity, View, Picker, Text, StyleSheet, Alert} from 'react-native'
 import { Overlay } from 'react-native-elements'
+import Axios from 'axios'
 import Search from './Search'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -12,8 +13,10 @@ export default class Selector extends Component{
 
         this.state = {
             mode: 'View',
-            show: false,
-            filter: 'N/A'
+            planShow: false,
+            viewShow: false,
+            filter: 'N/A',
+            categories: []
         }
 
         this.modeSel = this.modeSel.bind(this)
@@ -22,20 +25,28 @@ export default class Selector extends Component{
     }
     
     componentDidMount(){
-
+        Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
+        .then( response => this.setState( {categories: response.data}) )
     }
 
-    poiSet(lat, lon){
+    poiSet(lat, lon, name, key){
         console.log("Lat: " + lat)
         console.log("Lon: " + lon)
+        console.log("Name: " + name)
+        console.log("Key: " + key)
+        var Des = {
+            Name: name,
+            Key: key,
+            Lat: lat,
+            Lon: lon
+        }
         Alert.alert(
             "Point",
-            "Set as Start point or End point",
+            "Set " + name + " as destination?",
             [
-                {text: 'Start', onPress: () => { console.log('Start pressed') }},
-                {text: 'End', onPress: () => console.log('End Pressed')},
+                {text: 'Yes', onPress: () => { this.props.setArr(Des) }},
                 {
-                    text: 'Cancel',
+                    text: 'No',
                     onPress: () => console.log('Cancel Pressed'),
                     style: 'cancel',
                 },
@@ -69,8 +80,7 @@ export default class Selector extends Component{
                             }
                             }>
                             <Picker.Item label="Select Filter"      value="N/A" />
-                            <Picker.Item label="Gardens"            value="Gardens" />
-                            <Picker.Item label="Food and Drink"     value="Food and Drink" />
+                            { this.state.categories.map( (item, i) => { return( <Picker.Item key={i} label={item} value={item} /> ) } ) }
                         </Picker>
                         <Search viewPOI={this.props.viewPOI} filter={this.props.filter}/>
                     </View>
@@ -79,60 +89,17 @@ export default class Selector extends Component{
                 return(
                     <View style={styles.containerP} >
                    <ActionButton buttonColor="#000">
-                        <ActionButton.Item buttonColor='#add8e6' title="Route" onPress={() => this.setState({show: true})}>
+                        <ActionButton.Item buttonColor='#add8e6' title="Route" onPress={() => this.setState({planShow: true})}>
                         <Icon name="md-flag" style={styles.actionButtonIcon} />
                         </ActionButton.Item>
                     </ActionButton>
                     <Overlay 
                             animationType="fade"
-                            isVisible={this.state.show}
-                            onBackdropPress={() => this.setState({ show: false })}
+                            isVisible={this.state.planShow}
+                            onBackdropPress={() => this.setState({ planShow: false })}
                     >
                     <View style={styles.containerP} >
-                    <View style={styles.containerP} >
-                    <Picker
-                            selectedValue={this.props.dep}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => this.props.setDep(itemValue)
-                            }>
-                            <Picker.Item label="Select Departure"                 value="-1" />
-                            <Picker.Item label="Innovation Park"                  value="0"  />
-                            <Picker.Item label="Newark Hall"                      value="1"  />
-                            <Picker.Item label="Exchange Building"                value="2"  />
-                            <Picker.Item label="Lenton Hillside"                  value="3"  />
-                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
-                            <Picker.Item label="George Green Library"             value="5"  />
-                            <Picker.Item label="Campus Arts Centre"               value="6"  />
-                            <Picker.Item label="Lincon Hall"                      value="7"  />
-                            <Picker.Item label="East Entrance"                    value="8"  />
-                            <Picker.Item label="Campus Union Shop"                value="9"  />
-                            <Picker.Item label="Derby Hall"                       value="10" />
-                            <Picker.Item label="Kings Meadow Campus"              value="11" />
-                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
-                            <Picker.Item label="Current Location"                 value="13" />
-                        </Picker>
-            
-                        <Picker
-                            selectedValue={this.props.arr}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => this.props.setArr(itemValue)
-                            }>
-                            <Picker.Item label="Select Destination"               value="-1" />
-                            <Picker.Item label="Innovation Park"                  value="0"  />
-                            <Picker.Item label="Newark Hall"                      value="1"  />
-                            <Picker.Item label="Exchange Building"                value="2"  />
-                            <Picker.Item label="Lenton Hillside"                  value="3"  />
-                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
-                            <Picker.Item label="George Green Library"             value="5"  />
-                            <Picker.Item label="Campus Arts Centre"               value="6"  />
-                            <Picker.Item label="Lincon Hall"                      value="7"  />
-                            <Picker.Item label="East Entrance"                    value="8"  />
-                            <Picker.Item label="Campus Union Shop"                value="9"  />
-                            <Picker.Item label="Derby Hall"                       value="10" />
-                            <Picker.Item label="Kings Meadow Campus"              value="11" />
-                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
-                        </Picker>
-                    </View>
+                    
             
                     <View style={styles.containerP} >
                         <View style={styles.tRow}>
@@ -159,8 +126,7 @@ export default class Selector extends Component{
                             onValueChange={(itemValue, itemIndex) => {this.setState({filter: itemValue})}
                             }>
                             <Picker.Item label="Select Filter"      value="N/A" />
-                            <Picker.Item label="Gardens"            value="Gardens" />
-                            <Picker.Item label="Food and Drink"     value="Food and Drink" />
+                            { this.state.categories.map( (item, i) => { return( <Picker.Item key={i} label={item} value={item} /> ) } ) }
                         </Picker>
                         <Search viewPOI={this.poiSet} filter={this.state.filter}/>
                     </View>
@@ -224,3 +190,50 @@ const styles = StyleSheet.create({
         color: 'white',
     }
 })
+
+/*
+Old Picker 
+<View style={styles.containerP} >     
+<Picker
+                            selectedValue={this.props.dep}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) => this.props.setDep(itemValue)
+                            }>
+                            <Picker.Item label="Select Departure"                 value="-1" />
+                            <Picker.Item label="Innovation Park"                  value="0"  />
+                            <Picker.Item label="Newark Hall"                      value="1"  />
+                            <Picker.Item label="Exchange Building"                value="2"  />
+                            <Picker.Item label="Lenton Hillside"                  value="3"  />
+                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
+                            <Picker.Item label="George Green Library"             value="5"  />
+                            <Picker.Item label="Campus Arts Centre"               value="6"  />
+                            <Picker.Item label="Lincon Hall"                      value="7"  />
+                            <Picker.Item label="East Entrance"                    value="8"  />
+                            <Picker.Item label="Campus Union Shop"                value="9"  />
+                            <Picker.Item label="Derby Hall"                       value="10" />
+                            <Picker.Item label="Kings Meadow Campus"              value="11" />
+                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
+                            <Picker.Item label="Current Location"                 value="13" />
+                        </Picker>
+                        <Picker
+                            selectedValue={this.props.arr}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) => this.props.setArr(itemValue)
+                            }>
+                            <Picker.Item label="Select Destination"               value="-1" />
+                            <Picker.Item label="Innovation Park"                  value="0"  />
+                            <Picker.Item label="Newark Hall"                      value="1"  />
+                            <Picker.Item label="Exchange Building"                value="2"  />
+                            <Picker.Item label="Lenton Hillside"                  value="3"  />
+                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
+                            <Picker.Item label="George Green Library"             value="5"  />
+                            <Picker.Item label="Campus Arts Centre"               value="6"  />
+                            <Picker.Item label="Lincon Hall"                      value="7"  />
+                            <Picker.Item label="East Entrance"                    value="8"  />
+                            <Picker.Item label="Campus Union Shop"                value="9"  />
+                            <Picker.Item label="Derby Hall"                       value="10" />
+                            <Picker.Item label="Kings Meadow Campus"              value="11" />
+                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
+                        </Picker>
+                        </View>
+*/
