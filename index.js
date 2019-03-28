@@ -29,11 +29,11 @@ class Manager{
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       AsyncStorage.getItem('travel', (err, res) => {console.log(res)} )
 
-      AsyncStorage.getItem(
+      /*AsyncStorage.getItem(
         //this.props.jKey
         '0000'
         ,(err,res) =>{ let obj = JSON.parse(res); console.log(obj)}
-      )
+      )*/
 
       console.log("Class Man")
       this.sendNotif = this.sendNotif.bind(this)
@@ -59,7 +59,6 @@ class Manager{
           soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
           number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
           actions: '["Yes", "No"]',  // (Android only) See the doc for notification actions to know more
-          date: new Date(Date.now() + (6 * 1000))
         })
       this.state.item++
   }
@@ -67,12 +66,13 @@ class Manager{
 
 const AppMan = new Manager();
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, (AppMan) => App);
 
 const Notif = async (data) => {
     console.log("Background Service")
     navigator.geolocation.getCurrentPosition((position) => {
         //console.log(position.coords);
+        //AppMan.sendNotif()
        });
     //this.intervalID = setInterval( () => sendNotif(), 5000)
     
