@@ -64,9 +64,6 @@ export default class Info extends Component{
                             </View>
                         </View>
                     </View>
-
-                
-
                 <TouchableOpacity style={styles.button} onPress={this.saveSettings}>
                     <Text style={styles.text}>Save</Text>
                 </TouchableOpacity>

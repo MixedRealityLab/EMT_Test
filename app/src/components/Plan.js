@@ -72,14 +72,6 @@ export default class Plan extends Component{
   }
 
   beginRoute(){
-    console.log(this.state.jMiddle)
-    if(this.state.walk){
-      console.log("jMiddle: " + this.state.jMiddle.length) 
-    }
-    else{
-      console.log("jMiddle: " + this.state.jMiddle[0].length) 
-    }
-    console.log("ChildArr: " + this.props.childArr)
     if(this.state.jMiddle.length !== 0){
       var Journey = {
         //Is it a walking journey?
@@ -90,12 +82,9 @@ export default class Plan extends Component{
         changes: this.state.changes,
         //Start point
         start: this.state.currentPos,
-        //(this.props.childDep > coordsLatLng.length -1 ? "Location" : stopList[this.props.childDep])
         //End point
         end: this.props.childArr
-        //(this.props.childArr > coordsLatLng.length -1 ? "Location" : stopList[this.props.childArr])
       }
-      console.log(Journey)
       console.log(JSON.stringify(Journey))
       AsyncStorage.getAllKeys((err,keys)=>{
         console.log(keys)
@@ -131,39 +120,12 @@ export default class Plan extends Component{
     
   }
 
-  getRoute(){
-    //console.log("Dep: " + this.props.childDep)
-    console.log("Arr: " + this.props.childArr)  
-    /*
-    if(this.props.childDep !== -1){
-      console.log("Dep correct")
-    }
-    else{
-      Alert.alert(
-        "Warning",
-        "Please select Start and End points"
-      )
-    }
-    */
+  getRoute(){   
       if(this.props.childArr.key !== -1){
-        console.log("Arr correct")
-
           this.getLoc()
           var journey = this.setJourney()
           //Get bus journey, which can have walking sections
           this.getJourney(journey)
-        /*
-        if(this.state.currentPos.latitude === this.props.childArr.lat && this.state.currentPos.longitude === this.props.childArr.lon){
-          Alert.alert(
-            "Warning",
-            "Start point and End point cannot be the same"
-          )
-        }
-        else{
-          if(this.props.childDep > coordsLatLng.length -1){ 
-          }
-        }
-        */
       }
       else{
         Alert.alert(
@@ -187,32 +149,16 @@ export default class Plan extends Component{
   }
 
   setJourney(){
-    //var temp = [this.props.childDep,-1,-1,this.props.childArr]
     var temp = [this.state.currentPos,-1,-1,this.props.childArr]
-    //If start point is not a bus stop, find the closest bus stop to it
-    /*if(this.props.childDep > coordsLatLng.length-1){
-      
-    }
-    else{ temp[1] = temp[0] }*/
 
     let closeS = geolib.findNearest(this.state.currentPos, coordsLatLng, 0)
     temp[1] = closeS.key
     
-    //If end point is not a bus stop, find the closest bus stop to it
-    /*
-    if(this.props.childArr > coordsLatLng.length-1){
-      
-    }
-    else{ temp[2] = temp[3] }
-    */
-   //tempLocs[this.props.childArr === "13"? 0 : 1]
     let aLoc = {latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}
-    console.log(aLoc)
     let closeA = geolib.findNearest(aLoc, coordsLatLng, 0)
     temp[2] = closeA.key
 
     return temp
-
   }
 
   getJourney(journey){
@@ -273,7 +219,6 @@ export default class Plan extends Component{
           <>
           <Marker
             coordinate={ this.state.currentPos }
-            //this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep]
             image={ require('../../assets/icons8-current-location-96.png') }>
             <Callout>
               <Text>
@@ -283,7 +228,6 @@ export default class Plan extends Component{
             </Marker>
           
           <Marker
-          //this.props.childArr > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childArr]
             coordinate={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}}
             image= { require('../../assets/icons8-destination-96.png') }
           >
@@ -312,7 +256,6 @@ export default class Plan extends Component{
               : null
             }
             <MapViewDirections origin={this.state.currentPos}
-            //this.props.childDep > coordsLatLng.length-1? this.state.currentPos :coordsLatLng[this.props.childDep] 
               destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
               mode={'walking'}
@@ -322,7 +265,6 @@ export default class Plan extends Component{
               this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
             }
              <MapViewDirections origin={this.state.jMiddle.length > 1 ? this.state.jMiddle.slice(-1)[this.state.jMiddle.length-1] : this.state.jMiddle[this.state.jMiddle.length-1]} 
-              //coordsLatLng[this.props.childArr]
               destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}} 
               apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
               mode={'walking'}

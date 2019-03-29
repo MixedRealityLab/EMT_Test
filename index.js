@@ -12,7 +12,8 @@ var PushNotification = require('react-native-push-notification');
 class Manager{
   constructor(){
       this.state ={
-          item: 0
+          item: 0,
+          travel: false
       }
 
       PushNotification.configure({
@@ -27,17 +28,26 @@ class Manager{
         }
       })
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
-      AsyncStorage.getItem('travel', (err, res) => {console.log(res)} )
-
+      
       /*AsyncStorage.getItem(
         //this.props.jKey
         '0000'
         ,(err,res) =>{ let obj = JSON.parse(res); console.log(obj)}
       )*/
-
-      console.log("Class Man")
       this.sendNotif = this.sendNotif.bind(this)
-      //this.intervalID = setInterval( () => this.sendNotif(), 10000);
+      this.checkTravel = this.checkTravel.bind(this)
+
+      this.checkTravel()
+  }
+
+  checkTravel(){
+    AsyncStorage.getItem(
+      'travel', (err, res) => {
+        if(res === true)
+        {console.log("Ye")}
+        else{console.log("Ne")}
+      } 
+      )
   }
 
   sendNotif(){
@@ -73,6 +83,7 @@ const Notif = async (data) => {
     navigator.geolocation.getCurrentPosition((position) => {
         //console.log(position.coords);
         //AppMan.sendNotif()
+        //AppMan.checkTravel()
        });
     //this.intervalID = setInterval( () => sendNotif(), 5000)
     
