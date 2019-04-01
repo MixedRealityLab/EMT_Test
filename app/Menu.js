@@ -9,7 +9,6 @@ import Settings from './src/Settings'
  * Drawer Navigation screens
  */
 
-
 /**
  * Ask for location permission
  */

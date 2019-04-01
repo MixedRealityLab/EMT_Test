@@ -37,15 +37,20 @@ class Manager{
       this.sendNotif = this.sendNotif.bind(this)
       this.checkTravel = this.checkTravel.bind(this)
 
-      this.checkTravel()
+      if(this.checkTravel()){
+        console.log("Its true")
+      }
+      else console.log("Its false")
   }
 
   checkTravel(){
     AsyncStorage.getItem(
       'travel', (err, res) => {
         if(res === true)
-        {console.log("Ye")}
-        else{console.log("Ne")}
+        {console.log("Ye")
+          return true}
+        else{console.log("Ne")
+          return false}
       } 
       )
   }
@@ -76,22 +81,16 @@ class Manager{
 
 const AppMan = new Manager();
 
-AppRegistry.registerComponent(appName, (AppMan) => App);
+AppRegistry.registerComponent(appName, () => App);
 
 const Notif = async (data) => {
     console.log("Background Service")
     navigator.geolocation.getCurrentPosition((position) => {
-        //console.log(position.coords);
+        //console.log(position.coords)
         //AppMan.sendNotif()
-        //AppMan.checkTravel()
-       });
-    //this.intervalID = setInterval( () => sendNotif(), 5000)
-    
-    /*for(let i = 0; i < 4; i++){
-      console.log(i)
-      //AppMan.sendNotif()
-    }
-    */
-        
+        if(AppMan.checkTravel()){
+          console.log("Work Work")
+        }
+       });      
 }
 AppRegistry.registerHeadlessTask('Notif', () => Notif.bind(null, AppMan));

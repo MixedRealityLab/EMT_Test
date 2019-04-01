@@ -12,12 +12,10 @@ export default class Map extends Component {
     constructor(props){
       super(props)
       this.state = {
-        //dep:      -1,
         arr:      -1,
         walk:     false,
       }
       this.setArr = this.setArr.bind(this)
-      //this.setDep = this.setDep.bind(this)
     }
     switch = () => {
       this.child.switch()
@@ -34,11 +32,7 @@ export default class Map extends Component {
     beginRoute = () => {
       this.child.beginRoute()
     }
-/*
-    setDep(dep){
-      this.setState({dep: dep})
-    }
-*/
+
     setArr(arr){
       this.setState({arr: arr})
       console.log(arr)
@@ -64,15 +58,12 @@ export default class Map extends Component {
         <Buses/>
         <Plan 
           onRef={ref => (this.child = ref)} //Refernce in order to use childs functions
-          //childDep={this.state.dep}         //Pass selected start point to child
           childArr={this.state.arr}         //Pass selected end point to child
           change={this.props.change}        //Pass function to change from plan view to travel view
         />
        </MapView>
        <Selector 
             mode={'Plan'}                 //Tell component what to return
-            //setDep={this.setDep}          //Pass function to change start point
-            //dep={this.state.dep}          //Pass selected start point to component
             setArr={this.setArr}          //Pass function to change end point
             arr={this.state.arr}          //Pass selected end point to component
             getRoute={this.getRoute}      //Pass refrence to child function

@@ -36,13 +36,11 @@ export default class POISCallout extends Component{
     render(){
         return(
             this.props.render ? 
-
             <View style={styles.containerP}>
                 <Text>{this.props.item.name}</Text>
                 {this.state.clean.map( (item, i) => { return( String(item).substr(0,4) === "<img" ? null : <HTML key={i} html={item} imagesMaxWidth={200} imagesMaxHeight={200}/> ) } )}
                 
             </View>
-
             :
             null
         )
@@ -56,11 +54,3 @@ const styles = StyleSheet.create({
         width: 200
     },
   });
-  /*
-  <HTML html={this.state.clean[0]} imagesMaxWidth={200} imagesMaxHeight={200}/>
-  <WebView  
-                originWhitelist={['*']}
-                allowUniversalAccessFromFileURLs={true}
-                domStorageEnabled={true}
-                source={{html: this.state.clean[1] , baseUrl: ''}} style={styles.containerP}
-                />*/

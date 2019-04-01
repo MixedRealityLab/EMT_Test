@@ -30,10 +30,6 @@ export default class Selector extends Component{
     }
 
     poiSet(lat, lon, name, key){
-        console.log("Lat: " + lat)
-        console.log("Lon: " + lon)
-        console.log("Name: " + name)
-        console.log("Key: " + key)
         var Des = {
             Name: name,
             Key: key,
@@ -190,50 +186,3 @@ const styles = StyleSheet.create({
         color: 'white',
     }
 })
-
-/*
-Old Picker 
-<View style={styles.containerP} >     
-<Picker
-                            selectedValue={this.props.dep}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => this.props.setDep(itemValue)
-                            }>
-                            <Picker.Item label="Select Departure"                 value="-1" />
-                            <Picker.Item label="Innovation Park"                  value="0"  />
-                            <Picker.Item label="Newark Hall"                      value="1"  />
-                            <Picker.Item label="Exchange Building"                value="2"  />
-                            <Picker.Item label="Lenton Hillside"                  value="3"  />
-                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
-                            <Picker.Item label="George Green Library"             value="5"  />
-                            <Picker.Item label="Campus Arts Centre"               value="6"  />
-                            <Picker.Item label="Lincon Hall"                      value="7"  />
-                            <Picker.Item label="East Entrance"                    value="8"  />
-                            <Picker.Item label="Campus Union Shop"                value="9"  />
-                            <Picker.Item label="Derby Hall"                       value="10" />
-                            <Picker.Item label="Kings Meadow Campus"              value="11" />
-                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
-                            <Picker.Item label="Current Location"                 value="13" />
-                        </Picker>
-                        <Picker
-                            selectedValue={this.props.arr}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => this.props.setArr(itemValue)
-                            }>
-                            <Picker.Item label="Select Destination"               value="-1" />
-                            <Picker.Item label="Innovation Park"                  value="0"  />
-                            <Picker.Item label="Newark Hall"                      value="1"  />
-                            <Picker.Item label="Exchange Building"                value="2"  />
-                            <Picker.Item label="Lenton Hillside"                  value="3"  />
-                            <Picker.Item label="Dunkirk East Entrance"            value="4"  />
-                            <Picker.Item label="George Green Library"             value="5"  />
-                            <Picker.Item label="Campus Arts Centre"               value="6"  />
-                            <Picker.Item label="Lincon Hall"                      value="7"  />
-                            <Picker.Item label="East Entrance"                    value="8"  />
-                            <Picker.Item label="Campus Union Shop"                value="9"  />
-                            <Picker.Item label="Derby Hall"                       value="10" />
-                            <Picker.Item label="Kings Meadow Campus"              value="11" />
-                            <Picker.Item label="East Midlands Coference Centre"   value="12" />
-                        </Picker>
-                        </View>
-*/
