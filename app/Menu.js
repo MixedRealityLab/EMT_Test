@@ -1,9 +1,10 @@
 import React from "react"
-import { View, PermissionsAndroid, Button, StyleSheet } from "react-native"
+import { View, PermissionsAndroid, AsyncStorage, StyleSheet } from "react-native"
 import { createAppContainer, createDrawerNavigator } from "react-navigation"
 import App from './App'
 import Info from './src/Info.js'
 import Settings from './src/Settings'
+import Axios from "axios";
 
 /**
  * Drawer Navigation screens
@@ -45,6 +46,28 @@ class Lobby extends React.Component {
 
     componentDidMount(){
       requestLocationPermission()
+
+      AsyncStorage.getItem(
+        'username', (err, res) => {
+          if(res !== null)
+          {
+            console.log("Username Found")
+            console.log(res)
+          }
+          else{
+            console.log("No Username")
+            Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/newuser")
+            .then( 
+              response => { 
+                console.log(response)
+                AsyncStorage.setItem('username', response.data.id)
+                AsyncStorage.setItem('password', response.data.password)
+              }
+            )
+          }
+        } 
+      )
+
     }
   
     render() {

@@ -5,6 +5,7 @@ import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 import Geolocation from 'react-native-geolocation-service'
 import { Button } from 'react-native-elements'
+import Axios from 'axios';
 
 export default class TravelMap extends Component {
 
@@ -42,11 +43,15 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
+        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline" )
+        .then( response => {
+          console.log(response)
+        })
         this.getLoc()
         this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
-            this.props.jKey
-            //'0004'
+            //this.props.jKey
+            '0048'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
             )
             .then(

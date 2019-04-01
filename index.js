@@ -8,6 +8,7 @@ import App from './app/Menu';
 import { name as appName } from './app.json';
 
 var PushNotification = require('react-native-push-notification');
+var geolib = require('geolib')
 
 class Manager{
   constructor(){
@@ -29,11 +30,11 @@ class Manager{
       })
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
-      /*AsyncStorage.getItem(
+      AsyncStorage.getItem(
         //this.props.jKey
-        '0000'
+        '0048'
         ,(err,res) =>{ let obj = JSON.parse(res); console.log(obj)}
-      )*/
+      )
       this.sendNotif = this.sendNotif.bind(this)
       this.checkTravel = this.checkTravel.bind(this)
 
@@ -84,12 +85,17 @@ const AppMan = new Manager();
 AppRegistry.registerComponent(appName, () => App);
 
 const Notif = async (data) => {
-    console.log("Background Service")
     navigator.geolocation.getCurrentPosition((position) => {
         //console.log(position.coords)
-        //AppMan.sendNotif()
+
         if(AppMan.checkTravel()){
+        var dist = geolib.getDistance({latitude: position.coords.latitude, longitude: position.coords.longitude}, {latitude: 52.9534967, longitude: -1.1871835} , 0)
+        console.log("Dist: " + dist)
+        
           console.log("Work Work")
+          if(dist < 11){
+            AppMan.sendNotif()
+          }
         }
        });      
 }
