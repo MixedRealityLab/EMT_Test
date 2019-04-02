@@ -14,7 +14,8 @@ class Manager{
   constructor(){
       this.state ={
           item: 0,
-          travel: false
+          loaded: false,
+          facticles: []
       }
 
       PushNotification.configure({
@@ -36,24 +37,15 @@ class Manager{
         ,(err,res) =>{ let obj = JSON.parse(res); console.log(obj)}
       )
       this.sendNotif = this.sendNotif.bind(this)
-      this.checkTravel = this.checkTravel.bind(this)
-
-      if(this.checkTravel()){
-        console.log("Its true")
-      }
-      else console.log("Its false")
+      this.loadJourney = this.loadJourney.bind(this)
   }
 
-  checkTravel(){
-    AsyncStorage.getItem(
-      'travel', (err, res) => {
-        if(res === true)
-        {console.log("Ye")
-          return true}
-        else{console.log("Ne")
-          return false}
-      } 
-      )
+  loadJourney(){
+    if(!this.state.loaded){
+      console.log("Loading")
+      AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); console.log(obj); this.state.facticles = obj } )
+      this.state.loaded = true
+    }
   }
 
   sendNotif(){
@@ -87,16 +79,25 @@ AppRegistry.registerComponent(appName, () => App);
 const Notif = async (data) => {
     navigator.geolocation.getCurrentPosition((position) => {
         //console.log(position.coords)
+        AsyncStorage.getItem(
+          'travel', (err, res) => {
+            if(res === 'true'){
+              AppMan.loadJourney()
 
-        if(AppMan.checkTravel()){
-        var dist = geolib.getDistance({latitude: position.coords.latitude, longitude: position.coords.longitude}, {latitude: 52.9534967, longitude: -1.1871835} , 0)
-        console.log("Dist: " + dist)
-        
-          console.log("Work Work")
-          if(dist < 11){
-            AppMan.sendNotif()
+              var dist = geolib.getDistance({latitude: position.coords.latitude, longitude: position.coords.longitude}, {latitude: 52.9534967, longitude: -1.1871835} , 0)
+              console.log("Dist: " + dist)
+              
+              if(dist < 11){
+                AppMan.sendNotif()
+              }
+
+            }
+            else{
+              AppMan.state.loaded = false
+            }
           }
-        }
+        )
+
        });      
 }
 AppRegistry.registerHeadlessTask('Notif', () => Notif.bind(null, AppMan));

@@ -16,7 +16,9 @@ export default class Plan extends Component{
 
     this.state = {
       currentPos: {},
+      jStart:   [],
       jMiddle:  [],
+      jEnd:     [],
       jWalk:    [],
       changes:  [],
       show:     false,
@@ -77,7 +79,7 @@ export default class Plan extends Component{
         //Is it a walking journey?
         walk: this.state.walk,
         //Bus route
-        route: this.state.walk ? [this.state.jWalk] : this.state.jMiddle,
+        route: this.state.walk ? [this.state.jWalk] : [this.state.jStart, this.state.jMiddle[0], this.state.jEnd],
         //Bus Changes
         changes: this.state.changes,
         //Start point
@@ -139,7 +141,9 @@ export default class Plan extends Component{
   clearRoute(){
     //Reset route and redraw
     this.setState({
-      jMiddle:  [[]],
+      jStart:   [],
+      jMiddle:  [],
+      jEnd:     [],
       jWalk:    [],
       changes:  [],
       show:     false,
@@ -212,6 +216,18 @@ export default class Plan extends Component{
       )
   }
   render(){
+    if(this.state.jMiddle.length > 0){
+      if(this.state.jMiddle.length > 7){
+        var lastItem = this.state.jMiddle[this.state.jMiddle.length-1]
+      }
+      else{
+        console.log(this.state.jMiddle.length)
+        let temp = this.state.jMiddle[this.state.jMiddle.length-1]
+        var lastItem = temp[temp.length -1]
+        console.log(lastItem)
+      }
+    }
+
       return(
         <>
         {//Only show markers and polyline if a route has been selected
@@ -248,30 +264,36 @@ export default class Plan extends Component{
               strokeColor={this.state.polyOptsWalk}
               strokeWidth = {3}/>
             :
-            <>
-            {
-              this.state.jMiddle.length > 1 ? 
-                this.state.jMiddle.map( 
-                  (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../../assets/icons8-synchronize-filled-96.png')} />) )
-              : null
-            }
-            <MapViewDirections origin={this.state.currentPos}
-              destination={this.state.jMiddle.length > 1 ? this.state.jMiddle[0][0] : this.state.jMiddle[0]} 
-              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
-              mode={'walking'}
-              strokeColor={this.state.polyOptsWalk}
-              strokeWidth = {3}/>
-            {
-              this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
-            }
-             <MapViewDirections origin={this.state.jMiddle.length > 1 ? this.state.jMiddle.slice(-1)[this.state.jMiddle.length-1] : this.state.jMiddle[this.state.jMiddle.length-1]} 
-              destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}} 
-              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
-              mode={'walking'}
-              strokeColor={this.state.polyOptsWalk}
-              strokeWidth = {3}
-              anchor={(1,1)}/>
-            </>
+            this.state.jMiddle.length > 0 ? 
+              <>
+              {
+                this.state.jMiddle.length > 1 ? 
+                  this.state.jMiddle.map( 
+                    (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../../assets/icons8-synchronize-filled-96.png')} />) )
+                : null
+              } 
+
+              <MapViewDirections origin={this.state.currentPos}
+                destination={this.state.jMiddle.length > 7 ? this.state.jMiddle[0] : this.state.jMiddle[0][0]}
+                onReady={(props) =>{ this.setState({jStart: props.coordinates}) } }
+                apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
+                mode={'walking'}
+                strokeColor={this.state.polyOptsWalk}
+                strokeWidth = {3}/>
+              {
+                this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
+              }
+              <MapViewDirections origin={lastItem} 
+                destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}}
+                onReady={(props) =>{ this.setState({jEnd: props.coordinates}) } }
+                apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
+                mode={'walking'}
+                strokeColor={this.state.polyOptsWalk}
+                strokeWidth = {3}
+                anchor={(1,1)}/>
+              </>
+            :
+            null
           }
           </> 
         : null}

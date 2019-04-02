@@ -14,6 +14,7 @@ export default class TravelMap extends Component {
       this.state ={
         route: {},
         points: [],
+        facticles: [],
         currentPos: {},
         loaded: false,
         following: true,
@@ -22,6 +23,7 @@ export default class TravelMap extends Component {
                      '#000000' ,
                      '#fff000' ]
       }
+      this.getFacticles = this.getFacticles.bind(this)
     }
     viewPOI() {
       this.mView.animateCamera({center:this.state.currentPos, zoom: 17})
@@ -42,16 +44,25 @@ export default class TravelMap extends Component {
     );
     }
 
+    getFacticles(){
+      Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline" )
+      .then( response => {
+        console.log(response.data)
+        this.setState({facticles: response.data})
+        return response.data
+      })
+      .then( data => 
+        AsyncStorage.setItem('facticles', JSON.stringify(data))
+      )
+    }
+
     componentDidMount(){
-        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline" )
-        .then( response => {
-          console.log(response)
-        })
+        this.getFacticles()
         this.getLoc()
         this.intervalID = setInterval( () => this.getLoc(), 5000);
         AsyncStorage.getItem(
-            //this.props.jKey
-            '0048'
+            this.props.jKey
+            //'0051'
             ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
             )
             .then(
