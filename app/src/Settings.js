@@ -2,14 +2,20 @@ import React, {Component} from 'react';
 import {AsyncStorage, ScrollView, Text, StyleSheet, TouchableOpacity, View, LayoutAnimation, Platform, UIManager } from 'react-native'
 import { CheckBox } from 'react-native-elements'
 
+/**
+ * Class to allow the user to edit settings
+ * Currently only changes notifcation settings
+ */
 export default class Info extends Component{
 
     constructor(props) {
         super(props);
 
         this.state = {
-            Open: false,
-            Settings: []
+            Settings: {},
+            notifDirect: true,
+            notifFacticle: true,
+            notifOpen: false
         }
 
         if (Platform.OS === 'android') {
@@ -21,21 +27,30 @@ export default class Info extends Component{
 
     changeLayout = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        this.setState({ expanded: !this.state.expanded });
+        this.setState({ notifOpen: !this.state.notifOpen });
     }
 
     componentDidMount(){
-        this.setState(
-            {
-                Settings: AsyncStorage.getItem("Setting")
+        var temp= {}
+
+        AsyncStorage.getItem( 
+            'Setting', (err,res) => {
+                temp = JSON.parse(res)
+                this.setState({
+                    Settings: temp
+                })
             }
         )
     }
 
     saveSettings(){
         console.log("Save")
+        var Settings = {
+            Direct:     this.state.notifDirect, //Direction Notifications
+            Facticle:   this.state.Facticle     //Facticle Notifications
+        }
+        AsyncStorage.setItem( 'Setting', JSON.stringify(Settings) )
     }
-
 
     render(){
         return(
@@ -44,22 +59,17 @@ export default class Info extends Component{
                         <TouchableOpacity activeOpacity={0.8} onPress={this.changeLayout} style={styles.expandMenu}>
                         <Text style={styles.expandMenuHeaderText}>Notifications</Text>
                         </TouchableOpacity>
-                        <View style={{ height: this.state.expanded ? null : 0, overflow: 'hidden' }}>
+                        <View style={{ height: this.state.notifOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
                                 <CheckBox
-                                title='Click Here'
-                                checked={this.state.checked}
-                                onPress={() => this.setState({checked: !this.state.checked})}
+                                title='Direction notifications'
+                                checked={this.state.notifDirect}
+                                onPress={() => this.setState({notifDirect: !this.state.notifDirect})}
                                 />
                                 <CheckBox
-                                title='Click Here'
-                                checked={this.state.checked}
-                                onPress={() => this.setState({checked: !this.state.checked})}
-                                />
-                                <CheckBox
-                                title='Click Here'
-                                checked={this.state.checked}
-                                onPress={() => this.setState({checked: !this.state.checked})}
+                                title='Facticle Notifications'
+                                checked={this.state.notifFacticle}
+                                onPress={() => this.setState({notifFacticle: !this.state.notifFacticle})}
                                 />
                             </View>
                         </View>

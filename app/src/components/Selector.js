@@ -6,6 +6,11 @@ import Search from './Search'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons'
 
+/**
+ * Class that displays various buttons and interactions for the user
+ * Returns different arrangements depending on the mode prop provided by calling class
+ * Current modes: View, Plan, Travel
+ */
 export default class Selector extends Component{
 
     constructor(props) {

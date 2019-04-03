@@ -3,13 +3,16 @@ import { AsyncStorage, Alert, Text } from 'react-native'
 import { Marker, Polyline, Callout } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios'
-import { reqBod, reqPlan, coordsArriva, coordsLatLng, tempLocs, stopList} from './Requests'
+import { reqBod, reqPlan, coordsArriva, coordsLatLng } from './Requests'
 import Geolocation from 'react-native-geolocation-service'
 
 var polyline = require('@mapbox/polyline')
 var simplify = require('simplify-js')
 var geolib = require('geolib')
 
+/**
+ * Class that handles displaying the planned route
+ */
 export default class Plan extends Component{
   constructor(props) {
     super(props);
@@ -135,8 +138,6 @@ export default class Plan extends Component{
           "Please select Destination"
         )
       }
-    
-    
   }
   clearRoute(){
     //Reset route and redraw
@@ -153,6 +154,7 @@ export default class Plan extends Component{
   }
 
   setJourney(){
+    //Set closest stops to the start and end points based on distance
     var temp = [this.state.currentPos,-1,-1,this.props.childArr]
 
     let closeS = geolib.findNearest(this.state.currentPos, coordsLatLng, 0)

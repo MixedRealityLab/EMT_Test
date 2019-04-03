@@ -7,8 +7,12 @@ import TravelMap from './src/Travel'
 
 /**
  * Tab Navigation Screens
+ * Add new tabs here
  */
 
+ /**
+  * Screen for viewing POIS
+  */
 class ExploreScreen extends React.Component {
   render() {
     return (
@@ -20,11 +24,14 @@ class ExploreScreen extends React.Component {
   }
 }
 
+/**
+ * Screen for planning a journey
+ */
 class PlanScreen extends React.Component {
   constructor(props){
     super(props) 
     this.state ={
-      changeView: false,
+      changeView: true,
       journeyKey: ''
     }
     this.change = this.change.bind(this)
@@ -76,16 +83,3 @@ const AppNavigator = createBottomTabNavigator(
 )
 
 export default createAppContainer(AppNavigator);
-
-/*
-static navigationOptions = ({ navigation }) => {
-    return{
-      title: 'Plan',
-      headerRight: <Button
-      onPress={() => navigation.navigate('Details')}
-      title="Info"
-      color="#000"
-    />
-    }
-  };
-*/

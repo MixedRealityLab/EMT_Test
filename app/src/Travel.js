@@ -1,11 +1,15 @@
 import React, {Component} from 'react'
-import {StyleSheet, View, AsyncStorage} from 'react-native'
+import { StyleSheet, View, AsyncStorage } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 import Geolocation from 'react-native-geolocation-service'
 import { Button } from 'react-native-elements'
 import Axios from 'axios';
+import StateMan from './components/StateCheck'
+import AppMan from './components/NotifMan'
+
+const StateManager = new StateMan()
 
 export default class TravelMap extends Component {
 
@@ -25,6 +29,7 @@ export default class TravelMap extends Component {
       }
       this.getFacticles = this.getFacticles.bind(this)
     }
+
     viewPOI() {
       this.mView.animateCamera({center:this.state.currentPos, zoom: 17})
     }
@@ -57,38 +62,41 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
-        this.getFacticles()
-        this.getLoc()
-        this.intervalID = setInterval( () => this.getLoc(), 5000);
-        AsyncStorage.getItem(
-            this.props.jKey
-            //'0051'
-            ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
-            )
-            .then(
-              () => {
-              console.log(this.state.route)
-              var temp = []
-              if(this.state.points.length < 6){
-                for(let i = 0; i < this.state.points.length; i++){
-                  let part = []
-                  this.state.points[i].map( (item,i) => { part.push({latitude: item.latitude, longitude: item.longitude}) } )
-                  temp.push( part )
-                }
-              }
-              else temp = this.state.points
-              return temp  
-              }
-            )
-            .then( (res) => this.setState({points: res, loaded: true}) )
-            
+      //AppMan.sendNotif()
+      this.getFacticles()
+      this.getLoc()
+      this.intervalID = setInterval( () => this.getLoc(), 5000);
+      AsyncStorage.getItem(
+        //this.props.jKey
+        '0057'
+        ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
+      )
+      .then(
+        () => {
+          console.log(this.state.route)
+          var temp = []
+          if(this.state.points.length < 6){
+            for(let i = 0; i < this.state.points.length; i++){
+              let part = []
+              this.state.points[i].map( (item,i) => { part.push({latitude: item.latitude, longitude: item.longitude}) } )
+              temp.push( part )
+            }
+          }
+          else temp = this.state.points
+            return temp  
+            }
+          )
+      .then( (res) => this.setState({points: res, loaded: true}) )
+      console.log(StateManager.returnState())
     }
 
     componentWillUnmount(){
       clearInterval(this.intervalID)
+      console.log("Unmount")
     }
 
     render() {
+      //console.log(StateManager.returnState())
       return (
       <View style={styles.containerP}>
       <View style={styles.mapContainer}>

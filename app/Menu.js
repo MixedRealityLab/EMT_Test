@@ -8,10 +8,12 @@ import Axios from "axios";
 
 /**
  * Drawer Navigation screens
+ * Add new options for drawer here
  */
 
 /**
  * Ask for location permission
+ * Add any other permissions to be asked for on app startup here
  */
 async function requestLocationPermission() {
   try {
@@ -38,7 +40,9 @@ async function requestLocationPermission() {
     console.warn(err)
   }
 }
-
+/**
+ * Screen for main components of the app
+ */
 class Lobby extends React.Component {
     static navigationOptions = {
       drawerLabel: 'Home',
@@ -68,6 +72,30 @@ class Lobby extends React.Component {
         } 
       )
 
+      AsyncStorage.getItem(
+        'Setting', (err,res) => {
+          if(res !== null){
+            console.log("Settings found")
+          }
+          else{
+            console.log("No settings found")
+            let obj = { Direct: true, Facticle: true }
+            AsyncStorage.setItem('Setting', JSON.stringify(obj))
+          }
+        }
+      )
+
+      AsyncStorage.getItem(
+        'facticles', (err,res) => {
+          if(res !== null){
+            console.log("Facticles found")
+          }
+          else{
+            console.log("No facticles found")
+            AsyncStorage.setItem('facticles', JSON.stringify([]))
+          }
+        }
+      )
     }
   
     render() {
@@ -76,7 +104,10 @@ class Lobby extends React.Component {
       );
     }
   }
-  
+  /**
+   * Screen for history of journeys
+   * Might be removed
+   */
   class HistoryScreen extends React.Component {
     static navigationOptions = {
       drawerLabel: 'History',
@@ -90,6 +121,9 @@ class Lobby extends React.Component {
     }
   }
   
+  /**
+   * Screen to change settings
+   */
   class SetScreen extends React.Component {
     static navigationOptions = {
       drawerLabel: 'Settings',
