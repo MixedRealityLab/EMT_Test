@@ -20,6 +20,7 @@ export default class TravelMap extends Component {
         points: [],
         facticles: [],
         currentPos: {},
+        Settings: {},
         loaded: false,
         following: true,
         polyOptsBus:['#00ff00' ,
@@ -40,6 +41,11 @@ export default class TravelMap extends Component {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
             }), this.state.following ? this.viewPOI() : console.log("freecam")
+            console.log("UI check")
+            AsyncStorage.getItem('Setting', (err,res) => {
+              let obj = JSON.parse(res); this.setState({Settings: obj});
+            } )
+            if(this.state.Settings.Facticle) AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
         },
         (error) => {
             // See error code charts below.
@@ -62,10 +68,10 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
-      //AppMan.sendNotif()
-      this.getFacticles()
       this.getLoc()
-      this.intervalID = setInterval( () => this.getLoc(), 5000);
+      AppMan.loadJourney()
+      this.intervalID = setInterval( () => this.getLoc(), 5000)
+      this.getFacticles()
       AsyncStorage.getItem(
         //this.props.jKey
         '0057'
@@ -87,6 +93,10 @@ export default class TravelMap extends Component {
             }
           )
       .then( (res) => this.setState({points: res, loaded: true}) )
+      .then( () => { AsyncStorage.setItem('CurrentJ', 
+        //this.props.jKey
+        '0057'
+      ) } )
       console.log(StateManager.returnState())
     }
 

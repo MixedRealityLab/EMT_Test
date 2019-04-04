@@ -36,8 +36,11 @@ export default class Info extends Component{
         AsyncStorage.getItem( 
             'Setting', (err,res) => {
                 temp = JSON.parse(res)
+                console.log(temp)
                 this.setState({
-                    Settings: temp
+                    Settings: temp,
+                    notifDirect: temp.Direct,
+                    notifFacticle: temp.Facticle
                 })
             }
         )
@@ -46,8 +49,8 @@ export default class Info extends Component{
     saveSettings(){
         console.log("Save")
         var Settings = {
-            Direct:     this.state.notifDirect, //Direction Notifications
-            Facticle:   this.state.Facticle     //Facticle Notifications
+            Direct:     this.state.notifDirect,  //Direction Notifications
+            Facticle:   this.state.notifFacticle //Facticle Notifications
         }
         AsyncStorage.setItem( 'Setting', JSON.stringify(Settings) )
     }

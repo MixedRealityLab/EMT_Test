@@ -36,7 +36,7 @@ class PlanScreen extends React.Component {
     }
     this.change = this.change.bind(this)
   }
-
+  //Function to switch to travel mode
   change(jKey){
     this.setState(
       {

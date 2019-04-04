@@ -50,7 +50,7 @@ class Lobby extends React.Component {
 
     componentDidMount(){
       requestLocationPermission()
-
+      //Look for a username in async storage, if none are found, ask server for a username and password
       AsyncStorage.getItem(
         'username', (err, res) => {
           if(res !== null)
@@ -71,7 +71,7 @@ class Lobby extends React.Component {
           }
         } 
       )
-
+      //Look for the settings object inside async storage, if not found, create one
       AsyncStorage.getItem(
         'Setting', (err,res) => {
           if(res !== null){
@@ -84,7 +84,7 @@ class Lobby extends React.Component {
           }
         }
       )
-
+      //Temp function to load up facticles, will be changed later
       AsyncStorage.getItem(
         'facticles', (err,res) => {
           if(res !== null){

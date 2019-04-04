@@ -1,5 +1,4 @@
-import React, {Component} from 'react';
-import { AppState, AsyncStorage } from 'react-native';
+import { AppState } from 'react-native';
 
 /**
  * Class to check if app is in the foreground
@@ -28,11 +27,9 @@ export default class StateMan {
   handleAppStateChange = (nextAppState) => {
     if ( this.state.appState.match(/inactive|background/) && nextAppState === 'active' ) {
         console.log("Foreground");
-        AsyncStorage.setItem('state', 'foreground')
     }
     else{
         console.log("Background")
-        AsyncStorage.setItem('state', 'background')
     }
     this.setState({appState: nextAppState});
   };
