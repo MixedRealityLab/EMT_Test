@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { StyleSheet, View, AsyncStorage } from 'react-native'
+import { StyleSheet, View, AsyncStorage, DeviceEventEmitter } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
@@ -8,6 +8,7 @@ import { Button } from 'react-native-elements'
 import Axios from 'axios';
 import StateMan from './components/StateCheck'
 import AppMan from './components/NotifMan'
+import PushNotificationAndroid from 'react-native-push-notification'
 
 const StateManager = new StateMan()
 
@@ -68,13 +69,27 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
+
+      (function() {
+        
+        PushNotificationAndroid.registerNotificationActions(['Show']);
+        DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+        console.log ('Notification action received: ' + action);
+        const info = JSON.parse(action.dataJSON);
+        if (info.action == 'Show') {
+          console.log("Ntif")
+        }
+      });
+
+      })();
       this.getLoc()
       AppMan.loadJourney()
+      
       this.intervalID = setInterval( () => this.getLoc(), 5000)
       this.getFacticles()
       AsyncStorage.getItem(
         //this.props.jKey
-        '0057'
+        '0005'
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
       )
       .then(
@@ -95,7 +110,7 @@ export default class TravelMap extends Component {
       .then( (res) => this.setState({points: res, loaded: true}) )
       .then( () => { AsyncStorage.setItem('CurrentJ', 
         //this.props.jKey
-        '0057'
+        '0005'
       ) } )
       console.log(StateManager.returnState())
     }
@@ -116,13 +131,15 @@ export default class TravelMap extends Component {
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
-         onPanDrag={ () => { if(this.state.following) this.setState({following: false}) } }
+         
          initialRegion={{
            latitude: 52.944351,
            longitude: -1.190312,
            latitudeDelta: 0.020,
            longitudeDelta: 0.0121,
          }}
+         onPanDrag={ () => { this.state.following ? this.setState({following: false}) : null } }
+         //if(this.state.following) this.setState({following: false})
        >
        {
            this.state.loaded ? 

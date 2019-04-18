@@ -20,6 +20,7 @@ AppRegistry.registerComponent(appName, () => App)
 
 const Notif = async (data) => {
   if(StateManager.returnState() !== 'active'){
+    console.log("Background")
     var Settings = {}
     AsyncStorage.getItem('Setting', (err,res) => {
       let obj = JSON.parse(res); Settings = obj; console.log(Settings);
@@ -36,7 +37,7 @@ const Notif = async (data) => {
                   console.log("Checking")
                   if(Settings.Facticle) AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
                 }
-                else AppMan.state.loaded = falses
+                else AppMan.state.loaded = false
               }
             )
            })

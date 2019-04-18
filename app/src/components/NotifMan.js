@@ -1,4 +1,5 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, DeviceEventEmitter } from 'react-native';
+import PushNotificationAndroid from 'react-native-push-notification'
 
 var PushNotification = require('react-native-push-notification');
 var geolib = require('geolib')
@@ -9,6 +10,7 @@ var geolib = require('geolib')
  * It is unique for the app, so when the app is started, only one instance will be present
  * This means it can keep coherency between the background service and foreground
  */
+
 class Manager{
   constructor(){
       this.state ={
@@ -30,6 +32,7 @@ class Manager{
           sound: true
         }
       })
+      
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
       this.sendNotif = this.sendNotif.bind(this)
@@ -51,13 +54,16 @@ class Manager{
   }
 
   checkDist(position, facticle){
-    console.log("Checkingv2")
     if(!this.seen(facticle.id)){
 
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
       if(facticle.targets.length > 0){
         let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
         console.log(isInside)
+        if(isInside){
+          this.sendNotif(facticle)
+          this.state.seenFacticles.push(facticle.id)
+        }
       }
       if(dist < 11){
         this.sendNotif(facticle)
@@ -88,8 +94,9 @@ class Manager{
       isFacticle = true
     }
     var notifSet = {
-      title: isFacticle ? "Bus change" : "Point of interest",
-      mess: isFacticle ? item.description : "Change to bus " + item.name,
+      title: isFacticle ? "Point of interest" : "Bus change",
+      bigMess: isFacticle ? item.name : "Change to bus " + item.name,
+      mainMess : isFacticle ? item.description: "Change to bus " + item.name,
       tag: isFacticle ? "facticle" : "bus_change",
       group: isFacticle ? "Facticle" : "BusChange"
 
@@ -98,7 +105,7 @@ class Manager{
       PushNotification.localNotification({
           largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
           smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          bigText: notifSet.mess, // (optional) default: "message" prop
+          bigText: notifSet.bigMess, // (optional) default: "message" prop
           color: "#add8e6", // (optional) default: system default
           vibrate: true, // (optional) default: true
           vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
@@ -107,9 +114,9 @@ class Manager{
   
            //iOS and Android properties 
           title: notifSet.title, // (optional)
-          message: notifSet.mess, // (required)
+          message: notifSet.mainMess, // (required)
           playSound: false, // (optional) default: true
-          actions: '["Show me"]',  // (Android only) See the doc for notification actions to know more
+          actions: '["Show"]',  // (Android only) See the doc for notification actions to know more
         })
       this.state.item++
   }

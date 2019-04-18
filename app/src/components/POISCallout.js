@@ -32,17 +32,18 @@ export default class POISCallout extends Component{
         })
 
     }
+    showOverlay(){ this.setState({show: true}) }
 
     render(){
         return(
-            this.props.render ? 
-            <View style={styles.containerP}>
-                <Text>{this.props.item.name}</Text>
-                {this.state.clean.map( (item, i) => { return( String(item).substr(0,4) === "<img" ? null : <HTML key={i} html={item} imagesMaxWidth={200} imagesMaxHeight={200}/> ) } )}
-                
-            </View>
-            :
-            null
+        <Overlay 
+          animationType="fade"
+          isVisible={this.state.show}
+          onBackdropPress={() => this.setState({ show: false })}
+        >
+        <View style={styles.containerP} >
+        </View>
+        </Overlay>
         )
     }
 }
@@ -54,3 +55,14 @@ const styles = StyleSheet.create({
         width: 200
     },
   });
+
+/*
+this.props.render ? 
+            <View style={styles.containerP}>
+                <Text>{this.props.item.name}</Text>
+                {this.state.clean.map( (item, i) => { return( String(item).substr(0,4) === "<img" ? null : <HTML key={i} html={item} imagesMaxWidth={200} imagesMaxHeight={200}/> ) } )}
+                
+            </View>
+            :
+            null
+*/

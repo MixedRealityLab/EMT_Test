@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import { Marker, Callout } from 'react-native-maps'
 import { SearchBar, Overlay  } from 'react-native-elements'
 import Axios from 'axios';
@@ -12,7 +12,8 @@ export default class POIS extends Component{
     
         this.state = {
             POIS: [],
-            render: []
+            render: [],
+            show: false
         }
         this.returnInfo = this.returnInfo.bind(this)
     }
@@ -39,36 +40,48 @@ export default class POIS extends Component{
 
     render(){
         return(
-            this.state.POIS.map((item, i) =>{
-              if(item.category === this.props.filter || this.props.filter === "N/A"){
-                return(
-                  <Marker
-                  key={i}
-                  onPress={
-                    () =>{
-                      var temp = this.state.render
-                      temp[i] = true
-                      this.setState({
-                        render: temp
-                      })
+          <>
+            {
+              this.state.POIS.map((item, i) =>{
+                if(item.category === this.props.filter || this.props.filter === "N/A"){
+                  return(
+                    <Marker
+                    key={i}
+                    onPress={
+                      () =>{
+                        this.props.showOverlay()
+                        this.props.showItem(item)
+                      }
                     }
-                  }
-                  name={item.name}
-                  coordinate={{latitude: item.latitude, longitude: item.longitude}}
-                  image={require('../../assets/icons8-point-of-interest-52.png')}
-                  >
-                  <Callout onPress={()=>{ console.log("I am: " + i), this.returnInfo() }}>
-                      <POISCallout item={item} render={this.state.render[i]} />
-                  </Callout>
-                  </Marker>
-                )
-              }
-            })
+                    name={item.name}
+                    coordinate={{latitude: item.latitude, longitude: item.longitude}}
+                    image={require('../../assets/icons8-point-of-interest-52.png')}
+                    >
+                    </Marker>
+                  )
+                }
+              })
+            }
+            
+          </>
           )
+          
     }
 }
 
 /*
+
+var temp = this.state.render
+                        temp[i] = true
+                        this.setState({
+                          render: temp
+                        })
+                        //this.setState({show: true})
+
+<Callout onPress={()=>{ console.log("I am: " + i), this.returnInfo() }}>
+                      <POISCallout item={item} render={this.state.render[i]} />
+                  </Callout>
+
 this.refs.modal7.open()
 <Modal ref={"modal7"} position={"center"}>
                   <View>

@@ -1,10 +1,11 @@
 import React from "react"
-import { View, PermissionsAndroid, AsyncStorage, StyleSheet } from "react-native"
+import { View, PermissionsAndroid, AsyncStorage, StyleSheet, DeviceEventEmitter } from "react-native"
 import { createAppContainer, createDrawerNavigator } from "react-navigation"
 import App from './App'
 import Info from './src/Info.js'
 import Settings from './src/Settings'
 import Axios from "axios";
+import PushNotificationAndroid from 'react-native-push-notification'
 
 /**
  * Drawer Navigation screens
@@ -50,6 +51,19 @@ class Lobby extends React.Component {
 
     componentDidMount(){
       requestLocationPermission()
+
+      PushNotificationAndroid.registerNotificationActions(['Show']);
+      DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+      console.log ('Notification action received: ' + action);
+      const info = JSON.parse(action.dataJSON);
+      if (info.action == 'Show') {
+        console.log("Notif!")
+      }
+      else{
+        console.log("Nothing")
+      }
+      });
+
       //Look for a username in async storage, if none are found, ask server for a username and password
       AsyncStorage.getItem(
         'username', (err, res) => {
