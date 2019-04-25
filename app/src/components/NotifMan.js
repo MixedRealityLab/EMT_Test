@@ -1,5 +1,4 @@
-import { AsyncStorage, DeviceEventEmitter } from 'react-native';
-import PushNotificationAndroid from 'react-native-push-notification'
+import { AsyncStorage } from 'react-native';
 
 var PushNotification = require('react-native-push-notification');
 var geolib = require('geolib')
@@ -10,7 +9,6 @@ var geolib = require('geolib')
  * It is unique for the app, so when the app is started, only one instance will be present
  * This means it can keep coherency between the background service and foreground
  */
-
 class Manager{
   constructor(){
       this.state ={
@@ -21,17 +19,19 @@ class Manager{
           journey: {}
       }
 
-      PushNotification.configure({
+      /*PushNotification.configure({
           // (required) Called when a remote or local notification is opened or received
           onNotification: function(notification) {
             console.log( 'NOTIFICATION:', notification )
+            console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon)
+            
         },
         permissions: {
           alert: true,
           badge: true,
           sound: true
         }
-      })
+      })*/
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
@@ -40,6 +40,7 @@ class Manager{
       this.checkDist = this.checkDist.bind(this)
       this.seen = this.seen.bind(this)
   }
+  
 
   seen(id){
     var seen = this.state.seenFacticles
@@ -59,7 +60,7 @@ class Manager{
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
       if(facticle.targets.length > 0){
         let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
-        console.log(isInside)
+        //console.log(isInside)
         if(isInside){
           this.sendNotif(facticle)
           this.state.seenFacticles.push(facticle.id)
@@ -70,7 +71,7 @@ class Manager{
         this.state.seenFacticles.push(facticle.id)
       }
       else{
-        console.log("Too far away")
+        //console.log("Too far away")
       }
     }
   }
@@ -93,14 +94,16 @@ class Manager{
     if(item.category !== null){
       isFacticle = true
     }
+    console.log(item)
     var notifSet = {
       title: isFacticle ? "Point of interest" : "Bus change",
       bigMess: isFacticle ? item.name : "Change to bus " + item.name,
       mainMess : isFacticle ? item.description: "Change to bus " + item.name,
       tag: isFacticle ? "facticle" : "bus_change",
       group: isFacticle ? "Facticle" : "BusChange"
-
     }
+
+    var loc = JSON.stringify({lat: item.latitude, lon: item.longitude})
 
       PushNotification.localNotification({
           largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
@@ -116,7 +119,8 @@ class Manager{
           title: notifSet.title, // (optional)
           message: notifSet.mainMess, // (required)
           playSound: false, // (optional) default: true
-          actions: '["Show"]',  // (Android only) See the doc for notification actions to know more
+          //actions: '["Show"]',  // (Android only) See the doc for notification actions to know more
+          data: loc
         })
       this.state.item++
   }

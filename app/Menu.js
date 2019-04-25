@@ -52,7 +52,7 @@ class Lobby extends React.Component {
     componentDidMount(){
       requestLocationPermission()
 
-      PushNotificationAndroid.registerNotificationActions(['Show']);
+      /*PushNotificationAndroid.registerNotificationActions(['Show']);
       DeviceEventEmitter.addListener('notificationActionReceived', function(action){
       console.log ('Notification action received: ' + action);
       const info = JSON.parse(action.dataJSON);
@@ -62,7 +62,7 @@ class Lobby extends React.Component {
       else{
         console.log("Nothing")
       }
-      });
+      });*/
 
       //Look for a username in async storage, if none are found, ask server for a username and password
       AsyncStorage.getItem(

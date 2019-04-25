@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { StyleSheet, View, AsyncStorage, DeviceEventEmitter } from 'react-native'
+import { StyleSheet, View, AsyncStorage } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
@@ -8,9 +8,9 @@ import { Button } from 'react-native-elements'
 import Axios from 'axios';
 import StateMan from './components/StateCheck'
 import AppMan from './components/NotifMan'
-import PushNotificationAndroid from 'react-native-push-notification'
 
 const StateManager = new StateMan()
+var PushNotification = require('react-native-push-notification');
 
 export default class TravelMap extends Component {
 
@@ -22,6 +22,7 @@ export default class TravelMap extends Component {
         facticles: [],
         currentPos: {},
         Settings: {},
+        VisiblePois: [],
         loaded: false,
         following: true,
         polyOptsBus:['#00ff00' ,
@@ -30,10 +31,15 @@ export default class TravelMap extends Component {
                      '#fff000' ]
       }
       this.getFacticles = this.getFacticles.bind(this)
+      this.resNotf = this.resNotf.bind(this)
     }
 
     viewPOI() {
       this.mView.animateCamera({center:this.state.currentPos, zoom: 17})
+    }
+
+    resNotf(){
+      console.log("ResNotf")
     }
 
     getLoc(){
@@ -70,18 +76,19 @@ export default class TravelMap extends Component {
 
     componentDidMount(){
 
-      (function() {
-        
-        PushNotificationAndroid.registerNotificationActions(['Show']);
-        DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-        console.log ('Notification action received: ' + action);
-        const info = JSON.parse(action.dataJSON);
-        if (info.action == 'Show') {
-          console.log("Ntif")
-        }
-      });
+      PushNotification.configure({
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+          console.log( 'NOTIFICATION:', notification )
+          console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon);
+      },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+      }
+    })
 
-      })();
       this.getLoc()
       AppMan.loadJourney()
       
@@ -121,7 +128,6 @@ export default class TravelMap extends Component {
     }
 
     render() {
-      //console.log(StateManager.returnState())
       return (
       <View style={styles.containerP}>
       <View style={styles.mapContainer}>
@@ -139,11 +145,20 @@ export default class TravelMap extends Component {
            longitudeDelta: 0.0121,
          }}
          onPanDrag={ () => { this.state.following ? this.setState({following: false}) : null } }
-         //if(this.state.following) this.setState({following: false})
        >
        {
            this.state.loaded ? 
-           this.state.points.map( (item, i) => { return( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3} /> ) } )
+           this.state.points.map( 
+             (item, i) => 
+                { 
+                  return( 
+                    <View key={i} >
+                      { i !== 0 ? <Marker  coordinate={item[0]} image={ require('../assets/icons8-synchronize-filled-96.png') } /> : null } 
+                      <Polyline coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3} />
+                    </View> 
+                    ) 
+                } 
+             )
             : console.log("empty")
        }
        {
