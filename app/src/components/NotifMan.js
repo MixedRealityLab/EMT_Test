@@ -19,7 +19,7 @@ class Manager{
           journey: {}
       }
 
-      /*PushNotification.configure({
+      PushNotification.configure({
           // (required) Called when a remote or local notification is opened or received
           onNotification: function(notification) {
             console.log( 'NOTIFICATION:', notification )
@@ -31,10 +31,11 @@ class Manager{
           badge: true,
           sound: true
         }
-      })*/
+      })
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
+      this.testNotif = this.testNotif.bind(this)
       this.sendNotif = this.sendNotif.bind(this)
       this.loadJourney = this.loadJourney.bind(this)
       this.checkDist = this.checkDist.bind(this)
@@ -80,13 +81,19 @@ class Manager{
     if(!this.state.loaded){
       var currJ = ''
       console.log("Loading")
-      AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); console.log(obj); this.state.facticles = obj } )
+      AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); /*console.log(obj);*/ this.state.facticles = obj } )
       AsyncStorage.getItem('CurrentJ', (err,res) => {console.log(res); currJ = res} )
       .then( () => {
         AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj } ) 
       } )
       this.state.loaded = true
     }
+  }
+
+  testNotif(){
+    PushNotification.localNotification({
+      message: "Test Notifcation" // (required)
+    })
   }
 
   sendNotif(item){

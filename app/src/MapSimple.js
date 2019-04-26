@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text } from 'react-native';
+import {StyleSheet, View, Text, ScrollView } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import { Overlay } from 'react-native-elements'
 import HTML from 'react-native-render-html'
@@ -87,6 +87,7 @@ export default class MapSimple extends Component {
           onBackdropPress={() => this.setState({ show: false })}
         >
         <View style={styles.containerP} >
+        <ScrollView contentContainerStyle={styles.scrollCont} >
           <Text>{this.state.item.name}</Text>
           <Text>Category: {this.state.item.category}</Text>
           {
@@ -107,6 +108,7 @@ export default class MapSimple extends Component {
               }
             )
           }
+        </ScrollView>
         </View>
         </Overlay>
           <Selector 

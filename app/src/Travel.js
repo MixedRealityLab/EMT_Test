@@ -65,7 +65,6 @@ export default class TravelMap extends Component {
     getFacticles(){
       Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline" )
       .then( response => {
-        console.log(response.data)
         this.setState({facticles: response.data})
         return response.data
       })
@@ -76,7 +75,7 @@ export default class TravelMap extends Component {
 
     componentDidMount(){
 
-      PushNotification.configure({
+      /*PushNotification.configure({
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
           console.log( 'NOTIFICATION:', notification )
@@ -87,7 +86,7 @@ export default class TravelMap extends Component {
         badge: true,
         sound: true
       }
-    })
+    })*/
 
       this.getLoc()
       AppMan.loadJourney()
@@ -165,7 +164,9 @@ export default class TravelMap extends Component {
          this.state.loaded ?
          this.state.currentPos.latitude === undefined ? console.log("empty")
          : <Marker coordinate={ this.state.currentPos }
-            image={ require('../assets/mylocation.gif') } />
+            image={ require('../assets/mylocation.gif') }
+            style={styles.image} 
+            />
          :
          console.log("empty")
        }
@@ -192,6 +193,10 @@ export default class TravelMap extends Component {
     map: {
       ...StyleSheet.absoluteFillObject,
     },
+    image: {
+      height: 22,
+      width: 22 
+    }
     
   })
   

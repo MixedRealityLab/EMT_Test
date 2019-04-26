@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity, Image } from 'react-native'
 import { Marker, Callout } from 'react-native-maps'
 import { SearchBar, Overlay  } from 'react-native-elements'
 import Axios from 'axios';
@@ -55,8 +55,8 @@ export default class POIS extends Component{
                     }
                     name={item.name}
                     coordinate={{latitude: item.latitude, longitude: item.longitude}}
-                    image={require('../../assets/icons8-point-of-interest-52.png')}
-                    >
+                    icon={require('../../assets/icons8-point-of-interest-52.png')}
+                    > 
                     </Marker>
                   )
                 }
