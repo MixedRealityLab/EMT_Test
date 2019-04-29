@@ -35,7 +35,6 @@ class Manager{
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
-      this.testNotif = this.testNotif.bind(this)
       this.sendNotif = this.sendNotif.bind(this)
       this.loadJourney = this.loadJourney.bind(this)
       this.checkDist = this.checkDist.bind(this)
@@ -61,7 +60,7 @@ class Manager{
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
       if(facticle.targets.length > 0){
         let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
-        //console.log(isInside)
+        console.log(isInside)
         if(isInside){
           this.sendNotif(facticle)
           this.state.seenFacticles.push(facticle.id)
@@ -88,12 +87,6 @@ class Manager{
       } )
       this.state.loaded = true
     }
-  }
-
-  testNotif(){
-    PushNotification.localNotification({
-      message: "Test Notifcation" // (required)
-    })
   }
 
   sendNotif(item){

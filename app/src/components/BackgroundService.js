@@ -1,21 +1,15 @@
 import { AsyncStorage } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
-var { Timer } = require('easytimer.js')
 import BackgroundTimer from 'react-native-background-timer';
+import AppMan from './NotifMan'
 
-
-/**
- * Notifications manager class
- * This class handles sending notifications to the user
- * It is unique for the app, so when the app is started, only one instance will be present
- * This means it can keep coherency between the background service and foreground
- */
 class LocationManager{
   constructor(){
       this.state ={
           item: 0,
           running: false,
-          interval: ""
+          interval: "",
+          settings: {}
       }
 
       this.clean = this.clean.bind(this) 
@@ -23,7 +17,12 @@ class LocationManager{
   }
 
   clean(){
-    BackgroundTimer.clearTimeout(this.state.interval)
+    console.log("Running: " + this.state.running)
+    if(this.state.running){
+      console.log("Cleaning Background Service")
+      BackgroundTimer.clearTimeout(this.state.interval)
+      this.state.running = false
+    }
   }
 
   startScan(){
@@ -31,20 +30,39 @@ class LocationManager{
         console.log("Start Scan")
         this.state.running = true
         
-        this.state.interval = BackgroundTimer.setInterval(() => {
-            // this will be executed every 200 ms
-            // even when app is the the background
-            this.getLoc()
-            console.log('tic');
-        }, 2000);
+        AsyncStorage.getItem('Setting', (err,res) => {
+          let obj = JSON.parse(res); this.state.settings = obj; console.log(this.state.settings);
+        } )
+        .then(
+          AsyncStorage.getItem(
+            'travel', (err, res) => {
+              if(res === 'true'){
+                AppMan.loadJourney()
+                console.log("Checking")
+                //Create background timer and execute every 5000ms (5 seconds)
+                this.state.interval = BackgroundTimer.setInterval(() => {
+                  this.getLoc()
+                  console.log('Item: ' + this.state.item);
+                  this.state.item++
+              }, 5000)
+              }
+              else AppMan.state.loaded = false
+            }
+          )
+        )
+        
     }
   }
   
   getLoc(){
-      console.log("Hey")
     Geolocation.getCurrentPosition(
         (position) => {
             console.log(position);
+            if(this.state.settings.Facticle && this.state.running){
+              console.log("Checking facticles")
+              AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
+            }
+
         },
         (error) => {
             // See error code charts below.
@@ -57,3 +75,25 @@ class LocationManager{
 }
 
 export default LocMan = new LocationManager(); 
+
+/*
+.then(
+    () => {
+      if(Settings.Direct){
+        navigator.geolocation.getCurrentPosition((position) => {
+          //console.log(position.coords)
+          AsyncStorage.getItem(
+            'travel', (err, res) => {
+              if(res === 'true'){
+                AppMan.loadJourney()
+                console.log("Checking")
+                if(Settings.Facticle) AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
+              }
+              else AppMan.state.loaded = false
+            }
+          )
+         })
+      }
+    }
+  )
+*/

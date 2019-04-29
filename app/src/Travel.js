@@ -8,6 +8,7 @@ import { Button } from 'react-native-elements'
 import Axios from 'axios';
 import StateMan from './components/StateCheck'
 import AppMan from './components/NotifMan'
+import LocMan from './components/BackgroundService'
 
 const StateManager = new StateMan()
 var PushNotification = require('react-native-push-notification');
@@ -87,7 +88,7 @@ export default class TravelMap extends Component {
         sound: true
       }
     })*/
-
+    
       this.getLoc()
       AppMan.loadJourney()
       
@@ -127,6 +128,8 @@ export default class TravelMap extends Component {
     }
 
     render() {
+      //Stop background service
+      LocMan.clean()
       return (
       <View style={styles.containerP}>
       <View style={styles.mapContainer}>
