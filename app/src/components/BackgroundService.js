@@ -17,7 +17,6 @@ class LocationManager{
   }
 
   clean(){
-    console.log("Running: " + this.state.running)
     if(this.state.running){
       console.log("Cleaning Background Service")
       BackgroundTimer.clearTimeout(this.state.interval)
@@ -29,7 +28,7 @@ class LocationManager{
     if(!this.state.running){
         console.log("Start Scan")
         this.state.running = true
-        
+
         AsyncStorage.getItem('Setting', (err,res) => {
           let obj = JSON.parse(res); this.state.settings = obj; console.log(this.state.settings);
         } )
@@ -57,9 +56,9 @@ class LocationManager{
   getLoc(){
     Geolocation.getCurrentPosition(
         (position) => {
-            console.log(position);
-            if(this.state.settings.Facticle && this.state.running){
-              console.log("Checking facticles")
+            //console.log(position);
+            if(this.state.settings.Facticle){
+              console.log("Get Location (Background Service)")
               AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
             }
 

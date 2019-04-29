@@ -49,7 +49,7 @@ export default class TravelMap extends Component {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
             }), this.state.following ? this.viewPOI() : console.log("freecam")
-            console.log("UI check")
+            console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             } )
@@ -75,20 +75,23 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
-
-      /*PushNotification.configure({
+      PushNotification.configure({
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
-          console.log( 'NOTIFICATION:', notification )
-          console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon);
-      },
+          
+          //console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon);
+          () => {
+            console.log( 'NOTIFICATION:', notification )
+            this.resNotf
+          }
+      }, 
       permissions: {
         alert: true,
         badge: true,
         sound: true
       }
-    })*/
-    
+    })
+      AppMan.testNotif()
       this.getLoc()
       AppMan.loadJourney()
       

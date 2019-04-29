@@ -35,6 +35,7 @@ class Manager{
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       
+      this.testNotif = this.testNotif.bind(this)
       this.sendNotif = this.sendNotif.bind(this)
       this.loadJourney = this.loadJourney.bind(this)
       this.checkDist = this.checkDist.bind(this)
@@ -87,6 +88,12 @@ class Manager{
       } )
       this.state.loaded = true
     }
+  }
+
+  testNotif(){
+    PushNotification.localNotification({
+      message: "Test Notifcation" // (required)
+    })
   }
 
   sendNotif(item){
