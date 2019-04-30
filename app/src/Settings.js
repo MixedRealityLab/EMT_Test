@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {AsyncStorage, ScrollView, Text, StyleSheet, TouchableOpacity, View, LayoutAnimation, Platform, UIManager } from 'react-native'
-import { CheckBox } from 'react-native-elements'
+import { CheckBox, Slider } from 'react-native-elements'
+import Axios from 'axios';
 
 /**
  * Class to allow the user to edit settings
@@ -12,10 +13,15 @@ export default class Info extends Component{
         super(props);
 
         this.state = {
+            notifOpen: false,
+            filterOpen: false,
+            rateOpen: false,
             Settings: {},
             notifDirect: true,
             notifFacticle: true,
-            notifOpen: false
+            filterList: [],
+            rateNotif: 0,
+            categories: [],
         }
 
         if (Platform.OS === 'android') {
@@ -23,11 +29,22 @@ export default class Info extends Component{
         }
 
         this.saveSettings = this.saveSettings.bind(this)
+        this.updateFilter = this.updateFilter.bind(this)
     }
 
-    changeLayout = () => {
+    changeLayout = (item) => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        this.setState({ notifOpen: !this.state.notifOpen });
+        switch(item){
+            case 0:
+            this.setState({ notifOpen: !this.state.notifOpen })
+            break
+            case 1:
+            this.setState({ filterOpen: !this.state.filterOpen })
+            break
+            case 2:
+            this.setState({ rateOpen: !this.state.rateOpen })
+            break
+        }
     }
 
     componentDidMount(){
@@ -40,27 +57,48 @@ export default class Info extends Component{
                 this.setState({
                     Settings: temp,
                     notifDirect: temp.Direct,
-                    notifFacticle: temp.Facticle
+                    notifFacticle: temp.Facticle,
+                    filterList: temp.Filter,
+                    rateNotif: temp.NotifRate
                 })
             }
         )
+
+        Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
+        .then( response => this.setState( {categories: response.data}) )
     }
 
     saveSettings(){
         console.log("Save")
         var Settings = {
-            Direct:     this.state.notifDirect,  //Direction Notifications
-            Facticle:   this.state.notifFacticle //Facticle Notifications
+            Direct:     this.state.notifDirect,     //Direction Notifications
+            Facticle:   this.state.notifFacticle,   //Facticle Notifications
+            Filter:     this.state.filterList,      //Facticle Notification Filter
+            NotifRate:  this.state.rateNotif        //Facticle Notification Display Rate
         }
         AsyncStorage.setItem( 'Setting', JSON.stringify(Settings) )
     }
 
+    updateFilter(item){
+        var temp = this.state.filterList
+        if(this.state.filterList.includes(item)){
+            let index = temp.indexOf(item)
+            temp.splice(index, 1)
+        }
+        else{
+            temp.push(item)
+        }
+        this.setState({filterList: temp})
+    }
+
     render(){
+        console.log(this.state.filterList)
         return(
             <ScrollView contentContainerStyle={styles.scrollCont}>
+            {/*Drop down to choose what type of notifications can be shown*/}
                 <View style={styles.expandMenuHolder}>
-                        <TouchableOpacity activeOpacity={0.8} onPress={this.changeLayout} style={styles.expandMenu}>
-                        <Text style={styles.expandMenuHeaderText}>Notifications</Text>
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => this.changeLayout(0)} style={styles.expandMenu}>
+                        <Text style={styles.expandMenuHeaderText}>Notification Types</Text>
                         </TouchableOpacity>
                         <View style={{ height: this.state.notifOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
@@ -74,6 +112,47 @@ export default class Info extends Component{
                                 checked={this.state.notifFacticle}
                                 onPress={() => this.setState({notifFacticle: !this.state.notifFacticle})}
                                 />
+                            </View>
+                        </View>
+                    </View>
+                {/*Drop down to choose a filter for notifications*/}
+                <View style={styles.expandMenuHolder}>
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => this.changeLayout(1)} style={styles.expandMenu}>
+                        <Text style={styles.expandMenuHeaderText}>Notification Filters</Text>
+                        </TouchableOpacity>
+                        <View style={{ height: this.state.filterOpen ? null : 0, overflow: 'hidden' }}>
+                            <View style={styles.column}>
+
+                                {this.state.categories.map( 
+                                    (item, i) => { 
+                                        return( 
+                                            <CheckBox
+                                            title= {item}
+                                            key={i}
+                                            checked={ this.state.filterList.length === 0 ? false : this.state.filterList.includes(item) }
+                                            onPress={() => this.updateFilter(item) }
+                                            />
+                                        ) 
+                                    } 
+                                )}
+
+                            </View>
+                        </View>
+                    </View>
+                {/*Drop down to choose how often notifications are sent*/}
+                <View style={styles.expandMenuHolder}>
+                        <TouchableOpacity activeOpacity={0.8} onPress={() => this.changeLayout(2)} style={styles.expandMenu}>
+                        <Text style={styles.expandMenuHeaderText}>Notification Rates</Text>
+                        </TouchableOpacity>
+                        <View style={{ height: this.state.rateOpen ? null : 0, overflow: 'hidden' }}>
+                            <View style={styles.column}>
+                            <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
+                                <Slider
+                                    value={this.state.rateNotif}
+                                    onValueChange={ value => this.setState({ rateNotif: value })}
+                                />
+                                <Text>Value: {this.state.rateNotif}</Text>
+                            </View>
                             </View>
                         </View>
                     </View>

@@ -73,12 +73,6 @@ export default class Search extends Component {
       );
     }
   }
-/*
-
-<TouchableOpacity key={i} style={styles.button} onPress={()=>{this.props.viewPOI(item.latitude, item.longitude); this.setState({ show: false })}}>
-                              <Text style={styles.text}>{item.name}</Text>
-                          </TouchableOpacity>
-*/
 
 const styles = StyleSheet.create({
     button:{

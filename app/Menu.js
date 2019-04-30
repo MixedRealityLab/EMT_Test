@@ -90,10 +90,12 @@ class Lobby extends React.Component {
         'Setting', (err,res) => {
           if(res !== null){
             console.log("Settings found")
+            console.log(JSON.parse(res))
           }
           else{
             console.log("No settings found")
-            let obj = { Direct: true, Facticle: true }
+            let obj = { Direct: true, Facticle: true, Filter: [], NotifRate: 0 }
+            console.log(JSON.stringify(obj))
             AsyncStorage.setItem('Setting', JSON.stringify(obj))
           }
         }
