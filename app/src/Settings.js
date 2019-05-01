@@ -20,7 +20,7 @@ export default class Info extends Component{
             notifDirect: true,
             notifFacticle: true,
             filterList: [],
-            rateNotif: 0,
+            rateNotif: 1,
             categories: [],
         }
 
@@ -92,7 +92,6 @@ export default class Info extends Component{
     }
 
     render(){
-        console.log(this.state.filterList)
         return(
             <ScrollView contentContainerStyle={styles.scrollCont}>
             {/*Drop down to choose what type of notifications can be shown*/}
@@ -101,6 +100,7 @@ export default class Info extends Component{
                         <Text style={styles.expandMenuHeaderText}>Notification Types</Text>
                         </TouchableOpacity>
                         <View style={{ height: this.state.notifOpen ? null : 0, overflow: 'hidden' }}>
+                            <Text>Set if you want to see factile or direction notifications</Text>
                             <View style={styles.column}>
                                 <CheckBox
                                 title='Direction notifications'
@@ -122,7 +122,7 @@ export default class Info extends Component{
                         </TouchableOpacity>
                         <View style={{ height: this.state.filterOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
-
+                                <Text>Set the type of factile notifications that appear</Text>
                                 {this.state.categories.map( 
                                     (item, i) => { 
                                         return( 
@@ -146,12 +146,20 @@ export default class Info extends Component{
                         </TouchableOpacity>
                         <View style={{ height: this.state.rateOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
-                            <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
+                            <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'center' , flexDirection: 'column'}}>
+                                <Text>Set how often factile notifications appear</Text>
                                 <Slider
                                     value={this.state.rateNotif}
                                     onValueChange={ value => this.setState({ rateNotif: value })}
+                                    minimumValue={1}
+                                    maximumValue={10}
+                                    step={1}
                                 />
-                                <Text>Value: {this.state.rateNotif}</Text>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
+                                <Text>Min</Text>
+                                <Text>Max</Text>
+                                </View>
+                                
                             </View>
                             </View>
                         </View>

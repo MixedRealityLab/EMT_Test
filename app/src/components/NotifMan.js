@@ -1,6 +1,7 @@
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native'
+import Axios from 'axios'
 
-var PushNotification = require('react-native-push-notification');
+var PushNotification = require('react-native-push-notification')
 var geolib = require('geolib')
 
 /**
@@ -15,8 +16,11 @@ class Manager{
           item: 0,
           loaded: false,
           facticles: [],
+          facticleQueue: [],
+          factileRate: 1,
           seenFacticles: [],
-          journey: {}
+          journey: {},
+          categories: []
       }
 
       PushNotification.configure({
@@ -24,7 +28,6 @@ class Manager{
           onNotification: function(notification) {
             console.log( 'NOTIFICATION:', notification )
             console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon)
-            
         },
         permissions: {
           alert: true,
@@ -34,18 +37,32 @@ class Manager{
       })
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
+
+      Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
+      .then( response => this.state.categories = response.data )
       
-      this.testNotif = this.testNotif.bind(this)
-      this.sendNotif = this.sendNotif.bind(this)
-      this.loadJourney = this.loadJourney.bind(this)
-      this.checkDist = this.checkDist.bind(this)
-      this.seen = this.seen.bind(this)
+      this.checkNotif   = this.checkNotif.bind(this)
+      this.queue        = this.queue.bind(this)
+      this.testNotif    = this.testNotif.bind(this)
+      this.sendNotif    = this.sendNotif.bind(this)
+      this.loadJourney  = this.loadJourney.bind(this)
+      this.checkDist    = this.checkDist.bind(this)
+      this.seen         = this.seen.bind(this)
   }
-  
+
+  queue(item){
+    if(item !== this.state.factileRate) this.state.factileRate = item
+
+  }
+
+  checkNotif(item){
+
+  }
 
   seen(id){
     var seen = this.state.seenFacticles
     var isSeen = false
+    //var isSeen = seen.includes(id)
     for(let i = 0; i < seen.length; i++){
       if(id === seen[i]){
         isSeen = true
@@ -56,21 +73,15 @@ class Manager{
   }
 
   checkDist(position, facticle){
-    if(!this.seen(facticle.id)){
-
+    //if(!this.seen(facticle.id)){
+    if(!this.state.seenFacticles.includes(facticle.id)){
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
       if(facticle.targets.length > 0){
         let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
         console.log(isInside)
-        if(isInside){
-          this.sendNotif(facticle)
-          this.state.seenFacticles.push(facticle.id)
-        }
+        if(isInside) this.sendNotif(facticle)
       }
-      if(dist < 11){
-        this.sendNotif(facticle)
-        this.state.seenFacticles.push(facticle.id)
-      }
+      if(dist < 11) this.sendNotif(facticle)
       else{
         //console.log("Too far away")
       }
@@ -91,45 +102,50 @@ class Manager{
   }
 
   testNotif(){
-    PushNotification.localNotification({
-      message: "Test Notifcation" // (required)
-    })
+
+    this.state.categories.map( (item) => {
+      PushNotification.localNotification({
+        message: "Test notification type: " + item, // (required)
+        tag: item
+      })
+    } )
   }
 
   sendNotif(item){
     var isFacticle = false
-    if(item.category !== null){
-      isFacticle = true
-    }
+    if(item.category !== null) isFacticle = true
+
     console.log(item)
     var notifSet = {
       title: isFacticle ? "Point of interest" : "Bus change",
       bigMess: isFacticle ? item.name : "Change to bus " + item.name,
       mainMess : isFacticle ? item.description: "Change to bus " + item.name,
-      tag: isFacticle ? "facticle" : "bus_change",
+      tag: isFacticle ? item.category : "bus_change",
       group: isFacticle ? "Facticle" : "BusChange"
     }
 
     var loc = JSON.stringify({lat: item.latitude, lon: item.longitude})
 
       PushNotification.localNotification({
-          largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+          largeIcon: "ic_launcher",     // (optional) default: "ic_launcher"
           smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
-          bigText: notifSet.bigMess, // (optional) default: "message" prop
-          color: "#add8e6", // (optional) default: system default
-          vibrate: true, // (optional) default: true
-          vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
-          tag: notifSet.tag, // (optional) add tag to message
-          group: notifSet.group, // (optional) add group to message
+          bigText: notifSet.bigMess,    // (optional) default: "message" prop
+          color: "#add8e6",             // (optional) default: system default
+          vibrate: true,                // (optional) default: true
+          vibration: 300,               // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+          tag: notifSet.tag,            // (optional) add tag to message
+          group: notifSet.group,        // (optional) add group to message
   
-           //iOS and Android properties 
-          title: notifSet.title, // (optional)
+          //iOS and Android properties 
+          title: notifSet.title,      // (optional)
           message: notifSet.mainMess, // (required)
-          playSound: false, // (optional) default: true
-          //actions: '["Show"]',  // (Android only) See the doc for notification actions to know more
+          playSound: false,           // (optional) default: true
+          //actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
         })
+        
       this.state.item++
+      if(isFacticle)this.state.seenFacticles.push(item.id)
   }
 }
 

@@ -49,7 +49,6 @@ class LocationManager{
             }
           )
         )
-        
     }
   }
   
@@ -59,9 +58,14 @@ class LocationManager{
             //console.log(position);
             if(this.state.settings.Facticle){
               console.log("Get Location (Background Service)")
-              AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
+              AppMan.state.facticles.map((item) => {
+                  if(this.state.settings.Filter.includes(item.category)) {AppMan.checkDist(position.coords, item) }
+                })
             }
-
+            if(this.state.settingsDirect)
+              AppMan.state.journey.change.map( (item) => {
+                AppMan.checkDist(position.coords, item)
+            })
         },
         (error) => {
             // See error code charts below.
@@ -70,29 +74,6 @@ class LocationManager{
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
   }
-
 }
 
-export default LocMan = new LocationManager(); 
-
-/*
-.then(
-    () => {
-      if(Settings.Direct){
-        navigator.geolocation.getCurrentPosition((position) => {
-          //console.log(position.coords)
-          AsyncStorage.getItem(
-            'travel', (err, res) => {
-              if(res === 'true'){
-                AppMan.loadJourney()
-                console.log("Checking")
-                if(Settings.Facticle) AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
-              }
-              else AppMan.state.loaded = false
-            }
-          )
-         })
-      }
-    }
-  )
-*/
+export default LocMan = new LocationManager()

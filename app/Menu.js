@@ -94,7 +94,7 @@ class Lobby extends React.Component {
           }
           else{
             console.log("No settings found")
-            let obj = { Direct: true, Facticle: true, Filter: [], NotifRate: 0 }
+            let obj = { Direct: true, Facticle: true, Filter: [], NotifRate: 1 }
             console.log(JSON.stringify(obj))
             AsyncStorage.setItem('Setting', JSON.stringify(obj))
           }

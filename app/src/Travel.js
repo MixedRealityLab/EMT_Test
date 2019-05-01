@@ -53,7 +53,17 @@ export default class TravelMap extends Component {
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             } )
-            if(this.state.Settings.Facticle) AppMan.state.facticles.map( (item) => AppMan.checkDist(position.coords, item) )
+            //Check if facticles are turned on
+            if(this.state.Settings.Facticle)
+              AppMan.state.facticles.map( (item) => {
+              //Make sure that only the facticle categories that the user selected show up
+              if(this.state.Settings.Filter.includes(item.category)) AppMan.checkDist(position.coords, item) 
+              })
+            if(this.state.Direct)
+              AppMan.state.journey.change.map( (item) => {
+                AppMan.checkDist(position.coords, item)
+              })
+            
         },
         (error) => {
             // See error code charts below.
@@ -75,23 +85,7 @@ export default class TravelMap extends Component {
     }
 
     componentDidMount(){
-      PushNotification.configure({
-        // (required) Called when a remote or local notification is opened or received
-        onNotification: function(notification) {
-          
-          //console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon);
-          () => {
-            console.log( 'NOTIFICATION:', notification )
-            this.resNotf
-          }
-      }, 
-      permissions: {
-        alert: true,
-        badge: true,
-        sound: true
-      }
-    })
-      AppMan.testNotif()
+      //AppMan.testNotif()
       this.getLoc()
       AppMan.loadJourney()
       
