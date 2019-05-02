@@ -59,7 +59,21 @@ class LocationManager{
             if(this.state.settings.Facticle){
               console.log("Get Location (Background Service)")
               AppMan.state.facticles.map((item) => {
-                  if(this.state.settings.Filter.includes(item.category)) {AppMan.checkDist(position.coords, item) }
+                  if(this.state.settings.Filter.includes(item.category)) {
+                    let vis = AppMan.checkDist(position.coords, item)
+                    if(vis){
+                      AsyncStorage.getItem('VisPOIS', (err, res) => {
+
+                        if(!res.includes(JSON.stringify(item)) ){
+                          let temp = JSON.parse(res)
+                          temp.push(item)
+                          AsyncStorage.setItem('VisPOIS', JSON.stringify(this.state.VisiblePois))
+                        }
+
+                      })
+
+                    }
+                  }
                 })
             }
             if(this.state.settingsDirect)

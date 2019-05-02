@@ -138,6 +138,9 @@ export default class Selector extends Component{
             case 'Travel':
                 return(
                     <ActionButton buttonColor="#000">
+                        <ActionButton.Item buttonColor='#add8e6' title="Points of Interest" onPress={() => this.props.listPOIS() }>
+                        <Icon name="md-locate" style={styles.actionButtonIcon} />
+                        </ActionButton.Item>
                         <ActionButton.Item buttonColor='#add8e6' title="Recenter" onPress={() => this.props.following() }>
                         <Icon name="md-locate" style={styles.actionButtonIcon} />
                         </ActionButton.Item>

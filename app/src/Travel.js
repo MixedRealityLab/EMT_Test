@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
-import { StyleSheet, View, AsyncStorage } from 'react-native'
+import { StyleSheet, View, AsyncStorage, ScrollView, Text } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
+import HTML from 'react-native-render-html'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 import Geolocation from 'react-native-geolocation-service'
-import { Button } from 'react-native-elements'
+import { Overlay } from 'react-native-elements'
 import Axios from 'axios';
 import StateMan from './components/StateCheck'
 import AppMan from './components/NotifMan'
@@ -25,6 +26,9 @@ export default class TravelMap extends Component {
         Settings: {},
         VisiblePois: [],
         loaded: false,
+        showPOI: false,
+        showList: false,
+        clean: [],
         following: true,
         polyOptsBus:['#00ff00' ,
                      '#0000ff' ,
@@ -32,15 +36,33 @@ export default class TravelMap extends Component {
                      '#fff000' ]
       }
       this.getFacticles = this.getFacticles.bind(this)
-      this.resNotf = this.resNotf.bind(this)
+      this.showItem = this.showItem.bind(this)
     }
 
     viewPOI() {
       this.mView.animateCamera({center:this.state.currentPos, zoom: 17})
     }
 
-    resNotf(){
-      console.log("ResNotf")
+    showItem(item){
+      let temp = item.description
+        var split = temp.split("<br>")
+
+        var clean = []
+        split.map(
+            (item) => {
+                switch (String(item).substr(0,4)){
+                    case "":
+                    break
+                    default:
+                        clean.push(item)
+                    break
+                }
+            }
+        )
+        this.setState({
+            clean: clean,
+            showPOI: true
+        })
     }
 
     getLoc(){
@@ -54,7 +76,7 @@ export default class TravelMap extends Component {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             } )
             AsyncStorage.getItem('VisPOIS', (err,res) => {
-              if(res !== JSON.stringify(this.state.VisiblePois)){
+              if(JSON.parse(res) !== this.state.VisiblePois){
                 this.setState({VisiblePois: JSON.parse(res)})
               }
             })
@@ -66,10 +88,15 @@ export default class TravelMap extends Component {
                 //If a facticle is visible, add it to the list of visible POIS
                 let vis = AppMan.checkDist(position.coords, item)
                 if(vis){
-                  this.state.VisiblePois.push(
-                    item
-                  )
-                  AsyncStorage.setItem('VisPOIS', JSON.stringify(this.state.VisiblePois))
+                  console.log(item)
+                  console.log(this.state.VisiblePois)
+                  if(!this.state.VisiblePois.includes(item) ){
+                    console.log("Found")
+                    this.state.VisiblePois.push(
+                      item
+                    )
+                    AsyncStorage.setItem('VisPOIS', JSON.stringify(this.state.VisiblePois))
+                  }
                 }
               }
               })
@@ -102,7 +129,7 @@ export default class TravelMap extends Component {
       //AppMan.testNotif()
       this.getLoc()
       AppMan.loadJourney()
-      
+      AsyncStorage.setItem('VisPOIS', '[]')
       this.intervalID = setInterval( () => this.getLoc(), 5000)
       this.getFacticles()
       AsyncStorage.getItem(
@@ -159,7 +186,21 @@ export default class TravelMap extends Component {
          }}
          onPanDrag={ () => { this.state.following ? this.setState({following: false}) : null } }
        >
-       {console.log(this.state.points)}
+       {
+          this.state.loaded ?
+          this.state.VisiblePois.map( (item,i) => {
+            return( 
+              <Marker 
+                key={i} 
+                coordinate={{latitude: item.latitude, longitude: item.longitude}} 
+                image={require('../assets/icons8-point-of-interest-52.png')}
+                onPress={ () => {
+                  this.showItem(this.state.VisiblePois[i])
+                } }
+              /> )
+          })
+          : null
+        }
        {
            this.state.loaded ? 
            this.state.points.map( 
@@ -167,7 +208,11 @@ export default class TravelMap extends Component {
                 { 
                   return( 
                     <View key={i} >
-                      { i !== 0 ? <Marker  coordinate={item[0]} image={ require('../assets/icons8-synchronize-filled-96.png') } /> : null } 
+                      { i !== 0 ? 
+                      <Marker  
+                        coordinate={item[0]} 
+                        image={ require('../assets/icons8-synchronize-filled-96.png') } 
+                      /> : null } 
                       <Polyline coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3} />
                     </View> 
                     ) 
@@ -186,7 +231,59 @@ export default class TravelMap extends Component {
          console.log("empty")
        }
        </MapView>
-       <Selector change={this.props.change} mode={'Travel'} following={ () => { this.setState({following: true}), this.viewPOI() } }/>
+       {/*POIS overlay*/}
+       <Overlay 
+          animationType="fade"
+          isVisible={this.state.showPOI}
+          onBackdropPress={() => this.setState({ showPOI: false })}
+        >
+        <View style={styles.containerP} >
+        <ScrollView contentContainerStyle={styles.scrollCont} >
+          <Text>{this.state.clean.name}</Text>
+          <Text>Category: {this.state.clean.category}</Text>
+          {
+            String(this.state.clean[0]).substr(0,4) === "<img" ?
+              //<HTML html={this.state.clean[0]} />
+              <></>
+            : 
+              <Text>{this.state.clean[0]}</Text>
+          }
+          {
+            this.state.clean.map(
+              (item, i) => {
+                if(i !== 0){
+                  return(
+                    <Text key={i} >{item}</Text>
+                  )
+                }
+              }
+            )
+          }
+        </ScrollView>
+        </View>
+        </Overlay>
+        {/*POIS List overlay*/}
+        <Overlay 
+          animationType="fade"
+          isVisible={this.state.showList}
+          onBackdropPress={() => this.setState({ showList: false })}
+        >
+        <View style={styles.containerP} >
+        <ScrollView contentContainerStyle={styles.scrollCont} >
+          {
+            this.state.VisiblePois.map( (item, i) => {
+              return(
+                <Text key={i} onPress={ () => {
+                  this.mView.animateCamera({center:{latitude: item.latitude, longitude: item.longitude}, zoom: 17})
+                  this.setState({showList: false})
+                } } > {item.name} </Text>
+              )
+            })
+          }
+        </ScrollView>
+        </View>
+        </Overlay>
+       <Selector change={this.props.change} mode={'Travel'} following={ () => { this.setState({following: true}), this.viewPOI() } } listPOIS={ ()=> this.setState({showList: true}) } />
       </View>
     </View>
       )

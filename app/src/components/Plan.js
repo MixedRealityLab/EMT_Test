@@ -91,11 +91,7 @@ export default class Plan extends Component{
         //Is it a walking journey?
         walk: this.state.walk,
         //Bus route
-        route: this.state.walk ? [this.state.jWalk] : 
-        //[this.state.jStart, this.state.jMiddle[0], this.state.jEnd]
-        //[this.state.jStart,] + this.state.jMiddle +[ this.state.jEnd]
-        this.makeRoute()
-        ,
+        route: this.state.walk ? [this.state.jWalk] : this.makeRoute(),
         //Bus Changes
         changes: this.state.changes,
         //Start point

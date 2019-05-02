@@ -62,7 +62,7 @@ const AppNavigator = createBottomTabNavigator(
     Plan: PlanScreen
   },
   {
-    initialRouteName: 'Explore',
+    initialRouteName: 'Plan',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',

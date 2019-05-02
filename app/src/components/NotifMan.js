@@ -85,7 +85,7 @@ class Manager{
         notif = true
         }
       }
-      if(dist < 11){
+      else if(dist < 11){
         this.sendNotif(facticle)
         notif=true
       }
