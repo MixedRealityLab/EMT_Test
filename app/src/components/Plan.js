@@ -33,6 +33,7 @@ export default class Plan extends Component{
                      '#fff000' ]
       }
     
+    this.makeRoute = this.makeRoute.bind(this)
     this.switch = this.switch.bind(this)
     this.getRoute = this.getRoute.bind(this)
     this.clearRoute = this.clearRoute.bind(this)
@@ -76,13 +77,25 @@ export default class Plan extends Component{
   );
   }
 
+  makeRoute(){
+    var route = []
+      route.push(this.state.jStart)
+      this.state.jMiddle.map( (item) => { route.push(item) })
+      route.push(this.state.jEnd)
+    return route
+  }
+
   beginRoute(){
     if(this.state.jMiddle.length !== 0){
       var Journey = {
         //Is it a walking journey?
         walk: this.state.walk,
         //Bus route
-        route: this.state.walk ? [this.state.jWalk] : [this.state.jStart, this.state.jMiddle[0], this.state.jEnd],
+        route: this.state.walk ? [this.state.jWalk] : 
+        //[this.state.jStart, this.state.jMiddle[0], this.state.jEnd]
+        //[this.state.jStart,] + this.state.jMiddle +[ this.state.jEnd]
+        this.makeRoute()
+        ,
         //Bus Changes
         changes: this.state.changes,
         //Start point
@@ -220,14 +233,14 @@ export default class Plan extends Component{
   }
   render(){
     if(this.state.jMiddle.length > 0){
-      if(this.state.jMiddle.length > 7){
+      if(this.state.jMiddle.length > 6){
         var lastItem = this.state.jMiddle[this.state.jMiddle.length-1]
       }
       else{
-        console.log(this.state.jMiddle.length)
+        //console.log(this.state.jMiddle.length)
         let temp = this.state.jMiddle[this.state.jMiddle.length-1]
         var lastItem = temp[temp.length -1]
-        console.log(lastItem)
+        //console.log(lastItem)
       }
     }
 

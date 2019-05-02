@@ -107,7 +107,7 @@ export default class TravelMap extends Component {
       this.getFacticles()
       AsyncStorage.getItem(
         //this.props.jKey
-        '0005'
+        '0013'
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
       )
       .then(
@@ -128,7 +128,7 @@ export default class TravelMap extends Component {
       .then( (res) => this.setState({points: res, loaded: true}) )
       .then( () => { AsyncStorage.setItem('CurrentJ', 
         //this.props.jKey
-        '0005'
+        '0013'
       ) } )
       console.log(StateManager.returnState())
     }
@@ -159,6 +159,7 @@ export default class TravelMap extends Component {
          }}
          onPanDrag={ () => { this.state.following ? this.setState({following: false}) : null } }
        >
+       {console.log(this.state.points)}
        {
            this.state.loaded ? 
            this.state.points.map( 
