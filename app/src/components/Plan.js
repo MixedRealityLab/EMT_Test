@@ -112,6 +112,7 @@ export default class Plan extends Component{
           }
           AsyncStorage.setItem(newKey, JSON.stringify(Journey))
           AsyncStorage.setItem('travel', 'true')
+          AsyncStorage.setItem('VisPOIS',JSON.stringify([]))
           this.props.change(newKey)
         }
       })

@@ -100,6 +100,18 @@ class Lobby extends React.Component {
           }
         }
       )
+      //Look for VisPOIS object inside async storage, if not found, create one
+      AsyncStorage.getItem(
+        'VisPOIS', (err,res) => {
+          if(res !== null){
+            console.log("VisPOIS found")
+          }
+          else{
+            console.log("No VisPOIS found")
+            AsyncStorage.setItem('VisPOIS', JSON.stringify([]))
+          }
+        }
+      )
       //Temp function to load up facticles, will be changed later
       AsyncStorage.getItem(
         'facticles', (err,res) => {

@@ -53,11 +53,25 @@ export default class TravelMap extends Component {
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             } )
+            AsyncStorage.getItem('VisPOIS', (err,res) => {
+              if(res !== JSON.stringify(this.state.VisiblePois)){
+                this.setState({VisiblePois: JSON.parse(res)})
+              }
+            })
             //Check if facticles are turned on
             if(this.state.Settings.Facticle)
               AppMan.state.facticles.map( (item) => {
               //Make sure that only the facticle categories that the user selected show up
-              if(this.state.Settings.Filter.includes(item.category)) AppMan.checkDist(position.coords, item) 
+              if(this.state.Settings.Filter.includes(item.category)){
+                //If a facticle is visible, add it to the list of visible POIS
+                let vis = AppMan.checkDist(position.coords, item)
+                if(vis){
+                  this.state.VisiblePois.push(
+                    item
+                  )
+                  AsyncStorage.setItem('VisPOIS', JSON.stringify(this.state.VisiblePois))
+                }
+              }
               })
             if(this.state.Direct)
               AppMan.state.journey.change.map( (item) => {

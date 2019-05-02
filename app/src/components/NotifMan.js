@@ -73,19 +73,27 @@ class Manager{
   }
 
   checkDist(position, facticle){
+    var notif = false
     //if(!this.seen(facticle.id)){
     if(!this.state.seenFacticles.includes(facticle.id)){
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
       if(facticle.targets.length > 0){
         let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
         console.log(isInside)
-        if(isInside) this.sendNotif(facticle)
+        if(isInside){
+          this.sendNotif(facticle)
+        notif = true
+        }
       }
-      if(dist < 11) this.sendNotif(facticle)
+      if(dist < 11){
+        this.sendNotif(facticle)
+        notif=true
+      }
       else{
         //console.log("Too far away")
       }
     }
+    return notif
   }
 
   loadJourney(){
@@ -118,8 +126,8 @@ class Manager{
     console.log(item)
     var notifSet = {
       title: isFacticle ? "Point of interest" : "Bus change",
-      bigMess: isFacticle ? item.name : "Change to bus " + item.name,
-      mainMess : isFacticle ? item.description: "Change to bus " + item.name,
+      bigMess: isFacticle ? "Did you know you are near to " + (item.name.substring(0,2) === 'The' ? "" : "The ") + item.name : "Change to bus " + item.name,
+      //mainMess : isFacticle ? item.description: "Change to bus " + item.name,
       tag: isFacticle ? item.category : "bus_change",
       group: isFacticle ? "Facticle" : "BusChange"
     }
@@ -138,7 +146,7 @@ class Manager{
   
           //iOS and Android properties 
           title: notifSet.title,      // (optional)
-          message: notifSet.mainMess, // (required)
+          message: notifSet.bigMess,  // (required)
           playSound: false,           // (optional) default: true
           //actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
