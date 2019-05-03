@@ -32,7 +32,7 @@ export default class Plan extends Component{
                      '#000000' ,
                      '#fff000' ]
       }
-    
+
     this.makeRoute = this.makeRoute.bind(this)
     this.switch = this.switch.bind(this)
     this.getRoute = this.getRoute.bind(this)
@@ -132,10 +132,10 @@ export default class Plan extends Component{
         "A route needs to be selected in order to begin a journey"
       )
     }
-    
+
   }
 
-  getRoute(){   
+  getRoute(){
       if(this.props.childArr.key !== -1){
           this.getLoc()
           var journey = this.setJourney()
@@ -169,7 +169,7 @@ export default class Plan extends Component{
 
     let closeS = geolib.findNearest(this.state.currentPos, coordsLatLng, 0)
     temp[1] = closeS.key
-    
+
     let aLoc = {latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}
     let closeA = geolib.findNearest(aLoc, coordsLatLng, 0)
     temp[2] = closeA.key
@@ -178,8 +178,8 @@ export default class Plan extends Component{
   }
 
   getJourney(journey){
-    this.polyArriva(journey[1],journey[2]) 
-    
+    this.polyArriva(journey[1],journey[2])
+
     this.setState({
       show: true
     })
@@ -200,14 +200,17 @@ export default class Plan extends Component{
       var jnySec = []
       var jnyCount = 0
       for(let i = 0; i < sections.length; i++){
-        let temp = polyline.decode(data.common.polyL[i].crdEncYX)
+        let temp = polyline.decode(data.common.polyL[i].crdEncYX);
+        // [Dominic] As the polylines going through Jubilee are broken, at
+        // the moment lets just show start/end points.
+        temp = [temp[0], temp[temp.length-1]];
         if(sections[i].type === "JNY"){
           console.log(data.common.prodL[jnyCount])
           jnySec.push(data.common.prodL[jnyCount])
           jnyCount++
         }
         points.push(
-          temp.map(item => 
+          temp.map(item =>
             ({
               latitude: item[0],
               longitude: item[1],
@@ -224,7 +227,7 @@ export default class Plan extends Component{
       .then( data => this.setState({
         jMiddle: data
       }),
-      
+
       )
   }
   render(){
@@ -254,7 +257,7 @@ export default class Plan extends Component{
               </Text>
             </Callout>
             </Marker>
-          
+
           <Marker
             coordinate={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}}
             image= { require('../../assets/icons8-destination-96.png') }
@@ -266,24 +269,24 @@ export default class Plan extends Component{
             </Callout>
           </Marker>
           {//Display either the walking route or the bus route, which can have walking sections
-            this.state.walk ? 
-            <MapViewDirections origin={this.state.currentPos} 
-              destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}} 
-              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'} 
+            this.state.walk ?
+            <MapViewDirections origin={this.state.currentPos}
+              destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}}
+              apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
               mode={'walking'}
               //Get polyline coords for walking
               onReady={(props) =>{ this.setState({jWalk: props.coordinates}) } }
               strokeColor={this.state.polyOptsWalk}
               strokeWidth = {3}/>
             :
-            this.state.jMiddle.length > 0 ? 
+            this.state.jMiddle.length > 0 ?
               <>
               {
-                this.state.jMiddle.length > 1 ? 
-                  this.state.jMiddle.map( 
+                this.state.jMiddle.length > 1 ?
+                  this.state.jMiddle.map(
                     (item, i) => ( <Marker key={i} coordinate={item[item.length-1]} image={require('../../assets/icons8-synchronize-filled-96.png')} />) )
                 : null
-              } 
+              }
 
               <MapViewDirections origin={this.state.currentPos}
                 destination={this.state.jMiddle.length > 7 ? this.state.jMiddle[0] : this.state.jMiddle[0][0]}
@@ -295,7 +298,7 @@ export default class Plan extends Component{
               {
                 this.state.jMiddle.map( (item, i) => ( <Polyline key={i} coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3}/>) )
               }
-              <MapViewDirections origin={lastItem} 
+              <MapViewDirections origin={lastItem}
                 destination={{latitude: this.props.childArr.Lat, longitude: this.props.childArr.Lon}}
                 onReady={(props) =>{ this.setState({jEnd: props.coordinates}) } }
                 apikey={'AIzaSyAl_iLAt_xLilUJm2K4oZgXfr1bP22LIxk'}
@@ -307,7 +310,7 @@ export default class Plan extends Component{
             :
             null
           }
-          </> 
+          </>
         : null}
       </>
       )
