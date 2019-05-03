@@ -17,7 +17,7 @@ var PushNotification = require('react-native-push-notification');
 export default class TravelMap extends Component {
 
     constructor(props){
-      super(props) 
+      super(props)
       this.state ={
         route: {},
         points: [],
@@ -104,7 +104,7 @@ export default class TravelMap extends Component {
               AppMan.state.journey.change.map( (item) => {
                 AppMan.checkDist(position.coords, item)
               })
-            
+
         },
         (error) => {
             // See error code charts below.
@@ -120,7 +120,7 @@ export default class TravelMap extends Component {
         this.setState({facticles: response.data})
         return response.data
       })
-      .then( data => 
+      .then( data =>
         AsyncStorage.setItem('facticles', JSON.stringify(data))
       )
     }
@@ -133,8 +133,7 @@ export default class TravelMap extends Component {
       this.intervalID = setInterval( () => this.getLoc(), 5000)
       this.getFacticles()
       AsyncStorage.getItem(
-        //this.props.jKey
-        '0013'
+        this.props.jKey
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
       )
       .then(
@@ -149,13 +148,12 @@ export default class TravelMap extends Component {
             }
           }
           else temp = this.state.points
-            return temp  
+            return temp
             }
           )
       .then( (res) => this.setState({points: res, loaded: true}) )
-      .then( () => { AsyncStorage.setItem('CurrentJ', 
-        //this.props.jKey
-        '0013'
+      .then( () => { AsyncStorage.setItem('CurrentJ',
+        this.props.jKey
       ) } )
       console.log(StateManager.returnState())
     }
@@ -177,7 +175,7 @@ export default class TravelMap extends Component {
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
-         
+
          initialRegion={{
            latitude: 52.944351,
            longitude: -1.190312,
@@ -189,10 +187,10 @@ export default class TravelMap extends Component {
        {
           this.state.loaded ?
           this.state.VisiblePois.map( (item,i) => {
-            return( 
-              <Marker 
-                key={i} 
-                coordinate={{latitude: item.latitude, longitude: item.longitude}} 
+            return(
+              <Marker
+                key={i}
+                coordinate={{latitude: item.latitude, longitude: item.longitude}}
                 image={require('../assets/icons8-point-of-interest-52.png')}
                 onPress={ () => {
                   this.showItem(this.state.VisiblePois[i])
@@ -202,21 +200,21 @@ export default class TravelMap extends Component {
           : null
         }
        {
-           this.state.loaded ? 
-           this.state.points.map( 
-             (item, i) => 
-                { 
-                  return( 
+           this.state.loaded ?
+           this.state.points.map(
+             (item, i) =>
+                {
+                  return(
                     <View key={i} >
-                      { i !== 0 ? 
-                      <Marker  
-                        coordinate={item[0]} 
-                        image={ require('../assets/icons8-synchronize-filled-96.png') } 
-                      /> : null } 
+                      { i !== 0 ?
+                      <Marker
+                        coordinate={item[0]}
+                        image={ require('../assets/icons8-synchronize-filled-96.png') }
+                      /> : null }
                       <Polyline coordinates={item} strokeColor = {this.state.polyOptsBus[i]} strokeWidth = {3} />
-                    </View> 
-                    ) 
-                } 
+                    </View>
+                    )
+                }
              )
             : console.log("empty")
        }
@@ -225,14 +223,14 @@ export default class TravelMap extends Component {
          this.state.currentPos.latitude === undefined ? console.log("empty")
          : <Marker coordinate={ this.state.currentPos }
             image={ require('../assets/mylocation.gif') }
-            style={styles.image} 
+            style={styles.image}
             />
          :
          console.log("empty")
        }
        </MapView>
        {/*POIS overlay*/}
-       <Overlay 
+       <Overlay
           animationType="fade"
           isVisible={this.state.showPOI}
           onBackdropPress={() => this.setState({ showPOI: false })}
@@ -245,7 +243,7 @@ export default class TravelMap extends Component {
             String(this.state.clean[0]).substr(0,4) === "<img" ?
               //<HTML html={this.state.clean[0]} />
               <></>
-            : 
+            :
               <Text>{this.state.clean[0]}</Text>
           }
           {
@@ -263,7 +261,7 @@ export default class TravelMap extends Component {
         </View>
         </Overlay>
         {/*POIS List overlay*/}
-        <Overlay 
+        <Overlay
           animationType="fade"
           isVisible={this.state.showList}
           onBackdropPress={() => this.setState({ showList: false })}
@@ -289,7 +287,7 @@ export default class TravelMap extends Component {
       )
     }
   }
-  
+
   const styles = StyleSheet.create({
     mapContainer: {
       flex: 8,
@@ -307,8 +305,7 @@ export default class TravelMap extends Component {
     },
     image: {
       height: 22,
-      width: 22 
+      width: 22
     }
-    
+
   })
-  

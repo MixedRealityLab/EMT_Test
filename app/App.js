@@ -19,7 +19,7 @@ class ExploreScreen extends React.Component {
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <MapSimple />
       </View>
-      
+
     )
   }
 }
@@ -29,7 +29,7 @@ class ExploreScreen extends React.Component {
  */
 class PlanScreen extends React.Component {
   constructor(props){
-    super(props) 
+    super(props)
     this.state ={
       changeView: true,
       journeyKey: ''
@@ -47,11 +47,11 @@ class PlanScreen extends React.Component {
   }
   render() {
     return (
-      this.state.changeView ? 
+      this.state.changeView ?
       <TravelMap change={this.change} jKey={this.state.journeyKey} />
       :
       <Map change={this.change}/>
-      
+
     )
   }
 }
@@ -62,7 +62,7 @@ const AppNavigator = createBottomTabNavigator(
     Plan: PlanScreen
   },
   {
-    initialRouteName: 'Plan',
+    initialRouteName: 'Explore',
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: '#add8e6',
