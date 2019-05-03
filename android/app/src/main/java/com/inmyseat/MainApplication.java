@@ -1,7 +1,9 @@
 package com.inmyseat;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.content.Intent;
 
@@ -11,6 +13,7 @@ import java.util.List;
 import android.location.LocationManager;
 import android.location.LocationListener;
 import android.location.Location;
+import android.support.v4.content.ContextCompat;
 
 import com.facebook.react.ReactApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
@@ -85,9 +88,16 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
 
-    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);     
+    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     // Start requesting for location
-    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, listener);
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+      locationManager.requestLocationUpdates(
+              LocationManager.GPS_PROVIDER,
+              2000,
+              1,
+              listener);
+    }
 
     SoLoader.init(this, /* native exopackage */ false);
   }
