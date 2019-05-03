@@ -8,10 +8,10 @@ import POIS from './components/POIS'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 
-export default class MapSimple extends Component {
+export default class ExploreMap extends Component {
 
     constructor(props){
-      super(props) 
+      super(props)
       this.state ={
         filter: "N/A",
         region:{
@@ -81,7 +81,7 @@ export default class MapSimple extends Component {
         <POIS filter={this.state.filter} showOverlay={this.showOverlay} showItem={this.showItem} />
        </MapView>
       </View>
-      <Overlay 
+      <Overlay
           animationType="fade"
           isVisible={this.state.show}
           onBackdropPress={() => this.setState({ show: false })}
@@ -93,7 +93,7 @@ export default class MapSimple extends Component {
           {
             String(this.state.clean[0]).substr(0,4) === "<img" ?
               <HTML html={this.state.clean[0]} />
-            : 
+            :
               <Text>{this.state.clean[0]}</Text>
           }
           {
@@ -111,10 +111,10 @@ export default class MapSimple extends Component {
         </ScrollView>
         </View>
         </Overlay>
-          <Selector 
+          <Selector
           mode={'View'}
-          viewPOI={this.viewPOI} 
-          setFilter={this.setFilter} 
+          viewPOI={this.viewPOI}
+          setFilter={this.setFilter}
           filter={this.state.filter}
           />
     </View>
@@ -138,4 +138,3 @@ export default class MapSimple extends Component {
       ...StyleSheet.absoluteFillObject,
     }
   });
-  

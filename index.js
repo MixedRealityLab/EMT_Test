@@ -1,8 +1,9 @@
 import { AppRegistry, AsyncStorage } from 'react-native'
-import App from './app/Menu'
+
 import { name as appName } from './app.json'
-import StateMan from './app/src/components/StateCheck'
-import LocMan from './app/src/components/BackgroundService'
+import App from './app/Menu.js'
+import LocMan from './app/src/components/BackgroundService.js'
+import StateMan from './app/src/components/StateCheck.js'
 
 
 const StateManager = new StateMan();
@@ -18,7 +19,7 @@ const initialise = async () => {
   AsyncStorage.getItem(
     'username', (err, res) => {
       if (res == null) {
-        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/newuser")
+        Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/newuser')
             .then(
               response => {
                 AsyncStorage.setItem('username', response.data.id)

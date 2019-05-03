@@ -1,9 +1,9 @@
-import React from "react"
-import { createAppContainer, createDrawerNavigator } from "react-navigation"
+import React from 'react'
+import { createAppContainer, createDrawerNavigator } from 'react-navigation'
 
 import Info from './src/Info.js'
 import Map from './src/Map.js'
-import MapSimple from "./src/MapSimple.js"
+import ExploreMap from './src/ExploreMap.js'
 import Settings from './src/Settings'
 import TravelMap from './src/Travel'
 
@@ -13,7 +13,7 @@ class ExploreScreen extends React.Component {
     drawerLabel: 'Explore',
   };
   render() {
-    return (<MapSimple />)
+    return (<ExploreMap />)
   }
 }
 
