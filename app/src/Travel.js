@@ -130,7 +130,7 @@ export default class TravelMap extends Component {
       this.getLoc()
       AppMan.loadJourney()
       AsyncStorage.setItem('VisPOIS', '[]')
-      this.intervalID = setInterval( () => this.getLoc(), 5000)
+      this.intervalID = setInterval( () => this.getLoc(), 2000)
       this.getFacticles()
       AsyncStorage.getItem(
         this.props.jKey

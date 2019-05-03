@@ -38,12 +38,12 @@ class LocationManager{
               if(res === 'true'){
                 AppMan.loadJourney()
                 console.log("Checking")
-                //Create background timer and execute every 5000ms (5 seconds)
+                //Create background timer and execute every 2000ms (2 seconds)
                 this.state.interval = BackgroundTimer.setInterval(() => {
                   this.getLoc()
                   console.log('Item: ' + this.state.item);
                   this.state.item++
-              }, 5000)
+              }, 2000)
               }
               else AppMan.state.loaded = false
             }
