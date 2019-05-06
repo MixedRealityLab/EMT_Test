@@ -8,7 +8,7 @@ import POIS from './components/POIS'
 import { mapStyle } from './components/Requests'
 import Selector from './components/Selector'
 
-export default class ExploreMap extends Component {
+export default class Explore extends Component {
 
     constructor(props){
       super(props)

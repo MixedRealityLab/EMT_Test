@@ -1,11 +1,11 @@
 import React from 'react'
 import { createAppContainer, createDrawerNavigator } from 'react-navigation'
 
-import Info from './src/Info.js'
-import Map from './src/Map.js'
-import ExploreMap from './src/ExploreMap.js'
-import Settings from './src/Settings'
-import TravelMap from './src/Travel'
+import Explore from './src/Explore.js'
+import History from './src/History.js'
+import Plan from './src/Plan.js'
+import Settings from './src/Settings.js'
+import Travel from './src/Travel.js'
 
 
 class ExploreScreen extends React.Component {
@@ -13,11 +13,28 @@ class ExploreScreen extends React.Component {
     drawerLabel: 'Explore',
   };
   render() {
-    return (<ExploreMap />)
+    return (<Explore />)
   }
 }
 
-class PlanScreen extends React.Component {
+class HistoryScreen extends React.Component {
+  static navigationOptions = {
+    drawerLabel: 'History',
+  };
+  render() {
+    return (<History />)
+  }
+}
+class SettingsScreen extends React.Component {
+  static navigationOptions = {
+    drawerLabel: 'Settings',
+  };
+  render() {
+    return (<Settings />)
+  }
+}
+
+class TravelPlanScreen extends React.Component {
   static navigationOptions = {
     drawerLabel: 'Plan',
   };
@@ -40,29 +57,10 @@ class PlanScreen extends React.Component {
   }
   render() {
     return (
-      this.state.changeView ?
-      <TravelMap change={this.change} jKey={this.state.journeyKey} />
-      :
-      <Map change={this.change} />
+      this.state.changeView
+          ? <Travel change={this.change} jKey={this.state.journeyKey} />
+          : <Plan change={this.change} />
     )
-  }
-}
-
-class HistoryScreen extends React.Component {
-  static navigationOptions = {
-    drawerLabel: 'History',
-  };
-  render() {
-    return (<Info />)
-  }
-}
-
-class SettingsScreen extends React.Component {
-  static navigationOptions = {
-    drawerLabel: 'Settings',
-  };
-  render() {
-    return (<Settings />)
   }
 }
 
@@ -70,8 +68,8 @@ const DrawerNavigator = createDrawerNavigator({
   Explore: {
     screen: ExploreScreen,
   },
-  Plan: {
-    screen: PlanScreen
+  TravelPlan: {
+    screen: TravelPlanScreen
   },
   History: {
     screen: HistoryScreen,

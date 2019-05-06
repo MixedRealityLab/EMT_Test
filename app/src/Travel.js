@@ -14,7 +14,7 @@ import LocMan from './components/BackgroundService'
 const StateManager = new StateMan()
 var PushNotification = require('react-native-push-notification');
 
-export default class TravelMap extends Component {
+export default class Travel extends Component {
 
     constructor(props){
       super(props)

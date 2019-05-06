@@ -13,7 +13,7 @@ var geolib = require('geolib')
 /**
  * Class that handles displaying the planned route
  */
-export default class Plan extends Component{
+export default class PlanComponent extends Component{
   constructor(props) {
     super(props);
 

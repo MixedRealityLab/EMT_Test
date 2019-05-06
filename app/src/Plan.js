@@ -4,10 +4,10 @@ import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
 import { mapStyle } from './components/Requests'
 import Stops from './components/Stops'
 import Buses from './components/Buses'
-import Plan from './components/Plan'
+import PlanComponent from './components/Plan'
 import Selector from './components/Selector'
 
-export default class Map extends Component {
+export default class Plan extends Component {
 
     constructor(props){
       super(props)
@@ -20,11 +20,11 @@ export default class Map extends Component {
     switch = () => {
       this.child.switch()
     }
-  
+
     clearRoute = () => {
       this.child.clearRoute()
     }
-  
+
     getRoute = () => {
       this.child.getRoute()
     }
@@ -56,13 +56,13 @@ export default class Map extends Component {
        >
         <Stops/>
         <Buses/>
-        <Plan 
+        <PlanComponent
           onRef={ref => (this.child = ref)} //Refernce in order to use childs functions
           childArr={this.state.arr}         //Pass selected end point to child
           change={this.props.change}        //Pass function to change from plan view to travel view
         />
        </MapView>
-       <Selector 
+       <Selector
             mode={'Plan'}                 //Tell component what to return
             setArr={this.setArr}          //Pass function to change end point
             arr={this.state.arr}          //Pass selected end point to component
@@ -76,7 +76,7 @@ export default class Map extends Component {
       );
     }
   }
-  
+
   const styles = StyleSheet.create({
     mapContainer: {
       flex: 8,
@@ -99,4 +99,3 @@ export default class Map extends Component {
       ...StyleSheet.absoluteFillObject,
     }
   });
-  
