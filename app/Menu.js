@@ -41,7 +41,7 @@ class TravelPlanScreen extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      changeView: true,
+      showTravelView: false,
       journeyKey: ''
     }
     this.change = this.change.bind(this)
@@ -50,14 +50,14 @@ class TravelPlanScreen extends React.Component {
   change(jKey){
     this.setState(
       {
-        changeView: !this.state.changeView,
+        showTravelView: !this.state.showTravelView,
         journeyKey: jKey
       }
     )
   }
   render() {
     return (
-      this.state.changeView
+      this.state.showTravelView
           ? <Travel change={this.change} jKey={this.state.journeyKey} />
           : <Plan change={this.change} />
     )
