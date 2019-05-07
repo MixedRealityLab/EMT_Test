@@ -1,25 +1,64 @@
-/**
- * @format
- * @lint-ignore-every XPLATJSCOPYRIGHT1
- */
-
 import { AppRegistry, AsyncStorage } from 'react-native'
-import App from './app/Menu'
-import { name as appName } from './app.json'
-import StateMan from './app/src/components/StateCheck'
-import LocMan from './app/src/components/BackgroundService'
 
-/**
- * Entry point to app
- * Here is where the headless JS task runs
- */
+import { name as appName } from './app.json'
+import App from './app/Menu.js'
+import LocMan from './app/src/components/BackgroundService.js'
+import StateMan from './app/src/components/StateCheck.js'
+
 
 const StateManager = new StateMan();
-AppRegistry.registerComponent(appName, () => App)
 
 const Notif = async (data) => {
   if(StateManager.returnState() !== 'active'){
     LocMan.startScan()
-  }    
+  }
 }
-AppRegistry.registerHeadlessTask('Notif', () => Notif.bind(null, [LocMan, StateManager]))
+
+const initialise = async () => {
+
+  AsyncStorage.getItem(
+    'username', (err, res) => {
+      if (res == null) {
+        Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/newuser')
+            .then(
+              response => {
+                AsyncStorage.setItem('username', response.data.id)
+                AsyncStorage.setItem('password', response.data.password)
+              }
+            )
+      }
+    }
+  );
+
+  AsyncStorage.getItem(
+    'Setting', (err, res) => {
+      if (res == null) {
+        let obj = { Direct: true, Facticle: true, Filter: [], NotifRate: 1 };
+        AsyncStorage.setItem('Setting', JSON.stringify(obj));
+      }
+    }
+  );
+
+  AsyncStorage.getItem(
+    'VisPOIS', (err, res) => {
+      if (res == null) {
+        AsyncStorage.setItem('VisPOIS', JSON.stringify([]));
+      }
+    }
+  );
+
+  AsyncStorage.getItem(
+    'facticles', (err, res) => {
+      if (res == null) {
+        AsyncStorage.setItem('facticles', JSON.stringify([]));
+      }
+    }
+  );
+
+};
+initialise();
+
+AppRegistry.registerComponent(appName, () => App)
+AppRegistry.registerHeadlessTask(
+    'Notif',
+    () => Notif.bind(null, [LocMan, StateManager]));
