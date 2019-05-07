@@ -7,11 +7,13 @@ import Plan from './src/Plan.js'
 import Settings from './src/Settings.js'
 import Travel from './src/Travel.js'
 
-
 class ExploreScreen extends React.Component {
   static navigationOptions = {
     drawerLabel: 'Explore',
   };
+  constructor(props){
+    super(props)
+  }
   render() {
     return (<Explore />)
   }

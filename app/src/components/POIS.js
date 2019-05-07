@@ -9,7 +9,7 @@ export default class POIS extends Component{
     
         this.state = {
             POIS: [],
-            render: [],
+            //render: [],
             show: false
         }
         this.returnInfo = this.returnInfo.bind(this)
@@ -25,14 +25,14 @@ export default class POIS extends Component{
           return response.data
         })
         .then(data => this.setState({ POIS: data}))
-        .then( () => {
+        /*.then( () => {
           var render = []
           for(let i = 0; i < this.state.POIS.length; i++){
             render[i] = false
           }
           return render
         })
-        .then(data => this.setState({render: data}))
+        .then(data => this.setState({render: data}))*/
     }
 
     render(){

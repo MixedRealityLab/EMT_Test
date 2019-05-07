@@ -1,10 +1,9 @@
 import { AppRegistry, AsyncStorage } from 'react-native'
-
+import Axios from 'axios';
 import { name as appName } from './app.json'
 import App from './app/Menu.js'
 import LocMan from './app/src/components/BackgroundService.js'
 import StateMan from './app/src/components/StateCheck.js'
-
 
 const StateManager = new StateMan();
 
@@ -33,8 +32,13 @@ const initialise = async () => {
   AsyncStorage.getItem(
     'Setting', (err, res) => {
       if (res == null) {
-        let obj = { Direct: true, Facticle: true, Filter: [], NotifRate: 1 };
-        AsyncStorage.setItem('Setting', JSON.stringify(obj));
+        Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
+        .then( response => {
+          let obj = { Direct: true, Facticle: true, Filter: response.data, NotifRate: 1 };
+          AsyncStorage.setItem('Setting', JSON.stringify(obj));
+        } )
+
+        
       }
     }
   );

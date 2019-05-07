@@ -23,6 +23,42 @@ export const reqBod = {
   
   "ver": "1.16"
 }
+
+export const reqStopTimes = {
+  "svcReqL": [
+    {
+      "cfg": {
+        "polyEnc": "GPA"
+      },
+      "meth": "StationBoard",
+      "req": {
+        "date": "20181108",
+        "dur": 119,
+        "getPasslist": false,
+        "jnyFltrL": [
+          {
+            "mode": "BIT",
+            "type": "PROD",
+            "value": "11111111111111"
+          }
+        ],
+        "stbLoc": {
+          "crd": {
+            "x": -1183672,
+            "y": 52950473
+          },
+          "eteId": "A=1@O=Nottingham University Jubilee Campus Innovation Pa@X=-1183672@Y=52950473@u=0@U=70@L=530123@Nottingham University Jubilee Campus Innovation Pa",
+          "extId": "530123",
+          "lid": "A=1@O=Nottingham University Jubilee Campus Innovation Pa@X=-1183672@Y=52950473@u=0@U=70@L=530123@",
+          "name": "Nottingham University Jubilee Campus Innovation Pa",
+          "type": "S"
+        },
+        "time": "152400"
+      }
+    }
+  ],
+}
+
 export const reqStop = {
   
   "svcReqL": [
@@ -360,15 +396,6 @@ export const mapStyle = [
   },
   {
     "featureType": "administrative",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative",
     "elementType": "geometry.stroke",
     "stylers": [
       {
@@ -395,27 +422,11 @@ export const mapStyle = [
     ]
   },
   {
-    "featureType": "administrative.neighborhood",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
     "featureType": "landscape.natural",
     "elementType": "geometry",
     "stylers": [
       {
         "color": "#dfd2ae"
-      }
-    ]
-  },
-  {
-    "featureType": "poi",
-    "stylers": [
-      {
-        "visibility": "off"
       }
     ]
   },
@@ -461,24 +472,6 @@ export const mapStyle = [
     "stylers": [
       {
         "color": "#f5f1e6"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels.icon",
-    "stylers": [
-      {
-        "visibility": "off"
       }
     ]
   },
@@ -537,14 +530,6 @@ export const mapStyle = [
     ]
   },
   {
-    "featureType": "transit",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
     "featureType": "transit.line",
     "elementType": "geometry",
     "stylers": [
@@ -586,15 +571,6 @@ export const mapStyle = [
     "stylers": [
       {
         "color": "#b9d3c2"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text",
-    "stylers": [
-      {
-        "visibility": "off"
       }
     ]
   },

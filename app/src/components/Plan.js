@@ -230,6 +230,7 @@ export default class PlanComponent extends Component{
 
       )
   }
+  
   render(){
     if(this.state.jMiddle.length > 0){
       if(this.state.jMiddle.length > 6){

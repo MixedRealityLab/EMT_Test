@@ -273,7 +273,7 @@ export default class Travel extends Component {
               return(
                 <Text key={i} onPress={ () => {
                   this.mView.animateCamera({center:{latitude: item.latitude, longitude: item.longitude}, zoom: 17})
-                  this.setState({showList: false})
+                  this.setState({showList: false, following: false})
                 } } > {item.name} </Text>
               )
             })

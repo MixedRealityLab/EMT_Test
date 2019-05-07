@@ -89,6 +89,7 @@ export default class Info extends Component{
             temp.push(item)
         }
         this.setState({filterList: temp})
+        this.saveSettings()
     }
 
     render(){
@@ -105,12 +106,12 @@ export default class Info extends Component{
                                 <CheckBox
                                 title='Direction notifications'
                                 checked={this.state.notifDirect}
-                                onPress={() => this.setState({notifDirect: !this.state.notifDirect})}
+                                onPress={() => {this.setState({notifDirect: !this.state.notifDirect}); this.saveSettings() } }
                                 />
                                 <CheckBox
                                 title='Facticle Notifications'
                                 checked={this.state.notifFacticle}
-                                onPress={() => this.setState({notifFacticle: !this.state.notifFacticle})}
+                                onPress={() => { this.setState({notifFacticle: !this.state.notifFacticle}); this.saveSettings() }}
                                 />
                             </View>
                         </View>
@@ -151,6 +152,7 @@ export default class Info extends Component{
                                 <Slider
                                     value={this.state.rateNotif}
                                     onValueChange={ value => this.setState({ rateNotif: value })}
+                                    onSlidingComplete={ () => this.saveSettings() }
                                     minimumValue={1}
                                     maximumValue={10}
                                     step={1}
