@@ -13,7 +13,7 @@ class ExploreScreen extends React.Component {
     drawerLabel: 'Explore',
   };
   render() {
-    return (<Explore />)
+    return (<Explore navigation={this.props.navigation} />)
   }
 }
 
@@ -22,7 +22,7 @@ class HistoryScreen extends React.Component {
     drawerLabel: 'History',
   };
   render() {
-    return (<History />)
+    return (<History navigation={this.props.navigation} />)
   }
 }
 class SettingsScreen extends React.Component {

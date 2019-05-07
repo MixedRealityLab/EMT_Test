@@ -1,5 +1,7 @@
 import { AppRegistry, AsyncStorage } from 'react-native'
 
+import Axios from 'axios';
+
 import { name as appName } from './app.json'
 import App from './app/Menu.js'
 import LocMan from './app/src/components/BackgroundService.js'
