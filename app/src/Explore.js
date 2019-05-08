@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import ActionButton from 'react-native-action-button'
-import { Overlay, SearchBar } from 'react-native-elements'
+import { Picker, ScrollView, StyleSheet, Text, View } from 'react-native';
+import ActionButton from 'react-native-action-button';
+import { Overlay, SearchBar } from 'react-native-elements';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import HTML from 'react-native-render-html'
+import HTML from 'react-native-render-html';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { DrawerActions } from 'react-navigation';
 
 import Axios from 'axios';
+import capitalize from 'capitalize';
 
-import Stops from './components/Stops.js'
-import POIS from './components/POIS.js'
-import { mapStyle } from './components/Requests.js'
+import Stops from './components/Stops.js';
+import POIS from './components/POIS.js';
+import { mapStyle } from './components/Requests.js';
 
 
 class Search extends Component {
@@ -39,7 +40,7 @@ class Search extends Component {
           return 0;
         });
       })
-      .then(data => this.setState({ pois: data, isLoaded: true }))
+      .then(data => this.setState({ pois: data, isLoaded: true }));
   }
 
   setVisible(isVisible) {
@@ -69,7 +70,10 @@ class Search extends Component {
                           key={i}
                           style={styles.textList}
                           onPress={() => {
-                            this.props.viewPOI(item.latitude, item.longitude, item.name, i)
+                            this.props.viewPOI(
+                                item.latitude,
+                                item.longitude,
+                                item.name, i);
                             this.setVisible(false);
                           }}>
                         {item.name}
@@ -90,6 +94,7 @@ export default class Explore extends Component {
     super(props)
     this.state = {
       filter: 'N/A',
+      categories: [],
       region: {
         latitude: 52.944351,
         longitude: -1.190312,
@@ -107,8 +112,18 @@ export default class Explore extends Component {
     this.showItem = this.showItem.bind(this)
   }
 
+  componentDidMount(){
+    Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
+        .then( response => this.setState( {categories: response.data.sort()}) );
+  }
+
   viewPOI(lat, lon) {
-    this.mView.animateCamera({ center: { latitude: lat, longitude: lon }, zoom: 17 })
+    this.mView.animateCamera({
+      center: {
+        latitude: lat,
+        longitude: lon
+      },
+      zoom: 17 });
   }
 
   setFilter(filter) {
@@ -166,10 +181,9 @@ export default class Explore extends Component {
               <Text>{this.state.item.name}</Text>
               <Text>Category: {this.state.item.category}</Text>
               {
-                String(this.state.clean[0]).substr(0, 4) === '<img' ?
-                  <HTML html={this.state.clean[0]} />
-                  :
-                  <Text>{this.state.clean[0]}</Text>
+                String(this.state.clean[0]).substr(0, 4) === '<img'
+                    ? <HTML html={this.state.clean[0]} />
+                    : <Text>{this.state.clean[0]}</Text>
               }
               {
                 this.state.clean.map(
@@ -183,16 +197,21 @@ export default class Explore extends Component {
             </ScrollView>
           </View>
         </Overlay>
-        {/*<Selector
-          mode={'View'}
-          viewPOI={this.viewPOI}
-          setFilter={this.setFilter}
-          filter={this.state.filter}
-        />*/}
+        <Picker
+            style={styles.picker}
+            selectedValue={this.state.filter}
+            onValueChange={(itemValue, itemIndex) => {
+              this.setFilter(itemValue);
+            }}>
+          <Picker.Item label="Select Filter" value="N/A" />
+          { this.state.categories.map( (item, i) => {
+            const itemName = capitalize.words(item);
+            return(
+              <Picker.Item key={i} label={itemName} value={item} /> ) } )
+          }
+        </Picker>
         <Search
             ref={searchOverlayRef}
-            viewPOI={this.viewPOI}
-            setFilter={this.setFilter}
             filter={this.state.filter} />
         <ActionButton
             position='left'
