@@ -1,5 +1,6 @@
 import { AsyncStorage } from 'react-native'
 import Axios from 'axios'
+import BackgroundTimer from 'react-native-background-timer';
 
 var PushNotification = require('react-native-push-notification')
 var geolib = require('geolib')
@@ -16,11 +17,13 @@ class Manager{
           item: 0,
           loaded: false,
           facticles: [],
-          facticleQueue: [],
+          facticleQueue: 1,
           factileRate: 1,
+          nextFacticle: false,
           seenFacticles: [],
           journey: {},
-          categories: []
+          categories: [],
+          timer: ""
       }
 
       PushNotification.configure({
@@ -41,22 +44,55 @@ class Manager{
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
       
-      this.checkNotif   = this.checkNotif.bind(this)
-      this.queue        = this.queue.bind(this)
-      this.testNotif    = this.testNotif.bind(this)
-      this.sendNotif    = this.sendNotif.bind(this)
+      if(this.state.timer.length < 1 ){
+        console.log("Setting timer")
+        this.state.timer = BackgroundTimer.setInterval(() => {
+          console.log(this.state.facticleQueue)
+          let newTime = this.state.facticleQueue - 1
+          if(newTime > 0){
+            this.state.facticleQueue = newTime
+          }
+          else {
+            this.state.facticleQueue = this.state.factileRate
+            this.state.nextFacticle = true
+          }
+        }, 1000)
+      }
+
+      this.setRate      = this.setRate    .bind(this)
+      this.queue        = this.queue      .bind(this)
+      this.testNotif    = this.testNotif  .bind(this)
+      this.sendNotif    = this.sendNotif  .bind(this)
       this.loadJourney  = this.loadJourney.bind(this)
-      this.checkDist    = this.checkDist.bind(this)
-      this.seen         = this.seen.bind(this)
+      this.checkDist    = this.checkDist  .bind(this)
+      this.seen         = this.seen       .bind(this)
   }
 
   queue(item){
-    if(item !== this.state.factileRate) this.state.factileRate = item
+    let free = false
+    //if(!this.state.seenFacticles.includes(item + "testNotif")){
 
+    if( this.state.nextFacticle){
+      console.log("Current queue: " + this.state.facticleQueue)
+      this.state.nextFacticle = false
+      free = true
+    }
+    else {
+      console.log("Notif limit reached for now")
+      free = false
+    }
+  /*
+  }
+  
+  else{
+    console.log("Seen")
+  }*/
+
+    return free
   }
 
-  checkNotif(item){
-
+  setRate(item){
+    this.state.factileRate = item
   }
 
   seen(id){
@@ -74,25 +110,38 @@ class Manager{
 
   checkDist(position, facticle){
     var notif = false
-    //if(!this.seen(facticle.id)){
-    if(!this.state.seenFacticles.includes(facticle.id)){
+    if(facticle.hasOwnProperty('cls')){
+      console.log("Has CLS")
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
-      if(facticle.targets.length > 0){
-        let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
-        console.log(isInside)
-        if(isInside){
-          this.sendNotif(facticle)
-        notif = true
-        }
-      }
-      else if(dist < 11){
+      if(dist < 11){
         this.sendNotif(facticle)
         notif=true
       }
-      else{
-        //console.log("Too far away")
+    }
+    else{
+      if(!this.state.seenFacticles.includes(facticle.id)){
+        let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
+        if(facticle.targets.length > 0){
+          let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
+          if(isInside){
+            if(this.queue()){
+              this.sendNotif(facticle)
+              notif = true
+            }
+          }
+        }
+        else if(dist < 11){
+          if(this.queue()){
+            this.sendNotif(facticle)
+            notif=true
+          }
+        }
+        else{
+          //console.log("Too far away")
+        }
       }
     }
+    
     return notif
   }
 
@@ -111,11 +160,15 @@ class Manager{
 
   testNotif(){
 
-    this.state.categories.map( (item) => {
-      PushNotification.localNotification({
-        message: "Test notification type: " + item, // (required)
-        tag: item
-      })
+    this.state.categories.map( (item,i) => {
+      if(this.queue(item)){
+          PushNotification.localNotification({
+            message: "Test notification type: " + item, // (required)
+            tag: item
+          })
+          this.state.seenFacticles.push(item + "testNotif")
+          
+      }
     } )
   }
 
@@ -158,3 +211,28 @@ class Manager{
 }
 
 export default AppMan = new Manager(); 
+
+
+
+/*queue(item){
+    let free = false
+    if(!this.state.seenFacticles.includes(item + "testNotif")){
+
+    let newQueue = this.state.facticleQueue - 1
+    if( newQueue > 0){
+      this.state.facticleQueue = newQueue
+      console.log("Current queue: " + this.state.facticleQueue)
+      free = true
+    }
+    else {
+      console.log("Notif limit reached for now")
+      free = false
+    }
+
+  }
+  else{
+    console.log("Seen")
+  }
+
+    return free
+  }*/

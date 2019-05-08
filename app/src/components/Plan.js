@@ -205,7 +205,6 @@ export default class PlanComponent extends Component{
         // the moment lets just show start/end points.
         temp = [temp[0], temp[temp.length-1]];
         if(sections[i].type === "JNY"){
-          console.log(data.common.prodL[jnyCount])
           jnySec.push(data.common.prodL[jnyCount])
           jnyCount++
         }

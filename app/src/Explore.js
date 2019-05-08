@@ -14,6 +14,20 @@ import Stops from './components/Stops.js';
 import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
 
+import Geolocation from 'react-native-geolocation-service'
+
+const getLoc = () => {
+  Geolocation.getCurrentPosition(
+    (position) => {
+        console.log(position.coords)
+    },
+    (error) => {
+        // See error code charts below.
+        console.log(error.code, error.message);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+);
+}
 
 class Search extends Component {
 
@@ -119,7 +133,13 @@ export default class Explore extends Component {
   componentDidMount(){
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
+        //this.intervalID = setInterval( () => getLoc(), 2000)
   }
+
+  /*componentWillUnmount(){
+    clearInterval(this.intervalID)
+    console.log("Unmount")
+  }*/
 
   viewPOI(lat, lon) {
     this.mView.animateCamera({

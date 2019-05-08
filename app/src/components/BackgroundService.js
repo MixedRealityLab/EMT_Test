@@ -61,6 +61,7 @@ class LocationManager{
               AppMan.state.facticles.map((item) => {
                   if(this.state.settings.Filter.includes(item.category)) {
                     let vis = AppMan.checkDist(position.coords, item)
+                    //AppMan.checkDist(position.coords, item)
                     if(vis){
                       AsyncStorage.getItem('VisPOIS', (err, res) => {
 
@@ -76,9 +77,12 @@ class LocationManager{
                   }
                 })
             }
-            if(this.state.settingsDirect)
-              AppMan.state.journey.change.map( (item) => {
-                AppMan.checkDist(position.coords, item)
+            if(this.state.settings.Direct)
+            AppMan.state.journey.changes.map( (item, i) => {
+              let dir = item
+              let loc = AppMan.state.journey.route[i + 1][0]
+              let temp = Object.assign(dir, loc)
+              AppMan.checkDist(position.coords, temp)
             })
         },
         (error) => {

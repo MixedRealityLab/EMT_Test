@@ -148,19 +148,20 @@ export default class Info extends Component{
                         <View style={{ height: this.state.rateOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
                             <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'center' , flexDirection: 'column'}}>
-                                <Text>Set how often factile notifications appear</Text>
+                                <Text>Set the time in seconds between facticle notifications</Text>
                                 <Slider
                                     value={this.state.rateNotif}
                                     onValueChange={ value => this.setState({ rateNotif: value })}
                                     onSlidingComplete={ () => this.saveSettings() }
-                                    minimumValue={1}
-                                    maximumValue={10}
+                                    minimumValue={0}
+                                    maximumValue={60}
                                     step={1}
                                 />
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
-                                <Text>Min</Text>
-                                <Text>Max</Text>
+                                <Text>0 Seconds</Text>
+                                <Text>60 Seconds</Text>
                                 </View>
+                                <Text>Current interval: {this.state.rateNotif}</Text>
                                 
                             </View>
                             </View>

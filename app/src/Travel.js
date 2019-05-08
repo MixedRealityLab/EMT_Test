@@ -80,6 +80,7 @@ export default class Travel extends Component {
                 this.setState({VisiblePois: JSON.parse(res)})
               }
             })
+            AppMan.setRate(this.state.Settings.NotifRate)
             //Check if facticles are turned on
             if(this.state.Settings.Facticle)
               AppMan.state.facticles.map( (item) => {
@@ -87,6 +88,7 @@ export default class Travel extends Component {
               if(this.state.Settings.Filter.includes(item.category)){
                 //If a facticle is visible, add it to the list of visible POIS
                 let vis = AppMan.checkDist(position.coords, item)
+                //AppMan.checkDist(position.coords, item)
                 if(vis){
                   console.log(item)
                   console.log(this.state.VisiblePois)
@@ -100,10 +102,15 @@ export default class Travel extends Component {
                 }
               }
               })
-            if(this.state.Direct)
-              AppMan.state.journey.change.map( (item) => {
-                AppMan.checkDist(position.coords, item)
+            if(this.state.Settings.Direct){
+              this.state.route.changes.map( (item, i) => {
+                let dir = item
+                let loc = this.state.route.route[i + 1][0]
+                let temp = Object.assign(dir, loc)
+                AppMan.checkDist(position.coords, temp)
               })
+            }
+            
 
         },
         (error) => {
@@ -126,7 +133,6 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
-      //AppMan.testNotif()
       this.getLoc()
       AppMan.loadJourney()
       AsyncStorage.setItem('VisPOIS', '[]')
