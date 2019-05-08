@@ -10,6 +10,7 @@
   "dependencies": {
     "@mapbox/polyline": "^1.0.0",
     "axios": "^0.18.0",
+    "capitalize": "^2.0.0",
     "easytimer.js": "^3.1.0",
     "geolib": "^2.0.24",
     "node-libs-react-native": "^1.0.3",
