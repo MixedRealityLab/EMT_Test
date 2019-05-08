@@ -62,7 +62,14 @@ export default class Stops extends Component{
       this.state.CurrDate = DY + DM + DD
   
       reqStopTimes.svcReqL[0].req.date = this.state.CurrDate
-      reqStopTimes.svcReqL[0].req.time = "" + this.state.Date.getHours() + this.state.Date.getMinutes() + "00"
+
+      let TH = this.state.Date.getHours()
+      if(String(TH).length === 1) TH = "0" + TH
+      let TM = this.state.Date.getMinutes()
+      if(String(TM).length === 1) TM = "0" + TM
+
+
+      reqStopTimes.svcReqL[0].req.time = "" + TH + TM + "00"
 
       Axios.post(
         'https://inmyseat.chronicle.horizon.ac.uk/proxy/', Object.assign(reqBod, reqStopTimes)
@@ -82,9 +89,9 @@ export default class Stops extends Component{
               list.push(temp)
           }
           console.log(list)
-          this.setState({BusList: list})
+          this.props.showItem(list)
+          
       })
-      .then(this.forceUpdate())
       .catch(err => console.log(err))
     }
 
@@ -97,32 +104,12 @@ export default class Stops extends Component{
                     name={item.name}
                     coordinate={{latitude: item.lat, longitude: item.lng}}
                     image={require('../../assets/icon-bus-stop-64.png')}
-                    onPress={ () => { this.getStopInfo(i) } }
+                    onPress={ () => { this.props.showOverlay(); this.getStopInfo(i)} }
                     >
-                    <Callout style={{flex:1, flexDirection:'column', height:125, width:200}} onPress={ ()=>{ console.log("I am: " + stopList[i]);  } }>
-                      <View style={{flex:1, flexDirection: 'column', }} >
-                      <Text>Bus Times</Text>
-                      {
-                        this.state.BusList.map( (item,i) => {let temp = "" + item.time; let cleanTime = temp.substr(0,2) + ":" + temp.substr(2,2) + ":" + temp.substr(4,2) 
-                          return( <Text key={i} > Bus: {"" + item.bus}, Time: { cleanTime } </Text> )
-                        } )
-                      }
-                      </View>
-                    </Callout>
+                    
                 </Marker>  
               )
             })
           )
     }
 }
-
-
-        /*<Overlay
-          animationType="fade"
-          isVisible={this.state.show}
-          onBackdropPress={() => this.setState({ show: false })}
-        >
-        <View style={styles.containerP} >
-        <Text>Hi</Text>
-        </View>
-        </Overlay>*/

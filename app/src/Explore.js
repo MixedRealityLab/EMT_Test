@@ -96,15 +96,19 @@ export default class Explore extends Component {
         latitudeDelta: 0.020,
         longitudeDelta: 0.0121
       },
-      show: false,
+      showPOI: false,
+      showTime: false,
       item: {},
-      clean: []
+      clean: [],
+      busTimes: []
     }
 
     this.viewPOI = this.viewPOI.bind(this)
     this.setFilter = this.setFilter.bind(this)
-    this.showOverlay = this.showOverlay.bind(this)
+    this.showOverlayPOI = this.showOverlayPOI.bind(this)
+    this.showOverlayTime = this.showOverlayTime.bind(this)
     this.showItem = this.showItem.bind(this)
+    this.showBusTime = this.showBusTime.bind(this)
   }
 
   viewPOI(lat, lon) {
@@ -115,8 +119,12 @@ export default class Explore extends Component {
     this.setState({ filter: filter })
   }
 
-  showOverlay() {
-    this.setState({ show: true })
+  showOverlayPOI() {
+    this.setState({ showPOI: true })
+  }
+
+  showOverlayTime(){
+    this.setState({ showTime: true })
   }
 
   showItem(item) {
@@ -141,8 +149,13 @@ export default class Explore extends Component {
     })
   }
 
+  showBusTime(item){
+    this.setState({busTimes: item})
+  }
+
   render() {
     const searchOverlayRef = React.createRef();
+    console.log(this.state.busTimes)
     return (
       <View style={styles.containerP}>
         <View style={styles.mapContainer}>
@@ -153,14 +166,15 @@ export default class Explore extends Component {
             customMapStyle={mapStyle}
             onMapReady={this.ready}
             region={this.state.region} >
-            <Stops />
-            <POIS filter={this.state.filter} showOverlay={this.showOverlay} showItem={this.showItem} />
+            <Stops showOverlay={this.showOverlayTime} showItem={this.showBusTime} />
+            <POIS filter={this.state.filter} showOverlay={this.showOverlayPOI} showItem={this.showItem} />
           </MapView>
         </View>
+        {/**POI Overlay */}
         <Overlay
           animationType='fade'
-          isVisible={this.state.show}
-          onBackdropPress={() => this.setState({ show: false })} >
+          isVisible={this.state.showPOI}
+          onBackdropPress={() => this.setState({ showPOI: false })} >
           <View style={styles.containerP} >
             <ScrollView contentContainerStyle={styles.scrollCont} >
               <Text>{this.state.item.name}</Text>
@@ -180,6 +194,24 @@ export default class Explore extends Component {
                   }
                 )
               }
+            </ScrollView>
+          </View>
+        </Overlay>
+        {/**Bus Time Overlay */}
+        <Overlay
+          animationType='fade'
+          isVisible={this.state.showTime}
+          onBackdropPress={() => this.setState({ showTime: false })} >
+          <View style={styles.containerP} >
+            <ScrollView contentContainerStyle={styles.scrollCont} >
+              <Text>Bus Times</Text>
+                {
+                  this.state.busTimes.map( (item,i) =>{ let temp = "" + item.time; let cleanTime = temp.substr(0,2) + ":" + temp.substr(2,2) + ":" + temp.substr(4,2)
+                    return(
+                      <Text key={i} > Bus: {"" + item.bus}, Time: { cleanTime } </Text>
+                    )
+                  })
+                }
             </ScrollView>
           </View>
         </Overlay>
