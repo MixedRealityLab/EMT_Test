@@ -1,24 +1,95 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import ActionButton from 'react-native-action-button'
-import { Overlay } from 'react-native-elements'
+import { Overlay, SearchBar } from 'react-native-elements'
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import HTML from 'react-native-render-html'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { DrawerActions } from 'react-navigation';
 
+import Axios from 'axios';
+
 import Stops from './components/Stops.js'
 import POIS from './components/POIS.js'
 import { mapStyle } from './components/Requests.js'
-import Selector from './components/Selector.js'
 
+
+class Search extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      isLoaded: false,
+      pois: [],
+      searchTerm: '',
+      isVisible: false,
+    };
+    this.setVisible = this.setVisible.bind(this);
+  }
+
+  componentDidMount() {
+    Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois')
+      .then(response => {
+        return response.data.sort((e1, e2) => {
+          if (e1.name < e2.name) {
+            return -1;
+          } else if (e1.name > e2.name) {
+            return 1;
+          }
+          return 0;
+        });
+      })
+      .then(data => this.setState({ pois: data, isLoaded: true }))
+  }
+
+  setVisible(isVisible) {
+    this.setState({ isVisible: isVisible });
+  }
+
+  render() {
+    return (
+      <Overlay
+          animationType='fade'
+          isVisible={this.state.isVisible}
+          onBackdropPress={() => this.setVisible(false)} >
+        <View style={styles.containerP}>
+          <SearchBar
+              placeholder='Type Here...'
+              onChangeText={(text) => {this.setState({searchTerm: text})}}
+              value={this.state.searchTerm} />
+          <ScrollView contentContainerStyle={styles.scrollCont}>
+            {this.state.isLoaded
+                ? this.state.pois.map((item, i) => {
+                  if (item.name.includes(this.state.searchTerm)
+                      && (this.props.filter === 'N/A'
+                          ? true
+                          : item.category === this.props.filter)) {
+                    return (
+                      <Text
+                          key={i}
+                          style={styles.textList}
+                          onPress={() => {
+                            this.props.viewPOI(item.latitude, item.longitude, item.name, i)
+                            this.setVisible(false);
+                          }}>
+                        {item.name}
+                      </Text>
+                    )
+                  }})
+                : null}
+          </ScrollView>
+        </View>
+      </Overlay>
+    );
+  }
+}
 
 export default class Explore extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      filter: "N/A",
+      filter: 'N/A',
       region: {
         latitude: 52.944351,
         longitude: -1.190312,
@@ -50,13 +121,13 @@ export default class Explore extends Component {
 
   showItem(item) {
     let temp = item.description
-    var split = temp.split("<br>")
+    var split = temp.split('<br>')
 
     var clean = []
     split.map(
       (item) => {
         switch (String(item).substr(0, 4)) {
-          case "":
+          case '':
             break
           default:
             clean.push(item)
@@ -71,6 +142,7 @@ export default class Explore extends Component {
   }
 
   render() {
+    const searchOverlayRef = React.createRef();
     return (
       <View style={styles.containerP}>
         <View style={styles.mapContainer}>
@@ -86,7 +158,7 @@ export default class Explore extends Component {
           </MapView>
         </View>
         <Overlay
-          animationType="fade"
+          animationType='fade'
           isVisible={this.state.show}
           onBackdropPress={() => this.setState({ show: false })} >
           <View style={styles.containerP} >
@@ -94,7 +166,7 @@ export default class Explore extends Component {
               <Text>{this.state.item.name}</Text>
               <Text>Category: {this.state.item.category}</Text>
               {
-                String(this.state.clean[0]).substr(0, 4) === "<img" ?
+                String(this.state.clean[0]).substr(0, 4) === '<img' ?
                   <HTML html={this.state.clean[0]} />
                   :
                   <Text>{this.state.clean[0]}</Text>
@@ -111,12 +183,17 @@ export default class Explore extends Component {
             </ScrollView>
           </View>
         </Overlay>
-        <Selector
+        {/*<Selector
           mode={'View'}
           viewPOI={this.viewPOI}
           setFilter={this.setFilter}
           filter={this.state.filter}
-        />
+        />*/}
+        <Search
+            ref={searchOverlayRef}
+            viewPOI={this.viewPOI}
+            setFilter={this.setFilter}
+            filter={this.state.filter} />
         <ActionButton
             position='left'
             verticalOrientation='down'
@@ -127,6 +204,17 @@ export default class Explore extends Component {
             offsetY={15}
             onPress={() => {
               this.props.navigation.dispatch(DrawerActions.openDrawer());
+            }} />
+        <ActionButton
+            position='right'
+            verticalOrientation='up'
+            renderIcon={(active) => {
+              return (<Icon name='md-search' size={24} color='#FFFFFF' />)
+            }}
+            offsetX={15}
+            offsetY={15}
+            onPress={() => {
+              searchOverlayRef.current.setVisible(true);
             }} />
       </View>
     );
