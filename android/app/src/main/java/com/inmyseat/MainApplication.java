@@ -28,77 +28,80 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.agontuk.RNFusedLocation.RNFusedLocationPackage;
-import com.inmyseat.NotifService;
+
+import org.pgsqlite.SQLitePluginPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final LocationListener listener = new LocationListener() {
-  @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-    
-  @Override
-    public void onProviderEnabled(String provider) {
-    }
-  @Override
-    public void onProviderDisabled(String provider) {
-    }
-  @Override
-      public void onLocationChanged(Location location) {
-        Intent myIntent = new Intent(getApplicationContext(), NotifService.class);
-          getApplicationContext().startService(myIntent);
-        HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
-      }
-  };
+    private final LocationListener listener = new LocationListener() {
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
 
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+        @Override
+        public void onLocationChanged(Location location) {
+            Intent myIntent = new Intent(getApplicationContext(), NotifService.class);
+            getApplicationContext().startService(myIntent);
+            HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
+        }
+    };
+
+    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+            return Arrays.asList(
+                    new SQLitePluginPackage(),
+                    new MainReactPackage(),
+                    new BackgroundTimerPackage(),
+                    new VectorIconsPackage(),
+                    new ReactNativePushNotificationPackage(),
+                    new RNCWebViewPackage(),
+                    new RNGestureHandlerPackage(),
+                    new MapsPackage(),
+                    new RNFusedLocationPackage()
+            );
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+            return "index";
+        }
+    };
+
     @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+    public ReactNativeHost getReactNativeHost() {
+        return mReactNativeHost;
     }
 
     @Override
-    protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new BackgroundTimerPackage(),
-          new VectorIconsPackage(),
-          new ReactNativePushNotificationPackage(),
-          new RNCWebViewPackage(),
-          new RNGestureHandlerPackage(),
-          new MapsPackage(),
-          //new RNNotificationsPackage(MainApplication.this),  
-          new RNFusedLocationPackage()
-             
-      );
+    public void onCreate() {
+        super.onCreate();
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        // Start requesting for location
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    2000,
+                    1,
+                    listener);
+        }
+
+        getApplicationContext().startService(
+                new Intent(getApplicationContext(), LogUploaderService.class));
+
+        SoLoader.init(this, /* native exopackage */ false);
     }
-
-    @Override
-    protected String getJSMainModuleName() {
-      return "index";
-    }
-  };
-
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-
-    LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    // Start requesting for location
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-      locationManager.requestLocationUpdates(
-              LocationManager.GPS_PROVIDER,
-              2000,
-              1,
-              listener);
-    }
-
-    SoLoader.init(this, /* native exopackage */ false);
-  }
 }

@@ -1,10 +1,15 @@
 import { AppRegistry, AsyncStorage } from 'react-native'
+
 import Axios from 'axios';
+
 import { name as appName } from './app.json'
 import App from './app/Menu.js'
 import LocMan from './app/src/components/BackgroundService.js'
+import {Log, Uploader} from './app/src/Logger.js'
 import StateMan from './app/src/components/StateCheck.js'
 
+
+Log.info('Application started');
 const StateManager = new StateMan();
 
 const Notif = async (data) => {
@@ -38,7 +43,7 @@ const initialise = async () => {
           AsyncStorage.setItem('Setting', JSON.stringify(obj));
         } )
 
-        
+
       }
     }
   );
@@ -66,3 +71,5 @@ AppRegistry.registerComponent(appName, () => App)
 AppRegistry.registerHeadlessTask(
     'Notif',
     () => Notif.bind(null, [LocMan, StateManager]));
+AppRegistry.registerHeadlessTask('LogUploadTask', () => Uploader.uploadTask);
+

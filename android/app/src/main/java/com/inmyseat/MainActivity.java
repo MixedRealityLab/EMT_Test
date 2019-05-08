@@ -54,7 +54,6 @@ public class MainActivity extends ReactActivity {
     public void onPause(){
         super.onPause();
         Intent service = new Intent(getApplicationContext(), NotifService.class);
-
         getApplicationContext().startService(service);
     }
 

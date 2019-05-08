@@ -3,9 +3,11 @@ import { createAppContainer, createDrawerNavigator } from 'react-navigation'
 
 import Explore from './src/Explore.js'
 import History from './src/History.js'
+import Log from './src/Logger.js'
 import Plan from './src/Plan.js'
 import Settings from './src/Settings.js'
 import Travel from './src/Travel.js'
+
 
 class ExploreScreen extends React.Component {
   static navigationOptions = {
