@@ -170,7 +170,6 @@ export default class Explore extends Component {
 
   render() {
     const searchOverlayRef = React.createRef();
-    console.log(this.state.busTimes)
     return (
       <View style={styles.containerP}>
         <View style={styles.mapContainer}>
@@ -215,7 +214,7 @@ export default class Explore extends Component {
         <Overlay
           animationType='fade'
           isVisible={this.state.showTime}
-          onBackdropPress={() => this.setState({ showTime: false })} >
+          onBackdropPress={() => this.setState({ showTime: false, busTimes: [] })} >
           <View style={styles.containerP} >
             <ScrollView contentContainerStyle={styles.scrollCont} >
               <Text>Bus Times</Text>
