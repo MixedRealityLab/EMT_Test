@@ -1,4 +1,6 @@
+import Axios from 'axios';
 import iso8601 from 'iso8601.js'
+import { AsyncStorage } from 'react-native'
 import BackgroundTimer from 'react-native-background-timer';
 import SQLite from 'react-native-sqlite-storage'
 
@@ -59,6 +61,17 @@ const getUnuploaded = async () => {
   });
 }
 
+const setUploaded = async (entries) => {
+  while (db == null) {
+    await sleep(100);
+  }
+  var len = entries.length;
+  for (let i = 0; i < len; i++) {
+    const entry = entries[i];
+    db.executeSql('UPDATE log SET uploaded = 1 WHERE rowid = ?', [entry.rowid]);
+  }
+}
+
 export const Log = {
 
   trace: (data) => {
@@ -87,8 +100,14 @@ export const Uploader = {
 
   uploadTask: async (taskData) => {
     BackgroundTimer.setInterval(() => {
-      getUnuploaded().then((results) => {
-        // TODO: actually upload the results, then set rows to uploaded
+      getUnuploaded().then(async (results) => {
+        const un = await AsyncStorage.getItem('username');
+        Axios.post('https://inmyseat.chronicle.horizon.ac.uk/api/v1/log_entry?username=' + un,
+            JSON.stringify(results)).then(response => {
+          if (response.status == 200) {
+            setUploaded(results);
+          }
+        });
       });
     }, upload_period);
   }
