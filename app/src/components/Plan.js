@@ -24,6 +24,7 @@ export default class PlanComponent extends Component{
       jEnd:     [],
       jWalk:    [],
       changes:  [],
+      purePoly: [],
       show:     false,
       walk:     false,
       polyOptsWalk:'#ff0000',
@@ -33,6 +34,7 @@ export default class PlanComponent extends Component{
                      '#fff000' ]
       }
 
+    this.pureRoute  = this.pureRoute  .bind(this)
     this.makeRoute  = this.makeRoute  .bind(this)
     this.switch     = this.switch     .bind(this)
     this.getRoute   = this.getRoute   .bind(this)
@@ -85,6 +87,14 @@ export default class PlanComponent extends Component{
     return route
   }
 
+  pureRoute(){
+    let temp= []
+      temp.push(this.state.jStart)
+      this.state.purePoly.map( (item) => { temp.push(item) })
+      temp.push(this.state.jEnd)
+    return temp
+  }
+
   beginRoute(){
     if(this.state.jMiddle.length !== 0){
       var Journey = {
@@ -97,7 +107,9 @@ export default class PlanComponent extends Component{
         //Start point
         start: this.state.currentPos,
         //End point
-        end: this.props.childArr
+        end: this.props.childArr,
+        //Pure polyline from arriva, temp solution
+        pure: this.pureRoute()
       }
       console.log(JSON.stringify(Journey))
       AsyncStorage.getAllKeys((err,keys)=>{
@@ -194,8 +206,9 @@ export default class PlanComponent extends Component{
     )
     .then(response =>{
       let points = []
+      let purePoints = []
       let data = response.data.svcResL[0].res
-      console.log(data)
+
       let sections = data.outConL[0].secL
       var jnySec = []
       var jnyCount = 0
@@ -203,6 +216,10 @@ export default class PlanComponent extends Component{
         let temp = polyline.decode(data.common.polyL[i].crdEncYX);
         // [Dominic] As the polylines going through Jubilee are broken, at
         // the moment lets just show start/end points.
+        console.log(temp)
+        //Full arriva polyline
+        let pure = temp
+
         temp = [temp[0], temp[temp.length-1]];
         if(sections[i].type === "JNY"){
           jnySec.push(data.common.prodL[jnyCount])
@@ -218,8 +235,15 @@ export default class PlanComponent extends Component{
             })
           )
         )
+        purePoints.push(
+          pure.map(item =>
+            ({
+              latitude: item[0],
+              longitude: item[1]
+            }))
+        )
       }
-      this.setState({changes: jnySec})
+      this.setState({changes: jnySec, purePoly: purePoints})
       //Simplify Polyline
       return simplify(points,0.0001)}
       )

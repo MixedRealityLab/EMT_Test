@@ -122,14 +122,15 @@ export default class Travel extends Component {
     getFacticles(){
       let request = {}
       AsyncStorage.getItem('username', (err,res)=>{
+        console.log(this.state.route)
         request = { 
           user_id: res,
-          route: this.state.route.route
+          route: this.state.route.pure
         }
       })
       .then( () => {
         console.log(request)
-        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline", JSON.stringify(request) )
+        Axios.post("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline", JSON.stringify(request) )
         .then( response => {
           console.log(response.data)
           this.setState({facticles: response.data})
