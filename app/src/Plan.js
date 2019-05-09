@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, View } from 'react-native';
+import {StyleSheet, View, ScrollView, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE }  from 'react-native-maps';
+import { Overlay } from 'react-native-elements'
+
 import { mapStyle } from './components/Requests'
 import Stops from './components/Stops'
 import Buses from './components/Buses'
@@ -14,7 +16,11 @@ export default class Plan extends Component {
       this.state = {
         arr:      -1,
         walk:     false,
+        showBusTimes: false, 
+        busTimes: [],
       }
+      this.showBusTime = this.showBusTime.bind(this)
+      this.showBusTimeOverlay = this.showBusTimeOverlay.bind(this)
       this.setArr = this.setArr.bind(this)
     }
     switch = () => {
@@ -38,6 +44,14 @@ export default class Plan extends Component {
       console.log(arr)
     }
 
+    showBusTimeOverlay(){
+      this.setState({showBusTimes: true})
+    }
+
+    showBusTime(item){
+      this.setState({busTimes: item})
+    }
+
     render() {
       return (
       <View style={styles.containerP}>
@@ -54,7 +68,7 @@ export default class Plan extends Component {
            longitudeDelta: 0.0121,
          }}
        >
-        <Stops/>
+        <Stops showOverlay={this.showBusTimeOverlay} showItem={this.showBusTime} />
         <Buses/>
         <PlanComponent
           onRef={ref => (this.child = ref)} //Refernce in order to use childs functions
@@ -72,6 +86,27 @@ export default class Plan extends Component {
             switch={this.switch}          //Pass refrence to child function
           />
      </View>
+
+     {/*Bus Stop Times overlay*/}
+     <Overlay
+          animationType="fade"
+          isVisible={this.state.showBusTimes}
+          onBackdropPress={() => this.setState({ showBusTimes: false })}
+        >
+        <View style={styles.containerP} >
+        <ScrollView contentContainerStyle={styles.scrollCont} >
+          <Text>Bus Times</Text>
+            {
+              this.state.busTimes.map( (item,i) =>{ let temp = "" + item.time; let cleanTime = temp.substr(0,2) + ":" + temp.substr(2,2) + ":" + temp.substr(4,2)
+                return(
+                  <Text key={i} > Bus: {"" + item.bus}, Time: { cleanTime } </Text>
+                )
+              })
+            }
+        </ScrollView>
+        </View>
+        </Overlay>
+
      </View>
       );
     }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AsyncStorage, Alert, Text } from 'react-native'
+import { AsyncStorage, Alert, Text, ToastAndroid } from 'react-native'
 import { Marker, Polyline, Callout } from 'react-native-maps'
 import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios'
@@ -33,15 +33,15 @@ export default class PlanComponent extends Component{
                      '#fff000' ]
       }
 
-    this.makeRoute = this.makeRoute.bind(this)
-    this.switch = this.switch.bind(this)
-    this.getRoute = this.getRoute.bind(this)
-    this.clearRoute = this.clearRoute.bind(this)
-    this.polyArriva = this.polyArriva.bind(this)
-    this.setJourney = this.setJourney.bind(this)
-    this.getJourney = this.getJourney.bind(this)
-    this.getLoc = this.getLoc.bind(this)
-    this.beginRoute = this.beginRoute.bind(this)
+    this.makeRoute  = this.makeRoute  .bind(this)
+    this.switch     = this.switch     .bind(this)
+    this.getRoute   = this.getRoute   .bind(this)
+    this.clearRoute = this.clearRoute .bind(this)
+    this.polyArriva = this.polyArriva .bind(this)
+    this.setJourney = this.setJourney .bind(this)
+    this.getJourney = this.getJourney .bind(this)
+    this.getLoc     = this.getLoc     .bind(this)
+    this.beginRoute = this.beginRoute .bind(this)
   }
 
   componentDidMount(){
@@ -225,8 +225,7 @@ export default class PlanComponent extends Component{
       )
       .then( data => this.setState({
         jMiddle: data
-      }),
-
+      })
       )
   }
   

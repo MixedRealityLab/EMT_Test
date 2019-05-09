@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {TouchableOpacity, View, Picker, Text, StyleSheet, Alert} from 'react-native'
+import { TouchableOpacity, View, Picker, Text, StyleSheet, Alert, ToastAndroid } from 'react-native'
 import { Overlay } from 'react-native-elements'
 import Axios from 'axios'
 import Search from './Search'
@@ -21,7 +21,9 @@ export default class Selector extends Component{
             planShow: false,
             viewShow: false,
             filter: 'N/A',
-            categories: []
+            categories: [],
+            destName: "",
+            
         }
 
         this.modeSel = this.modeSel.bind(this)
@@ -45,7 +47,7 @@ export default class Selector extends Component{
             "Point",
             "Set " + name + " as destination?",
             [
-                {text: 'Yes', onPress: () => { this.props.setArr(Des) }},
+                {text: 'Yes', onPress: () => { this.props.setArr(Des); this.setState({destName: name}); this.props.getRoute() }},
                 {
                     text: 'No',
                     onPress: () => console.log('Cancel Pressed'),
@@ -88,6 +90,7 @@ export default class Selector extends Component{
                 )
             case 'Plan':
                 return(
+                    
                     <View style={styles.containerP} >
                    <ActionButton buttonColor="#000">
                         <ActionButton.Item buttonColor='#add8e6' title="Route" onPress={() => this.setState({planShow: true})}>
@@ -100,37 +103,21 @@ export default class Selector extends Component{
                             onBackdropPress={() => this.setState({ planShow: false })}
                     >
                     <View style={styles.containerP} >
+
+                    <Search viewPOI={this.poiSet} filter={this.state.filter}/>
+                    <Text>Destination: </Text>
+                    <Text>{ this.state.destName !== "" ? this.state.destName : "No Destination Selected" }</Text>
+                    {}
+                    <TouchableOpacity style={styles.button} onPress={()=>{ this.props.beginRoute()}}>
+                        <Text style={styles.text}>Begin Route</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button} onPress={()=>{this.props.clearRoute(); this.setState({destName:""})}}>
+                        <Text style={styles.text}>Cancel</Text>
+                    </TouchableOpacity>
+
                     
-            
-                    <View style={styles.containerP} >
-                        <View style={styles.tRow}>
-                        <TouchableOpacity style={styles.button} onPress={this.props.getRoute}>
-                            <Text style={styles.text}>Get Route</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={this.props.clearRoute}>
-                            <Text style={styles.text}>Clear Route</Text>
-                        </TouchableOpacity>
-                        </View>
-                        <View style={styles.tRow}>
-                        <TouchableOpacity style={styles.button} onPress={this.props.beginRoute}>
-                            <Text style={styles.text}>Begin Route</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={this.props.switch}>
-                            <Text style={styles.text}>Switch Route</Text>
-                        </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={styles.tRow}>
-                        <Picker
-                            selectedValue={this.state.filter}
-                            style={styles.picker}
-                            onValueChange={(itemValue, itemIndex) => {this.setState({filter: itemValue})}
-                            }>
-                            <Picker.Item label="Select Filter"      value="N/A" />
-                            { this.state.categories.map( (item, i) => { return( <Picker.Item key={i} label={item} value={item} /> ) } ) }
-                        </Picker>
-                        <Search viewPOI={this.poiSet} filter={this.state.filter}/>
-                    </View>
+
                     </View>
                     </Overlay>
                     </View>
@@ -160,6 +147,38 @@ export default class Selector extends Component{
           )
     }
 }
+
+/*
+<View style={styles.containerP} >
+                        <View style={styles.tRow}>
+                        <TouchableOpacity style={styles.button} onPress={this.props.getRoute}>
+                            <Text style={styles.text}>Get Route</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={this.props.clearRoute}>
+                            <Text style={styles.text}>Clear Route</Text>
+                        </TouchableOpacity>
+                        </View>
+                        <View style={styles.tRow}>
+                        <TouchableOpacity style={styles.button} onPress={this.props.beginRoute}>
+                            <Text style={styles.text}>Begin Route</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={this.props.switch}>
+                            <Text style={styles.text}>Switch Route</Text>
+                        </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={styles.tRow}>
+                        <Picker
+                            selectedValue={this.state.filter}
+                            style={styles.picker}
+                            onValueChange={(itemValue, itemIndex) => {this.setState({filter: itemValue})}
+                            }>
+                            <Picker.Item label="Select Filter"      value="N/A" />
+                            { this.state.categories.map( (item, i) => { return( <Picker.Item key={i} label={item} value={item} /> ) } ) }
+                        </Picker>
+                        <Search viewPOI={this.poiSet} filter={this.state.filter}/>
+                    </View>
+*/
 
 const styles = StyleSheet.create({
     tRow:{

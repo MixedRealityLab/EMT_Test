@@ -287,7 +287,14 @@ export default class Travel extends Component {
         </ScrollView>
         </View>
         </Overlay>
-       <Selector change={this.props.change} mode={'Travel'} following={ () => { this.setState({following: true}), this.viewPOI() } } listPOIS={ ()=> this.setState({showList: true}) } />
+
+       <Selector 
+        change={this.props.change} 
+        mode={'Travel'} 
+        following={ () => {
+           this.setState({following: true}), this.viewPOI() } } 
+           listPOIS={ ()=> this.setState({showList: true}) 
+        }/>
       </View>
     </View>
       )
