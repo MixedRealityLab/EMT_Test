@@ -72,6 +72,15 @@ const initialise = async () => {
     }
   )
 
+  AsyncStorage.getItem(
+    'travel', (err, res) => {
+      if (res == null) {
+        console.log("Setting false")
+        AsyncStorage.setItem('travel', 'false');
+      }
+    }
+  )
+
 };
 initialise();
 

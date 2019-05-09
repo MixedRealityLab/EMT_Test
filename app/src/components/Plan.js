@@ -120,7 +120,7 @@ export default class PlanComponent extends Component{
               break;
           }
           AsyncStorage.setItem(newKey, JSON.stringify(Journey))
-          AsyncStorage.setItem('travel', 'true')
+          AsyncStorage.setItem('travel', newKey)
           AsyncStorage.setItem('VisPOIS',JSON.stringify([]))
           this.props.change(newKey)
         }

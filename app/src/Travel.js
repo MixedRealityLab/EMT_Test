@@ -90,8 +90,6 @@ export default class Travel extends Component {
                 let vis = AppMan.checkDist(position.coords, item)
                 //AppMan.checkDist(position.coords, item)
                 if(vis){
-                  console.log(item)
-                  console.log(this.state.VisiblePois)
                   if(!this.state.VisiblePois.includes(item) ){
                     console.log("Found")
                     this.state.VisiblePois.push(
@@ -122,14 +120,25 @@ export default class Travel extends Component {
     }
 
     getFacticles(){
-      Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline" )
-      .then( response => {
-        this.setState({facticles: response.data})
-        return response.data
+      let request = {}
+      AsyncStorage.getItem('username', (err,res)=>{
+        request = { 
+          user_id: res,
+          route: this.state.route.route
+        }
       })
-      .then( data =>
-        AsyncStorage.setItem('facticles', JSON.stringify(data))
-      )
+      .then( () => {
+        console.log(request)
+        Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline", JSON.stringify(request) )
+        .then( response => {
+          console.log(response.data)
+          this.setState({facticles: response.data})
+          return response.data
+        })
+        .then( data =>
+          AsyncStorage.setItem('facticles', JSON.stringify(data))
+        )
+      })
     }
 
     componentDidMount(){
@@ -137,10 +146,9 @@ export default class Travel extends Component {
       AppMan.loadJourney()
       AsyncStorage.setItem('VisPOIS', '[]')
       this.intervalID = setInterval( () => this.getLoc(), 2000)
-      this.getFacticles()
+      
       AsyncStorage.getItem(
-        '0011'
-        //this.props.jKey
+        this.props.jKey
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
       )
       .then(
@@ -160,9 +168,9 @@ export default class Travel extends Component {
           )
       .then( (res) => this.setState({points: res, loaded: true}) )
       .then( () => { AsyncStorage.setItem('CurrentJ',
-        '0011'
-        //this.props.jKey
+        this.props.jKey
       ) } )
+      .then( () => this.getFacticles())
       console.log(StateManager.returnState())
     }
 
@@ -324,3 +332,38 @@ export default class Travel extends Component {
     }
 
   })
+
+  /*
+  var temp = {
+        "user_id" : "tidemark",
+        "route": [
+              [{"latitude": 52.95362, "longitude": -1.18758},
+              {"latitude": 52.95379, "longitude": -1.18708},
+              {"latitude": 52.95396, "longitude": -1.18722},
+              {"latitude": 52.95393, "longitude": -1.18735},
+              {"latitude": 52.95392, "longitude": -1.18741},
+              {"latitude": 52.95399, "longitude": -1.18756}],
+              
+              [{"latitude": 52.95399, "longitude": -1.18756, "y": 52.95399, "x": -1.18756},
+              {"latitude": 52.93888, "longitude": -1.19509, "y": 52.93888, "x": -1.19509}],
+              
+              [{"latitude": 52.93892, "longitude": -1.19514},
+              {"latitude": 52.93921, "longitude": -1.19448},
+              {"latitude": 52.93904, "longitude": -1.19432},
+              {"latitude": 52.93879, "longitude": -1.1941},
+              {"latitude": 52.93869, "longitude": -1.19399},
+              {"latitude": 52.93865, "longitude": -1.1939},
+              {"latitude": 52.93862, "longitude": -1.19383},
+              {"latitude": 52.93855, "longitude": -1.1939},
+              {"latitude": 52.93845, "longitude": -1.19398},
+              {"latitude": 52.93839, "longitude": -1.19393},
+              {"latitude": 52.93831, "longitude": -1.19386},
+              {"latitude": 52.93812, "longitude": -1.19421},
+              {"latitude": 52.93809, "longitude": -1.19425},
+              {"latitude": 52.93804, "longitude": -1.19419},
+              {"latitude": 52.93797, "longitude": -1.19412},
+              {"latitude": 52.93801, "longitude": -1.19404},
+              {"latitude": 52.93805, "longitude": -1.19409}]
+            ]
+      }
+  */

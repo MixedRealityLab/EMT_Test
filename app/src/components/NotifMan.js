@@ -42,7 +42,8 @@ class Manager{
       })
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
-
+      //AsyncStorage.setItem('travel','0012')
+      AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
       
@@ -194,7 +195,7 @@ class Manager{
 
   sendNotif(item){
     var isFacticle = false
-    if(item.category !== null) isFacticle = true
+    if(item.hasOwnProperty('category')) isFacticle = true
 
     console.log(item)
     var notifSet = {

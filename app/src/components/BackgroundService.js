@@ -35,7 +35,7 @@ class LocationManager{
         .then(
           AsyncStorage.getItem(
             'travel', (err, res) => {
-              if(res === 'true'){
+              if(res !== 'false'){
                 AppMan.loadJourney()
                 console.log("Checking")
                 //Create background timer and execute every 2000ms (2 seconds)

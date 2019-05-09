@@ -1,5 +1,6 @@
 import React from 'react'
 import { createAppContainer, createDrawerNavigator } from 'react-navigation'
+import { AsyncStorage } from 'react-native'
 
 import Explore from './src/Explore.js'
 import History from './src/History.js'
@@ -45,11 +46,21 @@ class TravelPlanScreen extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      showTravelView: true,
+      showTravelView: false,
       journeyKey: ''
     }
     this.change = this.change.bind(this)
   }
+
+  componentDidMount(){
+    AsyncStorage.getItem('travel', (err,res) =>{
+      if(res !== null)
+        if(res !== 'false'){
+          this.setState({showTravelView: true, journeyKey: res})
+        }
+    })
+  }
+
   //Function to switch to travel mode
   change(jKey){
     this.setState(
