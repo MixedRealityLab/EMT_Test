@@ -139,7 +139,8 @@ export default class Travel extends Component {
       this.intervalID = setInterval( () => this.getLoc(), 2000)
       this.getFacticles()
       AsyncStorage.getItem(
-        this.props.jKey
+        '0011'
+        //this.props.jKey
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
       )
       .then(
@@ -159,7 +160,8 @@ export default class Travel extends Component {
           )
       .then( (res) => this.setState({points: res, loaded: true}) )
       .then( () => { AsyncStorage.setItem('CurrentJ',
-        this.props.jKey
+        '0011'
+        //this.props.jKey
       ) } )
       console.log(StateManager.returnState())
     }

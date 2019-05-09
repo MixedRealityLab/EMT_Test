@@ -45,7 +45,7 @@ class TravelPlanScreen extends React.Component {
   constructor(props){
     super(props)
     this.state ={
-      showTravelView: false,
+      showTravelView: true,
       journeyKey: ''
     }
     this.change = this.change.bind(this)

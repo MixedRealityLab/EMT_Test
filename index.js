@@ -64,6 +64,14 @@ const initialise = async () => {
     }
   );
 
+  AsyncStorage.getItem(
+    'seenFacticles', (err, res) => {
+      if (res == null) {
+        AsyncStorage.setItem('seenFacticles', JSON.stringify([]));
+      }
+    }
+  )
+
 };
 initialise();
 

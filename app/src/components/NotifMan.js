@@ -14,6 +14,7 @@ var geolib = require('geolib')
 class Manager{
   constructor(){
       this.state ={
+          Date: new Date(),
           item: 0,
           loaded: false,
           facticles: [],
@@ -21,6 +22,7 @@ class Manager{
           factileRate: 1,
           nextFacticle: false,
           seenFacticles: [],
+          seenLimit: 50,
           journey: {},
           categories: [],
           timer: ""
@@ -44,6 +46,8 @@ class Manager{
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
       
+      AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); console.log(obj); this.state.seenFacticles = obj })
+
       if(this.state.timer.length < 1 ){
         console.log("Setting timer")
         this.state.timer = BackgroundTimer.setInterval(() => {
@@ -65,13 +69,12 @@ class Manager{
       this.sendNotif    = this.sendNotif  .bind(this)
       this.loadJourney  = this.loadJourney.bind(this)
       this.checkDist    = this.checkDist  .bind(this)
-      this.seen         = this.seen       .bind(this)
+      this.updateSeen   = this.updateSeen .bind(this)
+      this.checkSeen    = this.checkSeen  .bind(this)
   }
 
-  queue(item){
+  queue(){
     let free = false
-    //if(!this.state.seenFacticles.includes(item + "testNotif")){
-
     if( this.state.nextFacticle){
       console.log("Current queue: " + this.state.facticleQueue)
       this.state.nextFacticle = false
@@ -81,13 +84,6 @@ class Manager{
       console.log("Notif limit reached for now")
       free = false
     }
-  /*
-  }
-  
-  else{
-    console.log("Seen")
-  }*/
-
     return free
   }
 
@@ -95,31 +91,55 @@ class Manager{
     this.state.factileRate = item
   }
 
-  seen(id){
-    var seen = this.state.seenFacticles
-    var isSeen = false
-    //var isSeen = seen.includes(id)
-    for(let i = 0; i < seen.length; i++){
-      if(id === seen[i]){
-        isSeen = true
-        break
-      }
+  checkSeen(id){
+    let isSeen = false
+    for(let i = 0; i < this.state.seenFacticles.length; i++){
+      //Stop checking seen facticles after a point
+      if(i > this.state.seenLimit) break
+      if(this.state.seenFacticles[i].id === id){isSeen = true; console.log("Seen Facticle"); break}
     }
     return isSeen
+  }
+
+  updateSeen(item){
+    //Current Day
+    let TD = this.state.Date.getDate()
+    if(String(TD).length === 1) TD = "0" + TD
+    //Current Month
+    let TM = this.state.Date.getMonth() + 1
+    if(String(TM).length === 1) TM = "0" + TM 
+    //Current Year
+    let TY = this.state.Date.getFullYear()
+    //Current Hour
+    let TH = this.state.Date.getHours()
+    if(String(TH).length === 1) TH = "0" + TH
+    //Current Mins
+    let TMn = this.state.Date.getMinutes()
+    if(String(TMn).length === 1) TMn = "0" + TMn
+    
+    let setDate = {Date: TD + ":" + TM + ":" + TY , Time: TH + ":" + TMn}
+
+    let newItem = Object.assign(item, setDate)
+    console.log(newItem)
+    let temp = []
+    temp.push(newItem)
+    let newArr = temp.concat(this.state.seenFacticles)
+    this.state.seenFacticles = newArr
+
+    AsyncStorage.setItem('seenFacticles', JSON.stringify(this.state.seenFacticles))
   }
 
   checkDist(position, facticle){
     var notif = false
     if(facticle.hasOwnProperty('cls')){
-      console.log("Has CLS")
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
-      if(dist < 11){
+      if(dist < 20){
         this.sendNotif(facticle)
         notif=true
       }
     }
     else{
-      if(!this.state.seenFacticles.includes(facticle.id)){
+      if(!this.checkSeen(facticle.id)){
         let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
         if(facticle.targets.length > 0){
           let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
@@ -206,33 +226,8 @@ class Manager{
         })
         
       this.state.item++
-      if(isFacticle)this.state.seenFacticles.push(item.id)
+      if(isFacticle) this.updateSeen(item)
   }
 }
 
 export default AppMan = new Manager(); 
-
-
-
-/*queue(item){
-    let free = false
-    if(!this.state.seenFacticles.includes(item + "testNotif")){
-
-    let newQueue = this.state.facticleQueue - 1
-    if( newQueue > 0){
-      this.state.facticleQueue = newQueue
-      console.log("Current queue: " + this.state.facticleQueue)
-      free = true
-    }
-    else {
-      console.log("Notif limit reached for now")
-      free = false
-    }
-
-  }
-  else{
-    console.log("Seen")
-  }
-
-    return free
-  }*/
