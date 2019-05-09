@@ -30,6 +30,9 @@ SQLite.openDatabase(
     +'); ').catch((error) => {
       console.log(error);
   });
+}).catch((error) => {
+  console.log(error);
+  db = false;
 });
 
 const sleep = (ms) => {
@@ -37,8 +40,11 @@ const sleep = (ms) => {
 }
 
 const log = async (level, data) => {
-  while (db == null) {
+  while (db === null) {
     await sleep(100);
+  }
+  if (db === false) {
+    return;
   }
   const dt = iso8601.iso(new Date(), true);
   const json = JSON.stringify(data);
@@ -47,8 +53,11 @@ const log = async (level, data) => {
 }
 
 const getUnuploaded = async () => {
-  while (db == null) {
+  while (db === null) {
     await sleep(100);
+  }
+  if (db === false) {
+    return;
   }
   return db.executeSql('SELECT rowid, * FROM log WHERE uploaded = 0').then((results) => {
     var res = [];
@@ -62,8 +71,11 @@ const getUnuploaded = async () => {
 }
 
 const setUploaded = async (entries) => {
-  while (db == null) {
+  while (db === null) {
     await sleep(100);
+  }
+  if (db === false) {
+    return;
   }
   var len = entries.length;
   for (let i = 0; i < len; i++) {
@@ -75,23 +87,23 @@ const setUploaded = async (entries) => {
 export const Log = {
 
   trace: (data) => {
-    log('trace', data);
+    log('trace', data).catch(console.log);
   },
 
   debug: (data) => {
-    log('debug', data);
+    log('debug', data).catch(console.log);
   },
 
   info: (data) => {
-    log('info', data);
+    log('info', data).catch(console.log);
   },
 
   warn: (data) => {
-    log('warn', data);
+    log('warn', data).catch(console.log);
   },
 
   error: (data) => {
-    log('error', data);
+    log('error', data).catch(console.log);
   }
 
 };
