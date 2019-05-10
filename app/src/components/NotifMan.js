@@ -1,9 +1,28 @@
 import { AsyncStorage, DeviceEventEmitter } from 'react-native'
 import Axios from 'axios'
 import BackgroundTimer from 'react-native-background-timer';
-import PushNotificationAndroid from 'react-native-push-notification'
 
 var PushNotification = require('react-native-push-notification')
+import PushNotificationAndroid from 'react-native-push-notification'
+
+(function(notification) {
+  // Register all the valid actions for notifications here and add the action handler for each action
+  PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
+  DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+    console.log ('Notification action received: ' + action);
+    const info = JSON.parse(action.dataJSON);
+    if (info.action == 'Show') {
+      console.log("Show")
+    }
+    else if(info.action == 'Yes'){
+      console.log('Ye')
+    }
+    else{
+      console.log("Cri")
+    }
+    // Add all the required actions handlers
+  });
+})();
 var geolib = require('geolib')
 
 /**
@@ -31,25 +50,10 @@ class Manager{
 
       PushNotification.configure({
           // (required) Called when a remote or local notification is opened or received
-          onNotification: (function() {
+          onNotification: function(notification) {
             // Register all the valid actions for notifications here and add the action handler for each action
-            PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
-            DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-              console.log ('Notification action received: ' + action);
-              const info = JSON.parse(action.dataJSON);
-              if (info.action == 'Show') {
-                console.log("Show")
-              }
-              else if(info.action == 'Yes'){
-                console.log('Ye')
-              }
-              else{
-                console.log("Cri")
-              }
-              // Add all the required actions handlers
-            });
-          })(),
-        
+            
+          },
         permissions: {
           alert: true,
           badge: true,
@@ -58,7 +62,6 @@ class Manager{
       })
       
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
-      //AsyncStorage.setItem('travel','0012')
       AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )

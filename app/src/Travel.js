@@ -152,7 +152,21 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
-      
+      PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
+            DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+              console.log ('Notification action received: ' + action);
+              const info = JSON.parse(action.dataJSON);
+              if (info.action == 'Show') {
+                console.log("Show")
+              }
+              else if(info.action == 'Yes'){
+                console.log('Ye')
+              }
+              else{
+                console.log("Cri")
+              }
+              // Add all the required actions handlers
+            });
 
       this.getLoc()
       AppMan.loadJourney()
