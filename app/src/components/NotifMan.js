@@ -1,6 +1,7 @@
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, DeviceEventEmitter } from 'react-native'
 import Axios from 'axios'
 import BackgroundTimer from 'react-native-background-timer';
+import PushNotificationAndroid from 'react-native-push-notification'
 
 var PushNotification = require('react-native-push-notification')
 var geolib = require('geolib')
@@ -30,10 +31,25 @@ class Manager{
 
       PushNotification.configure({
           // (required) Called when a remote or local notification is opened or received
-          onNotification: function(notification) {
-            console.log( 'NOTIFICATION:', notification )
-            console.log("Lat: " + notification.data.lat + ", Lon: " + notification.data.lon)
-        },
+          onNotification: (function() {
+            // Register all the valid actions for notifications here and add the action handler for each action
+            PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
+            DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+              console.log ('Notification action received: ' + action);
+              const info = JSON.parse(action.dataJSON);
+              if (info.action == 'Show') {
+                console.log("Show")
+              }
+              else if(info.action == 'Yes'){
+                console.log('Ye')
+              }
+              else{
+                console.log("Cri")
+              }
+              // Add all the required actions handlers
+            });
+          })(),
+        
         permissions: {
           alert: true,
           badge: true,
@@ -134,7 +150,7 @@ class Manager{
     var notif = false
     if(facticle.hasOwnProperty('cls')){
       let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
-      if(dist < 20){
+      if(dist < 70){
         this.sendNotif(facticle)
         notif=true
       }
@@ -222,7 +238,7 @@ class Manager{
           title: notifSet.title,      // (optional)
           message: notifSet.bigMess,  // (required)
           playSound: false,           // (optional) default: true
-          //actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
+          actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
         })
         

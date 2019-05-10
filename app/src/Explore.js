@@ -263,7 +263,8 @@ export default class Explore extends Component {
         </Picker>
         <Search
             ref={searchOverlayRef}
-            filter={this.state.filter} />
+            filter={this.state.filter} 
+            viewPOI={this.viewPOI}/>
         <ActionButton
             position='left'
             verticalOrientation='down'

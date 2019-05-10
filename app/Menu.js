@@ -35,7 +35,7 @@ class SettingsScreen extends React.Component {
     drawerLabel: 'Settings',
   };
   render() {
-    return (<Settings />)
+    return (<Settings navigation={this.props.navigation}/>)
   }
 }
 
@@ -73,8 +73,8 @@ class TravelPlanScreen extends React.Component {
   render() {
     return (
       this.state.showTravelView
-          ? <Travel change={this.change} jKey={this.state.journeyKey} />
-          : <Plan change={this.change} />
+          ? <Travel change={this.change} jKey={this.state.journeyKey} navigation={this.props.navigation}/>
+          : <Plan change={this.change} navigation={this.props.navigation}/>
     )
   }
 }

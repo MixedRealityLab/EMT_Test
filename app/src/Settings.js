@@ -3,6 +3,8 @@ import {AsyncStorage, ScrollView, Text, StyleSheet, TouchableOpacity, View, Layo
 import { CheckBox, Slider } from 'react-native-elements'
 import Axios from 'axios';
 
+import Selector from './components/Selector'
+
 /**
  * Class to allow the user to edit settings
  * Currently only changes notifcation settings
@@ -94,6 +96,11 @@ export default class Info extends Component{
 
     render(){
         return(
+            <View style={{flex:1}}>
+            <Selector
+                mode={'Settings'}                       //Tell component what to return
+                navigation={this.props.navigation}  //Pass Nav props
+            />
             <ScrollView contentContainerStyle={styles.scrollCont}>
             {/*Drop down to choose what type of notifications can be shown*/}
                 <View style={styles.expandMenuHolder}>
@@ -171,6 +178,7 @@ export default class Info extends Component{
                     <Text style={styles.text}>Save</Text>
                 </TouchableOpacity>
             </ScrollView>
+            </View>
           )
     }
 }

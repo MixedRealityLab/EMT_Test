@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { StyleSheet, View, AsyncStorage, ScrollView, Text } from 'react-native'
+import { StyleSheet, View, AsyncStorage, ScrollView, Text, DeviceEventEmitter } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import HTML from 'react-native-render-html'
 import { mapStyle } from './components/Requests'
@@ -13,6 +13,9 @@ import LocMan from './components/BackgroundService'
 
 const StateManager = new StateMan()
 var PushNotification = require('react-native-push-notification');
+
+import PushNotificationAndroid from 'react-native-push-notification'
+
 
 export default class Travel extends Component {
 
@@ -101,11 +104,17 @@ export default class Travel extends Component {
               }
               })
             if(this.state.Settings.Direct){
-              this.state.route.changes.map( (item, i) => {
-                let dir = item
-                let loc = this.state.route.route[i + 1][0]
-                let temp = Object.assign(dir, loc)
-                AppMan.checkDist(position.coords, temp)
+              AppMan.state.journey.changes.map( (item, i) => {
+                if(!item.hasOwnProperty('seen')){
+                  let dir = item
+                  let loc = AppMan.state.journey.route[i + 1][0]
+                  let temp = Object.assign(dir, loc)
+                  let seen = AppMan.checkDist(position.coords, temp)
+
+                  if(seen){
+                    item = Object.assign(item, {seen:false})
+                  }
+                }
               })
             }
             
@@ -143,11 +152,13 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
+      
+
       this.getLoc()
       AppMan.loadJourney()
       AsyncStorage.setItem('VisPOIS', '[]')
       this.intervalID = setInterval( () => this.getLoc(), 2000)
-      
+
       AsyncStorage.getItem(
         this.props.jKey
         ,(err,res) =>{ let obj = JSON.parse(res); this.setState({route: obj, points: obj.route})}
@@ -305,7 +316,8 @@ export default class Travel extends Component {
         following={ () => {
            this.setState({following: true}), this.viewPOI() } } 
            listPOIS={ ()=> this.setState({showList: true}) 
-        }/>
+        }
+        navigation={this.props.navigation}/>
       </View>
     </View>
       )
@@ -333,38 +345,3 @@ export default class Travel extends Component {
     }
 
   })
-
-  /*
-  var temp = {
-        "user_id" : "tidemark",
-        "route": [
-              [{"latitude": 52.95362, "longitude": -1.18758},
-              {"latitude": 52.95379, "longitude": -1.18708},
-              {"latitude": 52.95396, "longitude": -1.18722},
-              {"latitude": 52.95393, "longitude": -1.18735},
-              {"latitude": 52.95392, "longitude": -1.18741},
-              {"latitude": 52.95399, "longitude": -1.18756}],
-              
-              [{"latitude": 52.95399, "longitude": -1.18756, "y": 52.95399, "x": -1.18756},
-              {"latitude": 52.93888, "longitude": -1.19509, "y": 52.93888, "x": -1.19509}],
-              
-              [{"latitude": 52.93892, "longitude": -1.19514},
-              {"latitude": 52.93921, "longitude": -1.19448},
-              {"latitude": 52.93904, "longitude": -1.19432},
-              {"latitude": 52.93879, "longitude": -1.1941},
-              {"latitude": 52.93869, "longitude": -1.19399},
-              {"latitude": 52.93865, "longitude": -1.1939},
-              {"latitude": 52.93862, "longitude": -1.19383},
-              {"latitude": 52.93855, "longitude": -1.1939},
-              {"latitude": 52.93845, "longitude": -1.19398},
-              {"latitude": 52.93839, "longitude": -1.19393},
-              {"latitude": 52.93831, "longitude": -1.19386},
-              {"latitude": 52.93812, "longitude": -1.19421},
-              {"latitude": 52.93809, "longitude": -1.19425},
-              {"latitude": 52.93804, "longitude": -1.19419},
-              {"latitude": 52.93797, "longitude": -1.19412},
-              {"latitude": 52.93801, "longitude": -1.19404},
-              {"latitude": 52.93805, "longitude": -1.19409}]
-            ]
-      }
-  */

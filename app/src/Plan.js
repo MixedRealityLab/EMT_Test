@@ -77,13 +77,14 @@ export default class Plan extends Component {
         />
        </MapView>
        <Selector
-            mode={'Plan'}                 //Tell component what to return
-            setArr={this.setArr}          //Pass function to change end point
-            arr={this.state.arr}          //Pass selected end point to component
-            getRoute={this.getRoute}      //Pass refrence to child function
-            clearRoute={this.clearRoute}  //Pass refrence to child function
-            beginRoute={this.beginRoute}  //Pass refrence to child function
-            switch={this.switch}          //Pass refrence to child function
+            mode={'Plan'}                       //Tell component what to return
+            navigation={this.props.navigation}  //Pass Nav props
+            setArr={this.setArr}                //Pass function to change end point
+            arr={this.state.arr}                //Pass selected end point to component
+            getRoute={this.getRoute}            //Pass refrence to child function
+            clearRoute={this.clearRoute}        //Pass refrence to child function
+            beginRoute={this.beginRoute}        //Pass refrence to child function
+            switch={this.switch}                //Pass refrence to child function
           />
      </View>
 

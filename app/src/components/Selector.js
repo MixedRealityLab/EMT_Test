@@ -5,6 +5,7 @@ import Axios from 'axios'
 import Search from './Search'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons'
+import { DrawerActions } from 'react-navigation';
 
 /**
  * Class that displays various buttons and interactions for the user
@@ -92,6 +93,19 @@ export default class Selector extends Component{
                 return(
                     
                     <View style={styles.containerP} >
+
+                    <ActionButton
+                        position='left'
+                        verticalOrientation='down'
+                        renderIcon={(active) => {
+                        return (<Icon name='md-menu' size={24} color='#FFFFFF' />)}}
+                        offsetX={15}
+                        offsetY={15}
+                        onPress={() => {
+                            this.props.navigation.dispatch(DrawerActions.openDrawer());
+                        }} 
+                    />
+
                    <ActionButton buttonColor="#000">
                         <ActionButton.Item buttonColor='#add8e6' title="Route" onPress={() => this.setState({planShow: true})}>
                         <Icon name="md-flag" style={styles.actionButtonIcon} />
@@ -124,6 +138,18 @@ export default class Selector extends Component{
                 )
             case 'Travel':
                 return(
+                    <>
+                    <ActionButton
+                        position='left'
+                        verticalOrientation='down'
+                        renderIcon={(active) => {
+                        return (<Icon name='md-menu' size={24} color='#FFFFFF' />)}}
+                        offsetX={15}
+                        offsetY={15}
+                        onPress={() => {
+                            this.props.navigation.dispatch(DrawerActions.openDrawer());
+                        }} 
+                    />
                     <ActionButton buttonColor="#000">
                         <ActionButton.Item buttonColor='#add8e6' title="Points of Interest" onPress={() => this.props.listPOIS() }>
                         <Icon name="md-locate" style={styles.actionButtonIcon} />
@@ -135,6 +161,21 @@ export default class Selector extends Component{
                         <Icon name="md-flag" style={styles.actionButtonIcon} />
                         </ActionButton.Item>
                     </ActionButton>
+                    </>
+                )
+            case 'Settings':
+                return(
+                    <ActionButton
+                        position='left'
+                        verticalOrientation='down'
+                        renderIcon={(active) => {
+                        return (<Icon name='md-menu' size={24} color='#FFFFFF' />)}}
+                        offsetX={15}
+                        offsetY={15}
+                        onPress={() => {
+                            this.props.navigation.dispatch(DrawerActions.openDrawer());
+                        }} 
+                    />
                 )
         }
     }

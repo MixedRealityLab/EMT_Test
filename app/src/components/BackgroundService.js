@@ -79,10 +79,16 @@ class LocationManager{
             }
             if(this.state.settings.Direct)
             AppMan.state.journey.changes.map( (item, i) => {
-              let dir = item
-              let loc = AppMan.state.journey.route[i + 1][0]
-              let temp = Object.assign(dir, loc)
-              AppMan.checkDist(position.coords, temp)
+              if(!item.hasOwnProperty('seen')){
+                let dir = item
+                let loc = AppMan.state.journey.route[i + 1][0]
+                let temp = Object.assign(dir, loc)
+                let seen = AppMan.checkDist(position.coords, temp)
+
+                if(seen){
+                  item = Object.assign(item, {seen:false})
+                }
+              }
             })
         },
         (error) => {

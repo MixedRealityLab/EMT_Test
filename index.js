@@ -14,7 +14,12 @@ const StateManager = new StateMan();
 
 const Notif = async (data) => {
   if(StateManager.returnState() !== 'active'){
-    LocMan.startScan()
+    AsyncStorage.getItem('travel', (err,res)=>{
+      if(res !== 'false'){
+        LocMan.startScan()
+      }
+    })
+    
   }
 }
 
