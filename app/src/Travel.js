@@ -73,8 +73,10 @@ export default class Travel extends Component {
         (position) => {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
-            }), this.state.following ? this.viewPOI() : console.log("freecam")
-            console.log("Get Location (Travel.js)")
+            });
+            if (this.state.following) {
+              this.viewPOI();
+            }
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             } )
@@ -94,7 +96,6 @@ export default class Travel extends Component {
                 //AppMan.checkDist(position.coords, item)
                 if(vis){
                   if(!this.state.VisiblePois.includes(item) ){
-                    console.log("Found")
                     this.state.VisiblePois.push(
                       item
                     )
@@ -117,7 +118,7 @@ export default class Travel extends Component {
                 }
               })
             }
-            
+
 
         },
         (error) => {
@@ -131,17 +132,14 @@ export default class Travel extends Component {
     getFacticles(){
       let request = {}
       AsyncStorage.getItem('username', (err,res)=>{
-        console.log(this.state.route)
-        request = { 
+        request = {
           user_id: res,
           route: this.state.route.pure
         }
       })
       .then( () => {
-        console.log(request)
         Axios.post("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline", JSON.stringify(request) )
         .then( response => {
-          console.log(response.data)
           this.setState({facticles: response.data})
           return response.data
         })
@@ -152,7 +150,7 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
-      
+
 
       this.getLoc()
       AppMan.loadJourney()
@@ -165,7 +163,6 @@ export default class Travel extends Component {
       )
       .then(
         () => {
-          console.log(this.state.route)
           var temp = []
           if(this.state.points.length < 6){
             for(let i = 0; i < this.state.points.length; i++){
@@ -183,12 +180,10 @@ export default class Travel extends Component {
         this.props.jKey
       ) } )
       .then( () => this.getFacticles())
-      console.log(StateManager.returnState())
     }
 
     componentWillUnmount(){
       clearInterval(this.intervalID)
-      console.log("Unmount")
     }
 
     render() {
@@ -244,17 +239,17 @@ export default class Travel extends Component {
                     )
                 }
              )
-            : console.log("empty")
+            : null
        }
        {
          this.state.loaded ?
-         this.state.currentPos.latitude === undefined ? console.log("empty")
+         this.state.currentPos.latitude === undefined ? null
          : <Marker coordinate={ this.state.currentPos }
             image={ require('../assets/mylocation.gif') }
             style={styles.image}
             />
          :
-         console.log("empty")
+         null
        }
        </MapView>
        {/*POIS overlay*/}
@@ -310,12 +305,12 @@ export default class Travel extends Component {
         </View>
         </Overlay>
 
-       <Selector 
-        change={this.props.change} 
-        mode={'Travel'} 
+       <Selector
+        change={this.props.change}
+        mode={'Travel'}
         following={ () => {
-           this.setState({following: true}), this.viewPOI() } } 
-           listPOIS={ ()=> this.setState({showList: true}) 
+           this.setState({following: true}), this.viewPOI() } }
+           listPOIS={ ()=> this.setState({showList: true})
         }
         navigation={this.props.navigation}/>
       </View>

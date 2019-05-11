@@ -13,10 +13,8 @@ export default class History extends Component{
 
     componentDidMount(){
         AsyncStorage.getAllKeys((err,res) =>{ this.setState({keys: res}) })
-        AsyncStorage.getItem("0000", (err,res) =>{ let obj = JSON.parse(res); console.log(obj)})
     }
     render(){
-        console.log(this.state.keys)
         return(
             <>
                 <ScrollView contentContainerStyle={styles.scrollCont}>

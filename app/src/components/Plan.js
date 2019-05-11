@@ -111,9 +111,7 @@ export default class PlanComponent extends Component{
         //Pure polyline from arriva, temp solution
         pure: this.pureRoute()
       }
-      console.log(JSON.stringify(Journey))
       AsyncStorage.getAllKeys((err,keys)=>{
-        console.log(keys)
         var keyLen = keys.length
         if(keyLen === 0){
           AsyncStorage.setItem('0000', JSON.stringify(Journey))
@@ -216,7 +214,6 @@ export default class PlanComponent extends Component{
         let temp = polyline.decode(data.common.polyL[i].crdEncYX);
         // [Dominic] As the polylines going through Jubilee are broken, at
         // the moment lets just show start/end points.
-        console.log(temp)
         //Full arriva polyline
         let pure = temp
 
@@ -252,17 +249,15 @@ export default class PlanComponent extends Component{
       })
       )
   }
-  
+
   render(){
     if(this.state.jMiddle.length > 0){
       if(this.state.jMiddle.length > 6){
         var lastItem = this.state.jMiddle[this.state.jMiddle.length-1]
       }
       else{
-        //console.log(this.state.jMiddle.length)
         let temp = this.state.jMiddle[this.state.jMiddle.length-1]
         var lastItem = temp[temp.length -1]
-        //console.log(lastItem)
       }
     }
 

@@ -25,12 +25,6 @@ export default class StateMan {
   }
 
   handleAppStateChange = (nextAppState) => {
-    if ( this.state.appState.match(/inactive|background/) && nextAppState === 'active' ) {
-        console.log("Foreground");
-    }
-    else{
-        console.log("Background")
-    }
     this.setState({appState: nextAppState});
   };
 

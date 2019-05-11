@@ -38,18 +38,16 @@ export default class BusStopTimes extends Component{
     .then(response =>{
         var Data = response.data.svcResL[0].res
         var DStop = response.data.svcResL[0].res.jnyL
-        console.log(Data)
         let list = []
         let mem = 0
         for( let i = 0; i < DStop.length; i++){
             if(!Data.common.prodL[i].hasOwnProperty('number')) mem++
             let temp = {
                 time: DStop[i].stbStop.dTimeS,
-                bus:  Data.common.prodL[i + mem].number 
+                bus:  Data.common.prodL[i + mem].number
             }
             list.push(temp)
         }
-        console.log(list)
         this.setState({BusList: list, loaded: true})
     })
     .then(this.forceUpdate())
@@ -61,13 +59,12 @@ export default class BusStopTimes extends Component{
   }
 
   render(){
-    console.log(this.state.BusList[0])
     return(
       <View style={{flex:1, flexDirection:'column'}}>
         <Text>Bus Times</Text>
         <Text>{"" + this.state.loaded}</Text>
         {
-          this.state.loaded ? 
+          this.state.loaded ?
           this.state.BusList.map( (item, i) => {
             <Text key={i} > Bus: {"" + item.bus}, Time: {"" + item.time} </Text>
           } )
@@ -119,19 +116,17 @@ class BusStopTimes{
     .then(response =>{
         var Data = response.data.svcResL[0].res
         var DStop = response.data.svcResL[0].res.jnyL
-        console.log(Data)
         let list = []
         let mem = 0
         for( let i = 0; i < DStop.length; i++){
             if(!Data.common.prodL[i].hasOwnProperty('number')) mem++
             let temp = {
                 time: DStop[i].stbStop.dTimeS,
-                bus:  Data.common.prodL[i + mem].number 
+                bus:  Data.common.prodL[i + mem].number
             }
             list.push(temp)
         }
-        
-        console.log(this.state.BusList)
+
         this.state.BusList = list
     })
 

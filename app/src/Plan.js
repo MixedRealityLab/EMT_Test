@@ -16,7 +16,7 @@ export default class Plan extends Component {
       this.state = {
         arr:      -1,
         walk:     false,
-        showBusTimes: false, 
+        showBusTimes: false,
         busTimes: [],
       }
       this.showBusTime = this.showBusTime.bind(this)
@@ -41,7 +41,6 @@ export default class Plan extends Component {
 
     setArr(arr){
       this.setState({arr: arr})
-      console.log(arr)
     }
 
     showBusTimeOverlay(){

@@ -19,7 +19,7 @@ const Notif = async (data) => {
         LocMan.startScan()
       }
     })
-    
+
   }
 }
 
@@ -80,7 +80,6 @@ const initialise = async () => {
   AsyncStorage.getItem(
     'travel', (err, res) => {
       if (res == null) {
-        console.log("Setting false")
         AsyncStorage.setItem('travel', 'false');
       }
     }
