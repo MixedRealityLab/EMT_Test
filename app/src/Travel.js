@@ -16,6 +16,17 @@ var PushNotification = require('react-native-push-notification');
 
 import PushNotificationAndroid from 'react-native-push-notification'
 
+var globRef = {}
+var globalFollow = true
+
+function newView(lat, lon) {
+  globRef.animateCamera({
+    center: {
+      latitude: 0,
+      longitude: 0
+    },
+    zoom: 17 });
+}
 
 export default class Travel extends Component {
 
@@ -73,7 +84,9 @@ export default class Travel extends Component {
         (position) => {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
-            }), this.state.following ? this.viewPOI() : console.log("freecam")
+            }), 
+            //this.state.following 
+            globalFollow ? this.viewPOI() : console.log("freecam")
             console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
@@ -98,6 +111,8 @@ export default class Travel extends Component {
                     this.state.VisiblePois.push(
                       item
                     )
+                    this.mView.animateCamera({center:{latitude:item.latitude, longitude: item.longitude }, zoom: 17})
+
                     AsyncStorage.setItem('VisPOIS', JSON.stringify(this.state.VisiblePois))
                   }
                 }
@@ -152,21 +167,26 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
-      PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
-            DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-              console.log ('Notification action received: ' + action);
-              const info = JSON.parse(action.dataJSON);
-              if (info.action == 'Show') {
-                console.log("Show")
-              }
-              else if(info.action == 'Yes'){
-                console.log('Ye')
-              }
-              else{
-                console.log("Cri")
-              }
-              // Add all the required actions handlers
-            });
+      PushNotification.configure({
+        // (required) Called when a remote or local notification is opened or received
+        onNotification: function(notification) {
+          // Register all the valid actions for notifications here and add the action handler for each action
+          console.log("hi");
+          console.log(notification.data)
+          globRef.animateCamera({
+            center: {
+              latitude: 0,
+              longitude: 0
+            },
+            zoom: 17 })
+            globalFollow = false
+        },
+      permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+      }
+      })
 
       this.getLoc()
       AppMan.loadJourney()
@@ -213,7 +233,7 @@ export default class Travel extends Component {
       <View style={styles.mapContainer}>
        <MapView
          provider={PROVIDER_GOOGLE}
-         ref={mView => this.mView = mView}
+         ref={mView => this.mView = globRef = mView}
          style={styles.map}
          customMapStyle={mapStyle}
          onMapReady={this.ready}
@@ -224,7 +244,10 @@ export default class Travel extends Component {
            latitudeDelta: 0.020,
            longitudeDelta: 0.0121,
          }}
-         onPanDrag={ () => { this.state.following ? this.setState({following: false}) : null } }
+         onPanDrag={ () => {
+            globalFollow ? globalFollow = false 
+            //this.state.following ? this.setState({following: false}) 
+            : null } }
        >
        {
           this.state.loaded ?
@@ -328,7 +351,10 @@ export default class Travel extends Component {
         change={this.props.change} 
         mode={'Travel'} 
         following={ () => {
-           this.setState({following: true}), this.viewPOI() } } 
+           //this.setState({following: true})
+           globalFollow = true
+           , this.viewPOI() } }
+
            listPOIS={ ()=> this.setState({showList: true}) 
         }
         navigation={this.props.navigation}/>

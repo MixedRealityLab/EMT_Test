@@ -200,7 +200,11 @@ class Manager{
 
   testNotif(){
 
-    this.state.categories.map( (item,i) => {
+    PushNotification.localNotification({
+      message: "Test notification type: Test", // (required)
+      data: "Loc Data here"
+    })
+    /*this.state.categories.map( (item,i) => {
       if(this.queue(item)){
           PushNotification.localNotification({
             message: "Test notification type: " + item, // (required)
@@ -209,7 +213,7 @@ class Manager{
           this.state.seenFacticles.push(item + "testNotif")
           
       }
-    } )
+    } )*/
   }
 
   sendNotif(item){

@@ -14,20 +14,9 @@ import Stops from './components/Stops.js';
 import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
 
-import Geolocation from 'react-native-geolocation-service'
+import AppMan from './components/NotifMan'
 
-const getLoc = () => {
-  Geolocation.getCurrentPosition(
-    (position) => {
-        console.log(position.coords)
-    },
-    (error) => {
-        // See error code charts below.
-        console.log(error.code, error.message);
-    },
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-);
-}
+var PushNotification = require('react-native-push-notification')
 
 class Search extends Component {
 
@@ -43,6 +32,7 @@ class Search extends Component {
   }
 
   componentDidMount() {
+    AppMan.testNotif()
     Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois')
       .then(response => {
         return response.data.sort((e1, e2) => {
@@ -102,6 +92,17 @@ class Search extends Component {
   }
 }
 
+var globRef = {}
+
+function newView(lat, lon) {
+  globRef.animateCamera({
+    center: {
+      latitude: 0,
+      longitude: 0
+    },
+    zoom: 17 });
+}
+
 export default class Explore extends Component {
 
   constructor(props) {
@@ -128,9 +129,25 @@ export default class Explore extends Component {
     this.showOverlayTime = this.showOverlayTime.bind(this)
     this.showItem = this.showItem.bind(this)
     this.showBusTime = this.showBusTime.bind(this)
+
+    /*PushNotification.configure({
+      // (required) Called when a remote or local notification is opened or received
+      onNotification: function(notification) {
+        // Register all the valid actions for notifications here and add the action handler for each action
+        console.log("hi");
+        console.log(notification.data)
+        newView()
+      },
+    permissions: {
+      alert: true,
+      badge: true,
+      sound: true
+    }
+    })*/
   }
 
   componentDidMount(){
+    AppMan.testNotif()
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
         //this.intervalID = setInterval( () => getLoc(), 2000)
@@ -149,6 +166,8 @@ export default class Explore extends Component {
       },
       zoom: 17 });
   }
+
+  
 
   setFilter(filter) {
     this.setState({ filter: filter })
@@ -194,7 +213,7 @@ export default class Explore extends Component {
       <View style={styles.containerP}>
         <View style={styles.mapContainer}>
           <MapView
-            ref={mView => this.mView = mView}
+            ref={mView => this.mView = globRef= mView}
             provider={PROVIDER_GOOGLE}
             style={styles.map}
             customMapStyle={mapStyle}
