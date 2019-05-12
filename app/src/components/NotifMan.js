@@ -200,10 +200,13 @@ class Manager{
 
   testNotif(){
 
-    PushNotification.localNotification({
-      message: "Test notification type: Test", // (required)
-      data: "Loc Data here"
-    })
+    for(let i = 0; i < 5; i++){
+      let pos = JSON.stringify({lat: i* 20, lon:i* 20})
+      PushNotification.localNotification({
+        message: "Test notification type: Test" + (i * 20), // (required)
+        data: pos
+      })
+    }
     /*this.state.categories.map( (item,i) => {
       if(this.queue(item)){
           PushNotification.localNotification({

@@ -19,15 +19,6 @@ import PushNotificationAndroid from 'react-native-push-notification'
 var globRef = {}
 var globalFollow = true
 
-function newView(lat, lon) {
-  globRef.animateCamera({
-    center: {
-      latitude: 0,
-      longitude: 0
-    },
-    zoom: 17 });
-}
-
 export default class Travel extends Component {
 
     constructor(props){
@@ -171,12 +162,11 @@ export default class Travel extends Component {
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
           // Register all the valid actions for notifications here and add the action handler for each action
-          console.log("hi");
           console.log(notification.data)
           globRef.animateCamera({
             center: {
-              latitude: 0,
-              longitude: 0
+              latitude: notification.data.lat,
+              longitude: notification.data.lon
             },
             zoom: 17 })
             globalFollow = false

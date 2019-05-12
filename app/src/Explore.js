@@ -32,7 +32,6 @@ class Search extends Component {
   }
 
   componentDidMount() {
-    AppMan.testNotif()
     Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois')
       .then(response => {
         return response.data.sort((e1, e2) => {
