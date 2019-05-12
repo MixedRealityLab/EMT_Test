@@ -161,7 +161,7 @@ class Manager{
     else{
       if(!this.checkSeen(facticle.id)){
         let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
-        if(facticle.targets.length > 0){
+        if(facticle.hasOwnProperty('targets')){
           let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
           if(isInside){
             if(this.queue()){
