@@ -8,7 +8,7 @@ import LocMan from './app/src/components/BackgroundService.js'
 import {Log, Uploader, init as logInit} from './app/src/Logger.js'
 import StateMan from './app/src/components/StateCheck.js'
 
-logInit.then(() => {
+logInit().then(() => {
 
   Log.info('Application started');
   const StateManager = new StateMan();
