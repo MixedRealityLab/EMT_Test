@@ -11,55 +11,48 @@ const database_displayname = 'In My Seat Log Database';
 
 const upload_period = 30 * 60 * 1000;
 
-let db = null;
+let db = false;
 
 SQLite.enablePromise(true);
 
-console.log('Opening log database');
-SQLite.openDatabase(
-    database_name,
-    database_version,
-    database_displayname, -1).then((_db) => {
-  console.log('Log database opened');
-  db = _db;
-  db.executeSql('CREATE TABLE IF NOT EXISTS log( '
-    + 'datetime TEXT, '
-    + 'level TEXT, '
-    + 'data TEXT, '
-    + 'uploaded INTEGER'
-    +'); ').catch((error) => {
-      console.log(error);
+export const init = async () => {
+  console.log('Opening log database');
+  SQLite.openDatabase(
+      database_name,
+      database_version,
+      database_displayname, -1).then((_db) => {
+    console.log('Log database opened');
+    db = _db;
+    return db.executeSql('CREATE TABLE IF NOT EXISTS log( '
+      + 'datetime TEXT, '
+      + 'level TEXT, '
+      + 'data TEXT, '
+      + 'uploaded INTEGER'
+      +'); ');
+  }).catch((error) => {
+    console.log(error);
+    db = false;
   });
-}).catch((error) => {
-  console.log(error);
-  db = false;
-});
-
-const sleep = (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 const log = async (level, data) => {
-  while (db === null) {
-    await sleep(100);
-  }
   if (db === false) {
     return;
   }
   const dt = iso8601.iso(new Date(), true);
   const json = JSON.stringify(data);
   console.log('[' + dt + '] ' + level + ': ' + json);
-  db.executeSql('INSERT INTO log (datetime, level, data, uploaded) VALUES (?, ?, ?, 0)', [dt, level, json]);
+  db.executeSql(
+      'INSERT INTO log (datetime, level, data, uploaded) '
+          + 'VALUES (?, ?, ?, 0)', [dt, level, json]);
 }
 
 const getUnuploaded = async () => {
-  while (db === null) {
-    await sleep(100);
-  }
   if (db === false) {
     return;
   }
-  return db.executeSql('SELECT rowid, * FROM log WHERE uploaded = 0').then((results) => {
+  return db.executeSql('SELECT rowid, * FROM log WHERE uploaded = 0')
+      .then((results) => {
     var res = [];
     results = results[0];
     var len = results.rows.length;
@@ -71,9 +64,6 @@ const getUnuploaded = async () => {
 }
 
 const setUploaded = async (entries) => {
-  while (db === null) {
-    await sleep(100);
-  }
   if (db === false) {
     return;
   }
@@ -120,7 +110,7 @@ export const Uploader = {
             setUploaded(results);
           }
         });
-      });
+      }).catch(console.log);
     }, upload_period);
   }
 
