@@ -49,20 +49,20 @@ class Manager{
               // Add all the required actions handlers
             });
           })(),
-        
+
         permissions: {
           alert: true,
           badge: true,
           sound: true
         }
       })
-      
+
       AsyncStorage.getAllKeys( (err,res) => console.log(res) )
       //AsyncStorage.setItem('travel','0012')
       AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
-      
+
       AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); console.log(obj); this.state.seenFacticles = obj })
 
       if(this.state.timer.length < 1 ){
@@ -124,7 +124,7 @@ class Manager{
     if(String(TD).length === 1) TD = "0" + TD
     //Current Month
     let TM = this.state.Date.getMonth() + 1
-    if(String(TM).length === 1) TM = "0" + TM 
+    if(String(TM).length === 1) TM = "0" + TM
     //Current Year
     let TY = this.state.Date.getFullYear()
     //Current Hour
@@ -133,7 +133,7 @@ class Manager{
     //Current Mins
     let TMn = this.state.Date.getMinutes()
     if(String(TMn).length === 1) TMn = "0" + TMn
-    
+
     let setDate = {Date: TD + ":" + TM + ":" + TY , Time: TH + ":" + TMn}
 
     let newItem = Object.assign(item, setDate)
@@ -158,7 +158,7 @@ class Manager{
     else{
       if(!this.checkSeen(facticle.id)){
         let dist = geolib.getDistance({latitude: position.latitude, longitude: position.longitude}, {latitude: facticle.latitude, longitude: facticle.longitude} , 0)
-        if(facticle.targets.length > 0){
+        if(facticle.targets && facticle.targets.length > 0){
           let isInside = geolib.isPointInside( {latitude: position.latitude, longitude: position.longitude}, facticle.targets[0].bounds )
           if(isInside){
             if(this.queue()){
@@ -178,7 +178,7 @@ class Manager{
         }
       }
     }
-    
+
     return notif
   }
 
@@ -189,7 +189,7 @@ class Manager{
       AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); /*console.log(obj);*/ this.state.facticles = obj } )
       AsyncStorage.getItem('CurrentJ', (err,res) => {console.log(res); currJ = res} )
       .then( () => {
-        AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj } ) 
+        AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj } )
       } )
       this.state.loaded = true
     }
@@ -204,7 +204,7 @@ class Manager{
             tag: item
           })
           this.state.seenFacticles.push(item + "testNotif")
-          
+
       }
     } )
   }
@@ -233,18 +233,18 @@ class Manager{
           vibration: 300,               // vibration length in milliseconds, ignored if vibrate=false, default: 1000
           tag: notifSet.tag,            // (optional) add tag to message
           group: notifSet.group,        // (optional) add group to message
-  
-          //iOS and Android properties 
+
+          //iOS and Android properties
           title: notifSet.title,      // (optional)
           message: notifSet.bigMess,  // (required)
           playSound: false,           // (optional) default: true
           actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
         })
-        
+
       this.state.item++
       if(isFacticle) this.updateSeen(item)
   }
 }
 
-export default AppMan = new Manager(); 
+export default AppMan = new Manager();
