@@ -161,9 +161,7 @@ export default class Travel extends Component {
     }
 
     componentDidMount(){
-      let load = AppMan.loadJourney(this.props.jKey)
-      console.log("Load 0:" + load)
-      console.log(AppMan.state.journey)
+      AppMan.loadJourney(this.props.jKey)
       PushNotification.configure({
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
@@ -209,7 +207,6 @@ export default class Travel extends Component {
       .then( () => this.getFacticles())
       .catch(err => console.log(err))
       
-      console.log("Load 1:" + load)
       this.getLoc()
       
       AsyncStorage.setItem('VisPOIS', '[]')

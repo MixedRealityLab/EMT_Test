@@ -6,7 +6,7 @@ import { Overlay } from 'react-native-elements'
 import { mapStyle } from './components/Requests'
 import Stops from './components/Stops'
 import Buses from './components/Buses'
-import PlanComponent from './components/Plan'
+import PlanComponent from './components/PlanComponent'
 import Selector from './components/Selector'
 
 export default class Plan extends Component {
