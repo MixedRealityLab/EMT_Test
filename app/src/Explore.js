@@ -13,81 +13,8 @@ import capitalize from 'capitalize';
 import Stops from './components/Stops.js';
 import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
-
+import Search from './components/Search'
 import AppMan from './components/NotifMan'
-
-class Search extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      isLoaded: false,
-      pois: [],
-      searchTerm: '',
-      isVisible: false,
-    };
-    this.setVisible = this.setVisible.bind(this);
-  }
-
-  componentDidMount() {
-    Axios.get('https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois')
-      .then(response => {
-        return response.data.sort((e1, e2) => {
-          if (e1.name < e2.name) {
-            return -1;
-          } else if (e1.name > e2.name) {
-            return 1;
-          }
-          return 0;
-        });
-      })
-      .then(data => this.setState({ pois: data, isLoaded: true }));
-  }
-
-  setVisible(isVisible) {
-    this.setState({ isVisible: isVisible });
-  }
-
-  render() {
-    return (
-      <Overlay
-          animationType='fade'
-          isVisible={this.state.isVisible}
-          onBackdropPress={() => this.setVisible(false)} >
-        <View style={styles.containerP}>
-          <SearchBar
-              placeholder='Type Here...'
-              onChangeText={(text) => {this.setState({searchTerm: text})}}
-              value={this.state.searchTerm} />
-          <ScrollView contentContainerStyle={styles.scrollCont}>
-            {this.state.isLoaded
-                ? this.state.pois.map((item, i) => {
-                  if (item.name.includes(this.state.searchTerm)
-                      && (this.props.filter === 'N/A'
-                          ? true
-                          : item.category === this.props.filter)) {
-                    return (
-                      <Text
-                          key={i}
-                          style={styles.textList}
-                          onPress={() => {
-                            this.props.viewPOI(
-                                item.latitude,
-                                item.longitude,
-                                item.name, i);
-                            this.setVisible(false);
-                          }}>
-                        {item.name}
-                      </Text>
-                    )
-                  }})
-                : null}
-          </ScrollView>
-        </View>
-      </Overlay>
-    );
-  }
-}
 
 var globRef = {}
 
@@ -118,24 +45,9 @@ export default class Explore extends Component {
     this.showItem = this.showItem.bind(this)
     this.showBusTime = this.showBusTime.bind(this)
 
-    /*PushNotification.configure({
-      onNotification: function(notification) {
-        globRef.animateCamera({
-            center: {
-              latitude: notification.data.lat,
-              longitude: notification.data.lon
-            },zoom: 17 })
-        },
-    permissions: {
-      alert: true,
-      badge: true,
-      sound: true
-    }
-    })*/
   }
 
   componentDidMount(){
-    //AppMan.testNotif()
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
   }
@@ -262,10 +174,7 @@ export default class Explore extends Component {
               <Picker.Item key={i} label={itemName} value={item} /> ) } )
           }
         </Picker>
-        <Search
-            ref={searchOverlayRef}
-            filter={this.state.filter}
-            viewPOI={this.viewPOI}/>
+        
         <ActionButton
             position='left'
             verticalOrientation='down'
@@ -288,6 +197,11 @@ export default class Explore extends Component {
             onPress={() => {
               searchOverlayRef.current.setVisible(true);
             }} />
+        <Search
+            mode={'exp'}
+            ref={searchOverlayRef}
+            filter={this.state.filter}
+            viewPOI={this.viewPOI}/>
       </View>
     );
   }

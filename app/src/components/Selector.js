@@ -118,7 +118,7 @@ export default class Selector extends Component{
                     >
                     <View style={styles.containerP} >
 
-                    <Search viewPOI={this.poiSet} filter={this.state.filter}/>
+                    <Search mode={'plan'} viewPOI={this.poiSet} filter={this.state.filter}/>
                     <Text>Destination: </Text>
                     <Text>{ this.state.destName !== "" ? this.state.destName : "No Destination Selected" }</Text>
                     {}
