@@ -42,7 +42,7 @@ class Manager{
           sound: true
         }
       })
-      
+      //AsyncStorage.setItem("seenFacticles","[]")
       AsyncStorage.getAllKeys( (err,res) => console.log(res) ).catch(err => console.log(err))
       AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
@@ -204,16 +204,6 @@ class Manager{
         data: pos
       })
     }
-    /*this.state.categories.map( (item,i) => {
-      if(this.queue(item)){
-          PushNotification.localNotification({
-            message: "Test notification type: " + item, // (required)
-            tag: item
-          })
-          this.state.seenFacticles.push(item + "testNotif")
-          
-      }
-    } )*/
   }
 
   sendNotif(item){
@@ -229,7 +219,13 @@ class Manager{
       group: isFacticle ? "Facticle" : "BusChange"
     }
 
-    var loc = JSON.stringify({lat: item.latitude, lon: item.longitude})
+    let data = {lat: item.latitude, lon: item.longitude}
+    let desc = ''
+    if(item.hasOwnProperty('description')){
+      desc = {desc: item.description}
+      data = Object.assign(data,desc)
+    }
+    var loc = JSON.stringify(data)
 
       PushNotification.localNotification({
           largeIcon: "ic_launcher",     // (optional) default: "ic_launcher"

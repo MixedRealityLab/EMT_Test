@@ -165,7 +165,7 @@ export default class Info extends Component{
                                     step={1}
                                 />
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
-                                <Text>0 Seconds</Text>
+                                <Text>1 Seconds</Text>
                                 <Text>60 Seconds</Text>
                                 </View>
                                 <Text>Current interval: {this.state.rateNotif}</Text>

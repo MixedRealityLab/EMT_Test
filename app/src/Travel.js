@@ -7,17 +7,34 @@ import Selector from './components/Selector'
 import Geolocation from 'react-native-geolocation-service'
 import { Overlay } from 'react-native-elements'
 import Axios from 'axios';
-import StateMan from './components/StateCheck'
 import AppMan from './components/NotifMan'
 import LocMan from './components/BackgroundService'
 
-const StateManager = new StateMan()
 var PushNotification = require('react-native-push-notification');
-
-import PushNotificationAndroid from 'react-native-push-notification'
 
 var globRef = {}
 var globalFollow = true
+var globalOverlay = false
+var globalClean = []
+
+function globalShow(item){
+  let temp = item
+    var split = temp.split("<br>")
+
+    var clean = []
+    split.map(
+        (item) => {
+            switch (String(item).substr(0,4)){
+                case "":
+                break
+                default:
+                    clean.push(item)
+                break
+            }
+        }
+    )
+    globalClean = clean
+}
 
 export default class Travel extends Component {
 
@@ -26,7 +43,6 @@ export default class Travel extends Component {
       this.state ={
         route: {},
         points: [],
-        facticles: [],
         currentPos: {},
         Settings: {},
         VisiblePois: [],
@@ -34,7 +50,7 @@ export default class Travel extends Component {
         showPOI: false,
         showList: false,
         clean: [],
-        following: true,
+        //following: true,
         polyOptsBus:['#00ff00' ,
                      '#0000ff' ,
                      '#000000' ,
@@ -78,7 +94,7 @@ export default class Travel extends Component {
             }), 
             //this.state.following 
             globalFollow ? this.viewPOI() : console.log("freecam")
-            console.log("Get Location (Travel.js)")
+            //console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             })
@@ -112,7 +128,7 @@ export default class Travel extends Component {
               }
               })
             if(this.state.Settings.Direct){
-              console.log(AppMan.state.journey.changes)
+              //console.log(AppMan.state.journey.changes)
               AppMan.state.journey.changes.map( (item, i) => {
                   if(!item.hasOwnProperty('seen')){
                     let dir = item
@@ -173,6 +189,10 @@ export default class Travel extends Component {
               longitude: notification.data.lon
             },zoom: 17 })
             globalFollow = false
+            if(notification.data.hasOwnProperty('desc')){
+              globalShow(notification.data.desc)
+              globalOverlay = true
+            }
         },
       permissions: {
         alert: true,
@@ -319,6 +339,39 @@ export default class Travel extends Component {
         </ScrollView>
         </View>
         </Overlay>
+      {/*Global POIS overlay*/}
+      <Overlay
+          animationType="fade"
+          isVisible={globalOverlay}
+          onBackdropPress={() => globalOverlay = false}
+        >
+        <View style={styles.containerP} >
+        <ScrollView contentContainerStyle={styles.scrollCont} >
+          <Text></Text>
+          <Text>Category: </Text>
+          {
+            String(globalClean[0]).substr(0,4) === "<img" ?
+              //<HTML html={globalClean[0]} />
+              <></>
+            :
+              <Text>{globalClean[0]}</Text>
+          }
+          {
+            globalClean.map(
+              (item, i) => {
+                if(i !== 0){
+                  return(
+                    <Text key={i} >{item}</Text>
+                  )
+                }
+              }
+            )
+          }
+        </ScrollView>
+        </View>
+        </Overlay>
+
+
         {/*POIS List overlay*/}
         <Overlay
           animationType="fade"
@@ -332,7 +385,10 @@ export default class Travel extends Component {
               return(
                 <Text key={i} onPress={ () => {
                   this.mView.animateCamera({center:{latitude: item.latitude, longitude: item.longitude}, zoom: 17})
-                  this.setState({showList: false, following: false})
+                  this.setState({showList: false
+                    //,following: false
+                  })
+                  globalFollow = false
                 } } > {item.name} </Text>
               )
             })
