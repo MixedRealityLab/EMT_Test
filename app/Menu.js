@@ -47,8 +47,7 @@ class TravelPlanScreen extends React.Component {
     super(props)
     this.state ={
       showTravelView: false,
-      journeyKey: '',
-      loaded: false
+      journeyKey: ''
     }
     this.change = this.change.bind(this)
   }
@@ -57,7 +56,7 @@ class TravelPlanScreen extends React.Component {
     AsyncStorage.getItem('travel', (err,res) =>{
       if(res !== null)
         if(res !== 'false'){
-          this.setState({showTravelView: true, journeyKey: res, loaded: true})
+          this.setState({showTravelView: true, journeyKey: res})
         }
     })
   }
@@ -73,11 +72,10 @@ class TravelPlanScreen extends React.Component {
   }
   render() {
     return (
-      this.state.loaded
-        ? this.state.showTravelView
+       this.state.showTravelView
           ? <Travel change={this.change} jKey={this.state.journeyKey} navigation={this.props.navigation}/>
           : <Plan change={this.change} navigation={this.props.navigation}/>
-        : null
+       
     )
   }
 }
