@@ -83,7 +83,7 @@ logInit().then(() => {
       if (res == null) {
         AsyncStorage.setItem('travel', 'false');
       }
-    )
+    })
 
   };
   initialise();
