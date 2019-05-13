@@ -16,8 +16,6 @@ import { mapStyle } from './components/Requests.js';
 
 import AppMan from './components/NotifMan'
 
-var PushNotification = require('react-native-push-notification')
-
 class Search extends Component {
 
   constructor(props) {

@@ -348,11 +348,11 @@ export default class Travel extends Component {
         <View style={styles.containerP} >
         <ScrollView contentContainerStyle={styles.scrollCont} >
           <Text></Text>
-          <Text>Category: </Text>
+          <Text>Category: {globalClean[globalClean-1]} </Text>
           {
             String(globalClean[0]).substr(0,4) === "<img" ?
-              //<HTML html={globalClean[0]} />
-              <></>
+              <HTML html={globalClean[0]} />
+              //<></>
             :
               <Text>{globalClean[0]}</Text>
           }

@@ -1,10 +1,8 @@
-import { AsyncStorage, DeviceEventEmitter } from 'react-native'
+import { AsyncStorage } from 'react-native'
 import Axios from 'axios'
 import BackgroundTimer from 'react-native-background-timer';
 
 var PushNotification = require('react-native-push-notification')
-import PushNotificationAndroid from 'react-native-push-notification'
-
 var geolib = require('geolib')
 
 /**
