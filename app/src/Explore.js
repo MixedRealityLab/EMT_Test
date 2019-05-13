@@ -93,15 +93,6 @@ class Search extends Component {
 
 var globRef = {}
 
-function newView(lat, lon) {
-  globRef.animateCamera({
-    center: {
-      latitude: 0,
-      longitude: 0
-    },
-    zoom: 17 });
-}
-
 export default class Explore extends Component {
 
   constructor(props) {
@@ -130,13 +121,13 @@ export default class Explore extends Component {
     this.showBusTime = this.showBusTime.bind(this)
 
     /*PushNotification.configure({
-      // (required) Called when a remote or local notification is opened or received
       onNotification: function(notification) {
-        // Register all the valid actions for notifications here and add the action handler for each action
-        console.log("hi");
-        console.log(notification.data)
-        newView()
-      },
+        globRef.animateCamera({
+            center: {
+              latitude: notification.data.lat,
+              longitude: notification.data.lon
+            },zoom: 17 })
+        },
     permissions: {
       alert: true,
       badge: true,
@@ -146,7 +137,7 @@ export default class Explore extends Component {
   }
 
   componentDidMount(){
-    AppMan.testNotif()
+    //AppMan.testNotif()
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
         //this.intervalID = setInterval( () => getLoc(), 2000)

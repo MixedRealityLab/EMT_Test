@@ -5,24 +5,6 @@ import BackgroundTimer from 'react-native-background-timer';
 var PushNotification = require('react-native-push-notification')
 import PushNotificationAndroid from 'react-native-push-notification'
 
-(function(notification) {
-  // Register all the valid actions for notifications here and add the action handler for each action
-  PushNotificationAndroid.registerNotificationActions(['Show','Yes','No']);
-  DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-    console.log ('Notification action received: ' + action);
-    const info = JSON.parse(action.dataJSON);
-    if (info.action == 'Show') {
-      console.log("Show")
-    }
-    else if(info.action == 'Yes'){
-      console.log('Ye')
-    }
-    else{
-      console.log("Cri")
-    }
-    // Add all the required actions handlers
-  });
-})();
 var geolib = require('geolib')
 
 /**
@@ -61,17 +43,19 @@ class Manager{
         }
       })
       
-      AsyncStorage.getAllKeys( (err,res) => console.log(res) )
+      AsyncStorage.getAllKeys( (err,res) => console.log(res) ).catch(err => console.log(err))
       AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
+      .catch(err => console.log(err))
       
       AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); console.log(obj); this.state.seenFacticles = obj })
+      .catch(err => console.log(err))
 
       if(this.state.timer.length < 1 ){
         console.log("Setting timer")
         this.state.timer = BackgroundTimer.setInterval(() => {
-          console.log(this.state.facticleQueue)
+          //console.log(this.state.facticleQueue)
           let newTime = this.state.facticleQueue - 1
           if(newTime > 0){
             this.state.facticleQueue = newTime
@@ -185,17 +169,30 @@ class Manager{
     return notif
   }
 
-  loadJourney(){
+  loadJourney(item){
     if(!this.state.loaded){
       var currJ = ''
       console.log("Loading")
       AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); /*console.log(obj);*/ this.state.facticles = obj } )
-      AsyncStorage.getItem('CurrentJ', (err,res) => {console.log(res); currJ = res} )
+      .catch(err => console.log(err))
+      
+      if(item !== null){
+        AsyncStorage.getItem(item,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj; this.state.loaded = true } )
+        .catch(err => console.log(err))
+      }
+      else{
+        AsyncStorage.getItem('CurrentJ', (err,res) => {console.log(res); currJ = res} )
       .then( () => {
-        AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj } ) 
+        AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj; this.state.loaded = true } )
+        .catch(err => console.log(err))
       } )
-      this.state.loaded = true
+      .catch(err => console.log(err))
+      }
+      
     }
+    console.log("AppMan: ")
+    console.log(this.state.journey)
+    return this.state.loaded
   }
 
   testNotif(){
@@ -248,7 +245,7 @@ class Manager{
           title: notifSet.title,      // (optional)
           message: notifSet.bigMess,  // (required)
           playSound: false,           // (optional) default: true
-          actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
+          //actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
         })
         

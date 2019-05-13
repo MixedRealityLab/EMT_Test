@@ -36,6 +36,7 @@ class LocationManager{
           AsyncStorage.getItem(
             'travel', (err, res) => {
               if(res !== 'false'){
+                console.log("Background key: " + res)
                 AppMan.loadJourney()
                 console.log("Checking")
                 //Create background timer and execute every 2000ms (2 seconds)
@@ -48,7 +49,9 @@ class LocationManager{
               else AppMan.state.loaded = false
             }
           )
+          .catch(err => console.log(err))
         )
+        .catch(err => console.log(err))
     }
   }
   
@@ -72,6 +75,7 @@ class LocationManager{
                         }
 
                       })
+                      .catch(err => console.log(err))
 
                     }
                   }

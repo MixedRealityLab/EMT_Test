@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { StyleSheet, View, AsyncStorage, ScrollView, Text, DeviceEventEmitter } from 'react-native'
+import { StyleSheet, View, AsyncStorage, ScrollView, Text } from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline, Marker }  from 'react-native-maps'
 import HTML from 'react-native-render-html'
 import { mapStyle } from './components/Requests'
@@ -81,12 +81,14 @@ export default class Travel extends Component {
             console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
-            } )
+            })
+            .catch(err => console.log(err))
             AsyncStorage.getItem('VisPOIS', (err,res) => {
               if(JSON.parse(res) !== this.state.VisiblePois){
                 this.setState({VisiblePois: JSON.parse(res)})
               }
             })
+            .catch(err => console.log(err))
             AppMan.setRate(this.state.Settings.NotifRate)
             //Check if facticles are turned on
             if(this.state.Settings.Facticle)
@@ -110,17 +112,18 @@ export default class Travel extends Component {
               }
               })
             if(this.state.Settings.Direct){
+              console.log(AppMan.state.journey.changes)
               AppMan.state.journey.changes.map( (item, i) => {
-                if(!item.hasOwnProperty('seen')){
-                  let dir = item
-                  let loc = AppMan.state.journey.route[i + 1][0]
-                  let temp = Object.assign(dir, loc)
-                  let seen = AppMan.checkDist(position.coords, temp)
-
-                  if(seen){
-                    item = Object.assign(item, {seen:false})
-                  }
-                }
+                  if(!item.hasOwnProperty('seen')){
+                    let dir = item
+                    let loc = AppMan.state.journey.route[i + 1][0]
+                    let temp = Object.assign(dir, loc)
+                    let seen = AppMan.checkDist(position.coords, temp)
+  
+                    if(seen){
+                      item = Object.assign(item, {seen:false})
+                    }
+                  } 
               })
             }
             
@@ -147,7 +150,6 @@ export default class Travel extends Component {
         console.log(request)
         Axios.post("https://inmyseat.chronicle.horizon.ac.uk/api/v1/timeline", JSON.stringify(request) )
         .then( response => {
-          console.log(response.data)
           this.setState({facticles: response.data})
           return response.data
         })
@@ -155,9 +157,13 @@ export default class Travel extends Component {
           AsyncStorage.setItem('facticles', JSON.stringify(data))
         )
       })
+      .catch(err => console.log(err))
     }
 
     componentDidMount(){
+      let load = AppMan.loadJourney(this.props.jKey)
+      console.log("Load 0:" + load)
+      console.log(AppMan.state.journey)
       PushNotification.configure({
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
@@ -167,8 +173,7 @@ export default class Travel extends Component {
             center: {
               latitude: notification.data.lat,
               longitude: notification.data.lon
-            },
-            zoom: 17 })
+            },zoom: 17 })
             globalFollow = false
         },
       permissions: {
@@ -177,11 +182,6 @@ export default class Travel extends Component {
         sound: true
       }
       })
-
-      this.getLoc()
-      AppMan.loadJourney()
-      AsyncStorage.setItem('VisPOIS', '[]')
-      this.intervalID = setInterval( () => this.getLoc(), 2000)
 
       AsyncStorage.getItem(
         this.props.jKey
@@ -207,7 +207,14 @@ export default class Travel extends Component {
         this.props.jKey
       ) } )
       .then( () => this.getFacticles())
-      console.log(StateManager.returnState())
+      .catch(err => console.log(err))
+      
+      console.log("Load 1:" + load)
+      this.getLoc()
+      
+      AsyncStorage.setItem('VisPOIS', '[]')
+      this.intervalID = setInterval( () => this.getLoc(), 2000)
+
     }
 
     componentWillUnmount(){

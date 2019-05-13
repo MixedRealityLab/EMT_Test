@@ -216,7 +216,7 @@ export default class PlanComponent extends Component{
         let temp = polyline.decode(data.common.polyL[i].crdEncYX);
         // [Dominic] As the polylines going through Jubilee are broken, at
         // the moment lets just show start/end points.
-        console.log(temp)
+        //console.log(temp)
         //Full arriva polyline
         let pure = temp
 

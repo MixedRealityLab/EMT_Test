@@ -139,17 +139,7 @@ export default class Selector extends Component{
             case 'Travel':
                 return(
                     <>
-                    <ActionButton
-                        position='left'
-                        verticalOrientation='down'
-                        renderIcon={(active) => {
-                        return (<Icon name='md-menu' size={24} color='#FFFFFF' />)}}
-                        offsetX={15}
-                        offsetY={15}
-                        onPress={() => {
-                            this.props.navigation.dispatch(DrawerActions.openDrawer());
-                        }} 
-                    />
+                    
                     <ActionButton buttonColor="#000">
                         <ActionButton.Item buttonColor='#add8e6' title="Points of Interest" onPress={() => this.props.listPOIS() }>
                         <Icon name="md-locate" style={styles.actionButtonIcon} />
@@ -161,6 +151,17 @@ export default class Selector extends Component{
                         <Icon name="md-flag" style={styles.actionButtonIcon} />
                         </ActionButton.Item>
                     </ActionButton>
+                    <ActionButton
+                        position='left'
+                        verticalOrientation='down'
+                        renderIcon={(active) => {
+                        return (<Icon name='md-menu' size={24} color='#FFFFFF' />)}}
+                        offsetX={15}
+                        offsetY={15}
+                        onPress={() => {
+                            this.props.navigation.dispatch(DrawerActions.openDrawer());
+                        }} 
+                    />
                     </>
                 )
             case 'Settings':
