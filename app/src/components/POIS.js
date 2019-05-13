@@ -6,7 +6,7 @@ export default class POIS extends Component{
 
     constructor(props) {
         super(props);
-    
+
         this.state = {
             POIS: [],
             //render: [],
@@ -14,10 +14,8 @@ export default class POIS extends Component{
         }
         this.returnInfo = this.returnInfo.bind(this)
     }
-    
-    returnInfo(){
-      console.log("Hi")
-    }
+
+    returnInfo(){}
 
     componentDidMount(){
         Axios.get("https://inmyseat.chronicle.horizon.ac.uk/api/v1/allpois")
@@ -53,15 +51,15 @@ export default class POIS extends Component{
                     name={item.name}
                     coordinate={{latitude: item.latitude, longitude: item.longitude}}
                     icon={require('../../assets/icons8-point-of-interest-52.png')}
-                    > 
+                    >
                     </Marker>
                   )
                 }
               })
             }
-            
+
           </>
           )
-          
+
     }
 }

@@ -24,14 +24,14 @@ export default class Selector extends Component{
             filter: 'N/A',
             categories: [],
             destName: "",
-            
+
         }
 
         this.modeSel = this.modeSel.bind(this)
         this.poiSet = this.poiSet.bind(this)
         this.endJour = this.endJour.bind(this)
     }
-    
+
     componentDidMount(){
         Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data}) )
@@ -51,7 +51,7 @@ export default class Selector extends Component{
                 {text: 'Yes', onPress: () => { this.props.setArr(Des); this.setState({destName: name}); this.props.getRoute() }},
                 {
                     text: 'No',
-                    onPress: () => console.log('Cancel Pressed'),
+                    onPress: () => {},
                     style: 'cancel',
                 },
             ],
@@ -65,7 +65,7 @@ export default class Selector extends Component{
             "Are you sure?",
             [
                 {text: 'Yes', onPress: () => this.props.change('') },
-                {text: 'No', onPress: () => console.log('Do nothing') },
+                {text: 'No', onPress: () => {} },
             ]
         )
     }
@@ -91,7 +91,7 @@ export default class Selector extends Component{
                 )
             case 'Plan':
                 return(
-                    
+
                     <View style={styles.containerP} >
 
                     <ActionButton
@@ -103,7 +103,7 @@ export default class Selector extends Component{
                         offsetY={15}
                         onPress={() => {
                             this.props.navigation.dispatch(DrawerActions.openDrawer());
-                        }} 
+                        }}
                     />
 
                    <ActionButton buttonColor="#000">
@@ -111,7 +111,7 @@ export default class Selector extends Component{
                         <Icon name="md-flag" style={styles.actionButtonIcon} />
                         </ActionButton.Item>
                     </ActionButton>
-                    <Overlay 
+                    <Overlay
                             animationType="fade"
                             isVisible={this.state.planShow}
                             onBackdropPress={() => this.setState({ planShow: false })}
@@ -130,7 +130,7 @@ export default class Selector extends Component{
                         <Text style={styles.text}>Cancel</Text>
                     </TouchableOpacity>
 
-                    
+
 
                     </View>
                     </Overlay>
@@ -160,7 +160,7 @@ export default class Selector extends Component{
                         offsetY={15}
                         onPress={() => {
                             this.props.navigation.dispatch(DrawerActions.openDrawer());
-                        }} 
+                        }}
                     />
                     </>
                 )
@@ -175,7 +175,7 @@ export default class Selector extends Component{
                         offsetY={15}
                         onPress={() => {
                             this.props.navigation.dispatch(DrawerActions.openDrawer());
-                        }} 
+                        }}
                     />
                 )
         }

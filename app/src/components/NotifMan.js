@@ -109,7 +109,7 @@ class Manager{
     if(String(TD).length === 1) TD = "0" + TD
     //Current Month
     let TM = this.state.Date.getMonth() + 1
-    if(String(TM).length === 1) TM = "0" + TM 
+    if(String(TM).length === 1) TM = "0" + TM
     //Current Year
     let TY = this.state.Date.getFullYear()
     //Current Hour
@@ -118,7 +118,7 @@ class Manager{
     //Current Mins
     let TMn = this.state.Date.getMinutes()
     if(String(TMn).length === 1) TMn = "0" + TMn
-    
+
     let setDate = {Date: TD + ":" + TM + ":" + TY , Time: TH + ":" + TMn}
 
     let newItem = Object.assign(item, setDate)
@@ -163,7 +163,7 @@ class Manager{
         }
       }
     }
-    
+
     return notif
   }
 
@@ -234,18 +234,18 @@ class Manager{
           vibration: 300,               // vibration length in milliseconds, ignored if vibrate=false, default: 1000
           tag: notifSet.tag,            // (optional) add tag to message
           group: notifSet.group,        // (optional) add group to message
-  
-          //iOS and Android properties 
+
+          //iOS and Android properties
           title: notifSet.title,      // (optional)
           message: notifSet.bigMess,  // (required)
           playSound: false,           // (optional) default: true
           //actions: '["Show"]',      // (Android only) See the doc for notification actions to know more
           data: loc
         })
-        
+
       this.state.item++
       if(isFacticle) this.updateSeen(item)
   }
 }
 
-export default AppMan = new Manager(); 
+export default AppMan = new Manager();

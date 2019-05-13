@@ -52,10 +52,9 @@ export default class Info extends Component{
     componentDidMount(){
         var temp= {}
 
-        AsyncStorage.getItem( 
+        AsyncStorage.getItem(
             'Setting', (err,res) => {
                 temp = JSON.parse(res)
-                console.log(temp)
                 this.setState({
                     Settings: temp,
                     notifDirect: temp.Direct,
@@ -71,7 +70,6 @@ export default class Info extends Component{
     }
 
     saveSettings(){
-        console.log("Save")
         var Settings = {
             Direct:     this.state.notifDirect,     //Direction Notifications
             Facticle:   this.state.notifFacticle,   //Facticle Notifications
@@ -131,17 +129,17 @@ export default class Info extends Component{
                         <View style={{ height: this.state.filterOpen ? null : 0, overflow: 'hidden' }}>
                             <View style={styles.column}>
                                 <Text>Set the type of factile notifications that appear</Text>
-                                {this.state.categories.map( 
-                                    (item, i) => { 
-                                        return( 
+                                {this.state.categories.map(
+                                    (item, i) => {
+                                        return(
                                             <CheckBox
                                             title= {item}
                                             key={i}
                                             checked={ this.state.filterList.length === 0 ? false : this.state.filterList.includes(item) }
                                             onPress={() => this.updateFilter(item) }
                                             />
-                                        ) 
-                                    } 
+                                        )
+                                    }
                                 )}
 
                             </View>
@@ -169,7 +167,7 @@ export default class Info extends Component{
                                 <Text>60 Seconds</Text>
                                 </View>
                                 <Text>Current interval: {this.state.rateNotif}</Text>
-                                
+
                             </View>
                             </View>
                         </View>
@@ -198,7 +196,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignSelf: 'center',
         color: 'white',
-        
+
       },
     column:{
         top:0,
@@ -214,12 +212,12 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 20
       },
-     
+
       expandMenuHolder: {
         borderWidth: 1,
         borderColor: 'black'
       },
-     
+
       expandMenu: {
         padding: 10,
         backgroundColor: '#add8e6'

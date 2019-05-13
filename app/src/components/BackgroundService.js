@@ -12,13 +12,12 @@ class LocationManager{
           settings: {}
       }
 
-      this.clean = this.clean.bind(this) 
+      this.clean = this.clean.bind(this)
       this.getLoc = this.getLoc.bind(this)
   }
 
   clean(){
     if(this.state.running){
-      console.log("Cleaning Background Service")
       BackgroundTimer.clearTimeout(this.state.interval)
       this.state.running = false
     }
@@ -26,11 +25,11 @@ class LocationManager{
 
   startScan(){
     if(!this.state.running){
-        console.log("Start Scan")
         this.state.running = true
 
         AsyncStorage.getItem('Setting', (err,res) => {
-          let obj = JSON.parse(res); this.state.settings = obj; console.log(this.state.settings);
+          let obj = JSON.parse(res);
+          this.state.settings = obj;
         } )
         .then(
           AsyncStorage.getItem(
@@ -38,11 +37,9 @@ class LocationManager{
               if(res !== 'false'){
                 console.log("Background key: " + res)
                 AppMan.loadJourney()
-                console.log("Checking")
                 //Create background timer and execute every 2000ms (2 seconds)
                 this.state.interval = BackgroundTimer.setInterval(() => {
                   this.getLoc()
-                  console.log('Item: ' + this.state.item);
                   this.state.item++
               }, 2000)
               }
@@ -54,13 +51,11 @@ class LocationManager{
         .catch(err => console.log(err))
     }
   }
-  
+
   getLoc(){
     Geolocation.getCurrentPosition(
         (position) => {
-            //console.log(position);
             if(this.state.settings.Facticle){
-              console.log("Get Location (Background Service)")
               AppMan.state.facticles.map((item) => {
                   if(this.state.settings.Filter.includes(item.category)) {
                     let vis = AppMan.checkDist(position.coords, item)

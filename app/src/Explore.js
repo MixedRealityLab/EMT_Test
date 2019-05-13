@@ -138,13 +138,7 @@ export default class Explore extends Component {
     //AppMan.testNotif()
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
-        //this.intervalID = setInterval( () => getLoc(), 2000)
   }
-
-  /*componentWillUnmount(){
-    clearInterval(this.intervalID)
-    console.log("Unmount")
-  }*/
 
   viewPOI(lat, lon) {
     this.mView.animateCamera({
@@ -270,7 +264,7 @@ export default class Explore extends Component {
         </Picker>
         <Search
             ref={searchOverlayRef}
-            filter={this.state.filter} 
+            filter={this.state.filter}
             viewPOI={this.viewPOI}/>
         <ActionButton
             position='left'
