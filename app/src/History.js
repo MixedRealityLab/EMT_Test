@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {AsyncStorage, ScrollView, Text, StyleSheet} from 'react-native'
+import {Log} from './Logger.js'
 
 export default class History extends Component{
 

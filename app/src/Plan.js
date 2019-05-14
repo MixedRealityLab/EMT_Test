@@ -8,6 +8,7 @@ import Stops from './components/Stops'
 import Buses from './components/Buses'
 import PlanComponent from './components/PlanComponent'
 import Selector from './components/Selector'
+import {Log} from './Logger.js'
 
 export default class Plan extends Component {
 

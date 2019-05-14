@@ -9,6 +9,7 @@ import { Overlay } from 'react-native-elements'
 import Axios from 'axios';
 import AppMan from './components/NotifMan'
 import LocMan from './components/BackgroundService'
+import {Log} from './Logger.js'
 
 var PushNotification = require('react-native-push-notification');
 
@@ -90,7 +91,7 @@ export default class Travel extends Component {
         (position) => {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
-            }), 
+            }),
             globalFollow ? this.viewPOI() : console.log("freecam")
             //console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
@@ -131,11 +132,11 @@ export default class Travel extends Component {
                     let loc = AppMan.state.journey.route[i + 1][0]
                     let temp = Object.assign(dir, loc)
                     let seen = AppMan.checkDist(position.coords, temp)
-  
+
                     if(seen){
                       item = Object.assign(item, {seen:false})
                     }
-                  } 
+                  }
               })
             }
 
@@ -219,9 +220,9 @@ export default class Travel extends Component {
       ) } )
       .then( () => this.getFacticles())
       .catch(err => console.log(err))
-      
+
       this.getLoc()
-      
+
       AsyncStorage.setItem('VisPOIS', '[]')
       this.intervalID = setInterval( () => this.getLoc(), 2000)
 
@@ -251,8 +252,8 @@ export default class Travel extends Component {
            longitudeDelta: 0.0121,
          }}
          onPanDrag={ () => {
-            globalFollow ? globalFollow = false 
-            //this.state.following ? this.setState({following: false}) 
+            globalFollow ? globalFollow = false
+            //this.state.following ? this.setState({following: false})
             : null } }
        >
        {
@@ -392,7 +393,7 @@ export default class Travel extends Component {
         change={this.props.change}
         mode={'Travel'}
         following={ () => { globalFollow = true, this.viewPOI() } }
-        listPOIS ={ ()=> this.setState({showList: true}) 
+        listPOIS ={ ()=> this.setState({showList: true})
         }
         navigation={this.props.navigation}/>
       </View>

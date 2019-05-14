@@ -5,6 +5,7 @@ import MapViewDirections from 'react-native-maps-directions'
 import Axios from 'axios'
 import { reqBod, reqPlan, coordsArriva, coordsLatLng } from './Requests'
 import Geolocation from 'react-native-geolocation-service'
+import {Log} from '../Logger.js'
 
 var polyline = require('@mapbox/polyline')
 var simplify = require('simplify-js')
@@ -252,7 +253,7 @@ export default class PlanComponent extends Component{
       })
       )
   }
-  
+
   render(){
     if(this.state.jMiddle.length > 0){
       if(this.state.jMiddle.length > 6){

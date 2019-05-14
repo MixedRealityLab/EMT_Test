@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, ScrollView } from 'react-native';
 import { SearchBar, Overlay  } from 'react-native-elements'
 import Axios from 'axios';
+import {Log} from '../Logger.js'
 
 export default class Search extends Component {
 

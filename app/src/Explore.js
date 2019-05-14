@@ -14,6 +14,7 @@ import Stops from './components/Stops.js';
 import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
 import Search from './components/Search'
+import {Log} from './Logger.js'
 
 export default class Explore extends Component {
 
@@ -47,6 +48,9 @@ export default class Explore extends Component {
   componentDidMount(){
     Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data.sort()}) );
+     this.props.navigation.addListener('didFocus', (payload) => {
+       Log.info('The Explore screen was activated');
+     });
   }
 
   viewPOI(lat, lon) {
@@ -58,7 +62,7 @@ export default class Explore extends Component {
       zoom: 17 });
   }
 
-  
+
 
   setFilter(filter) {
     this.setState({ filter: filter })
@@ -171,7 +175,7 @@ export default class Explore extends Component {
               <Picker.Item key={i} label={itemName} value={item} /> ) } )
           }
         </Picker>
-        
+
         <ActionButton
             position='left'
             verticalOrientation='down'

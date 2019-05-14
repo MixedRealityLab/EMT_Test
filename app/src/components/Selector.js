@@ -6,6 +6,7 @@ import Search from './Search'
 import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/Ionicons'
 import { DrawerActions } from 'react-navigation';
+import {Log} from '../Logger.js'
 
 /**
  * Class that displays various buttons and interactions for the user
@@ -48,8 +49,8 @@ export default class Selector extends Component{
             "Point",
             "Set " + name + " as destination?",
             [
-                {text: 'Yes', 
-                onPress: () => { 
+                {text: 'Yes',
+                onPress: () => {
                     this.props.setArr(Des)
                     this.setState({destName: name})
                     this.props.getRoute()
@@ -127,7 +128,7 @@ export default class Selector extends Component{
 
                     <Text>Destination: </Text>
                     <Text>{ this.state.destName !== "" ? this.state.destName : "No Destination Selected" }</Text>
-                    
+
                     <TouchableOpacity disabled={!this.state.loaded} style={this.state.loaded ? styles.button : styles.buttonOff} onPress={()=>{ this.props.beginRoute()}}>
                         <Text style={styles.text}>Begin Route</Text>
                     </TouchableOpacity>
@@ -142,7 +143,7 @@ export default class Selector extends Component{
                 )
             case 'Travel':
                 return(
-                    <>         
+                    <>
                     <ActionButton buttonColor="#000">
                         <ActionButton.Item buttonColor='#add8e6' title="Points of Interest" onPress={() => this.props.listPOIS() }>
                         <Icon name="md-locate" style={styles.actionButtonIcon} />

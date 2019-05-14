@@ -1,4 +1,5 @@
 import { AppState } from 'react-native';
+import {Log} from '../Logger.js'
 
 /**
  * Class to check if app is in the foreground

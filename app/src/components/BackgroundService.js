@@ -2,6 +2,7 @@ import { AsyncStorage } from 'react-native'
 import Geolocation from 'react-native-geolocation-service'
 import BackgroundTimer from 'react-native-background-timer';
 import AppMan from './NotifMan'
+import {Log} from '../Logger.js'
 
 class LocationManager{
   constructor(){

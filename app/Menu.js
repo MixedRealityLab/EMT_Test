@@ -75,7 +75,7 @@ class TravelPlanScreen extends React.Component {
        this.state.showTravelView
           ? <Travel change={this.change} jKey={this.state.journeyKey} navigation={this.props.navigation}/>
           : <Plan change={this.change} navigation={this.props.navigation}/>
-       
+
     )
   }
 }

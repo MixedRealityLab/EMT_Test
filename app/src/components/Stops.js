@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { Marker } from 'react-native-maps';
 import Axios from 'axios';
 import { reqStop, reqBod, reqStopTimes, coordsArriva } from './Requests';
+import {Log} from '../Logger.js'
 
 export default class Stops extends Component{
 

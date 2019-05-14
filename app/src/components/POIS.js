@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Marker } from 'react-native-maps'
 import Axios from 'axios';
+import {Log} from '../Logger.js'
 
 export default class POIS extends Component{
 

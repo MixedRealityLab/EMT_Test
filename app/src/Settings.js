@@ -4,6 +4,7 @@ import { CheckBox, Slider } from 'react-native-elements'
 import Axios from 'axios';
 
 import Selector from './components/Selector'
+import {Log} from './Logger.js'
 
 /**
  * Class to allow the user to edit settings

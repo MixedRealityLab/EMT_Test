@@ -4,6 +4,7 @@ import BackgroundTimer from 'react-native-background-timer';
 
 var PushNotification = require('react-native-push-notification')
 var geolib = require('geolib')
+import {Log} from '../Logger.js'
 
 /**
  * Notifications manager class
@@ -32,7 +33,7 @@ class Manager{
           // (required) Called when a remote or local notification is opened or received
           onNotification: function(notification) {
             // Register all the valid actions for notifications here and add the action handler for each action
-            
+
           },
         permissions: {
           alert: true,
@@ -46,7 +47,7 @@ class Manager{
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
       .catch(err => console.log(err))
-      
+
       AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); console.log(obj); this.state.seenFacticles = obj })
       .catch(err => console.log(err))
 
@@ -173,7 +174,7 @@ class Manager{
       console.log("Loading")
       AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); /*console.log(obj);*/ this.state.facticles = obj } )
       .catch(err => console.log(err))
-      
+
       if(item !== null){
         AsyncStorage.getItem(item,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj; this.state.loaded = true } )
         .catch(err => console.log(err))
@@ -186,7 +187,7 @@ class Manager{
       } )
       .catch(err => console.log(err))
       }
-      
+
     }
     console.log("AppMan: ")
     console.log(this.state.journey)

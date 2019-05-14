@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import { View, Text } from 'react-native'
 import Axios from 'axios';
 import { reqBod, reqStopTimes, coordsArriva } from './Requests'
+import {Log} from '../Logger.js'
 
 export default class BusStopTimes extends Component{
   constructor(props){
