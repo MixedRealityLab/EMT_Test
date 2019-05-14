@@ -87,9 +87,9 @@ const DrawerNavigator = createDrawerNavigator({
   TravelPlan: {
     screen: TravelPlanScreen
   },
-  History: {
+  /*History: {
     screen: HistoryScreen,
-  },
+  },*/
   Settings: {
     screen: SettingsScreen
   }

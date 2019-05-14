@@ -40,7 +40,7 @@ export default class Search extends Component {
       <View style={ this.props.mode === 'plan' ? {flex:1}: {} }>
       {
         this.props.mode === 'plan'
-        ? <TouchableOpacity style={styles.button} onPress={()=>{this.setVisible(true)}}>
+        ? <TouchableOpacity style={styles.button} onPress={()=>{this.setVisible(true) }}>
             <Text style={styles.text}>Search</Text>
           </TouchableOpacity>
         : null

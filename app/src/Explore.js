@@ -14,9 +14,6 @@ import Stops from './components/Stops.js';
 import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
 import Search from './components/Search'
-import AppMan from './components/NotifMan'
-
-var globRef = {}
 
 export default class Explore extends Component {
 

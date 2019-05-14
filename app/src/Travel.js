@@ -50,7 +50,6 @@ export default class Travel extends Component {
         showPOI: false,
         showList: false,
         clean: [],
-        //following: true,
         polyOptsBus:['#00ff00' ,
                      '#0000ff' ,
                      '#000000' ,
@@ -92,7 +91,6 @@ export default class Travel extends Component {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
             }), 
-            //this.state.following 
             globalFollow ? this.viewPOI() : console.log("freecam")
             //console.log("Get Location (Travel.js)")
             AsyncStorage.getItem('Setting', (err,res) => {
@@ -113,7 +111,6 @@ export default class Travel extends Component {
               if(this.state.Settings.Filter.includes(item.category)){
                 //If a facticle is visible, add it to the list of visible POIS
                 let vis = AppMan.checkDist(position.coords, item)
-                //AppMan.checkDist(position.coords, item)
                 if(vis){
                   if(!this.state.VisiblePois.includes(item) ){
                     this.state.VisiblePois.push(
@@ -366,7 +363,6 @@ export default class Travel extends Component {
         </View>
         </Overlay>
 
-
         {/*POIS List overlay*/}
         <Overlay
           animationType="fade"
@@ -395,12 +391,8 @@ export default class Travel extends Component {
        <Selector
         change={this.props.change}
         mode={'Travel'}
-        following={ () => {
-           //this.setState({following: true})
-           globalFollow = true
-           , this.viewPOI() } }
-
-           listPOIS={ ()=> this.setState({showList: true}) 
+        following={ () => { globalFollow = true, this.viewPOI() } }
+        listPOIS ={ ()=> this.setState({showList: true}) 
         }
         navigation={this.props.navigation}/>
       </View>
