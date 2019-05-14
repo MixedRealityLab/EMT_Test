@@ -22,7 +22,7 @@ export default class Info extends Component{
             notifDirect: true,
             notifFacticle: true,
             filterList: [],
-            rateNotif: 1,
+            rateNotif: 60,
             categories: [],
         }
 
@@ -159,12 +159,12 @@ export default class Info extends Component{
                                     onValueChange={ value => this.setState({ rateNotif: value })}
                                     onSlidingComplete={ () => this.saveSettings() }
                                     minimumValue={0}
-                                    maximumValue={60}
-                                    step={1}
+                                    maximumValue={300}
+                                    step={15}
                                 />
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
                                 <Text>1 Seconds</Text>
-                                <Text>60 Seconds</Text>
+                                <Text>5 Minutes</Text>
                                 </View>
                                 <Text>Current interval: {this.state.rateNotif}</Text>
 

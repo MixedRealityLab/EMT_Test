@@ -45,7 +45,7 @@ logInit().then(() => {
         if (res == null) {
           Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
           .then( response => {
-            let obj = { Direct: true, Facticle: true, Filter: response.data, NotifRate: 1 };
+            let obj = { Direct: true, Facticle: true, Filter: response.data, NotifRate: 60 };
             AsyncStorage.setItem('Setting', JSON.stringify(obj));
           } )
 
