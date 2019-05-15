@@ -15,7 +15,6 @@ import POIS from './components/POIS.js';
 import { mapStyle } from './components/Requests.js';
 import Search from './components/Search'
 import {Log} from './Logger.js'
-
 export default class Explore extends Component {
 
   constructor(props) {
@@ -54,6 +53,11 @@ export default class Explore extends Component {
   }
 
   viewPOI(lat, lon) {
+    Log.info({
+      message: "Viewing POI",
+      lat: lat,
+      lon: lon
+    })
     this.mView.animateCamera({
       center: {
         latitude: lat,
@@ -66,6 +70,7 @@ export default class Explore extends Component {
 
   setFilter(filter) {
     this.setState({ filter: filter })
+    Log.info("<Explore> Filter changed, new value: " + filter);
   }
 
   showOverlayPOI() {
@@ -77,6 +82,10 @@ export default class Explore extends Component {
   }
 
   showItem(item) {
+    Log.info({
+      message: "<Explore> Show item",
+      data: item
+    });
     let temp = item.description
     var split = temp.split('<br>')
 
@@ -98,8 +107,13 @@ export default class Explore extends Component {
     })
   }
 
-  showBusTime(item){
+  showBusTime(item, busStop){
     this.setState({busTimes: item})
+    Log.info({
+      message: "<Explore> Show bus time",
+      item: item,
+      busStop: busStop
+    });
   }
 
   render() {

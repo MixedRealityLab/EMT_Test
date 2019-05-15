@@ -55,7 +55,7 @@ export default class Stops extends Component{
       this.checkCache()
       if(this.state.generatedTimes.find( (item) => {
         if(item.ID === busStop) {
-          this.props.showItem(item.DATA)
+          this.props.showItem(item.DATA, busStop)
           return true
         }
       })){
@@ -102,9 +102,9 @@ export default class Stops extends Component{
                 list.push(temp)
             }
             this.state.generatedTimes.push({ID: busStop, DATA: list})
-            this.props.showItem(list)
+            this.props.showItem(list, busStop)
         })
-        .catch(err => console.log(err))
+        .catch(err => Log.error(err))
       }
 
     }

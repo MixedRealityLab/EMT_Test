@@ -14,7 +14,11 @@ export default class History extends Component{
 
     componentDidMount(){
         AsyncStorage.getAllKeys((err,res) =>{ this.setState({keys: res}) })
+        this.props.navigation.addListener('didFocus', (payload) => {
+            Log.info('The History screen was activated');
+          });
     }
+
     render(){
         return(
             <>

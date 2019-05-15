@@ -36,7 +36,6 @@ class LocationManager{
           AsyncStorage.getItem(
             'travel', (err, res) => {
               if(res !== 'false'){
-                console.log("Background key: " + res)
                 AppMan.loadJourney()
                 //Create background timer and execute every 2000ms (2 seconds)
                 this.state.interval = BackgroundTimer.setInterval(() => {
@@ -47,9 +46,9 @@ class LocationManager{
               else AppMan.state.loaded = false
             }
           )
-          .catch(err => console.log(err))
+          .catch(err => Log.error(err))
         )
-        .catch(err => console.log(err))
+        .catch(err => Log.error(err))
     }
   }
 
@@ -71,7 +70,7 @@ class LocationManager{
                         }
 
                       })
-                      .catch(err => console.log(err))
+                      .catch(err => Log.error(err))
 
                     }
                   }
@@ -93,7 +92,7 @@ class LocationManager{
         },
         (error) => {
             // See error code charts below.
-            console.log(error.code, error.message);
+            Log.error(error);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );

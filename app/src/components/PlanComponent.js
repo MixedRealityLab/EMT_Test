@@ -74,7 +74,7 @@ export default class PlanComponent extends Component{
       },
       (error) => {
           // See error code charts below.
-          console.log(error.code, error.message);
+          Log.error(error.code);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
   );
@@ -112,9 +112,7 @@ export default class PlanComponent extends Component{
         //Pure polyline from arriva, temp solution
         pure: this.pureRoute()
       }
-      console.log(JSON.stringify(Journey))
       AsyncStorage.getAllKeys((err,keys)=>{
-        console.log(keys)
         var keyLen = keys.length
         if(keyLen === 0){
           AsyncStorage.setItem('0000', JSON.stringify(Journey))
@@ -187,6 +185,11 @@ export default class PlanComponent extends Component{
     let closeA = geolib.findNearest(aLoc, coordsLatLng, 0)
     temp[2] = closeA.key
 
+    Log.info({
+      message: "Set journey",
+      journey: temp
+    });
+
     return temp
   }
 
@@ -197,6 +200,10 @@ export default class PlanComponent extends Component{
       show: true
     })
     this.forceUpdate()
+    Log.info({
+      message: "Get journey",
+      journey: journey
+    });
   }
 
   polyArriva(start, stop){
@@ -206,6 +213,10 @@ export default class PlanComponent extends Component{
       'https://inmyseat.chronicle.horizon.ac.uk/proxy/', Object.assign(reqBod, reqPlan)
     )
     .then(response =>{
+      Log.info({
+        message: "Arriva journey",
+        response: response
+      });
       let points = []
       let purePoints = []
       let data = response.data.svcResL[0].res
@@ -217,7 +228,6 @@ export default class PlanComponent extends Component{
         let temp = polyline.decode(data.common.polyL[i].crdEncYX);
         // [Dominic] As the polylines going through Jubilee are broken, at
         // the moment lets just show start/end points.
-        //console.log(temp)
         //Full arriva polyline
         let pure = temp
 
@@ -260,10 +270,8 @@ export default class PlanComponent extends Component{
         var lastItem = this.state.jMiddle[this.state.jMiddle.length-1]
       }
       else{
-        //console.log(this.state.jMiddle.length)
         let temp = this.state.jMiddle[this.state.jMiddle.length-1]
         var lastItem = temp[temp.length -1]
-        //console.log(lastItem)
       }
     }
 

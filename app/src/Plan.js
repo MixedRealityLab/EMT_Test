@@ -24,20 +24,31 @@ export default class Plan extends Component {
       this.showBusTimeOverlay = this.showBusTimeOverlay.bind(this)
       this.setArr = this.setArr.bind(this)
     }
+
+    componentDidMount(){
+      this.props.navigation.addListener('didFocus', (payload) => {
+          Log.info('The Plan screen was activated');
+        });
+    }
+
     switch = () => {
       this.child.switch()
+      Log.info("<Plan> switch route");
     }
 
     clearRoute = () => {
-      this.child.clearRoute()
+      this.child.clearRoute();
+      Log.info("<Plan> clear route");
     }
 
     getRoute = () => {
-      this.child.getRoute()
+      this.child.getRoute();
+      Log.info("<Plan> get route");
     }
 
     beginRoute = () => {
-      this.child.beginRoute()
+      this.child.beginRoute();
+      Log.info("<Plan> begin route");
     }
 
     setArr(arr){
@@ -45,7 +56,7 @@ export default class Plan extends Component {
     }
 
     showBusTimeOverlay(){
-      this.setState({showBusTimes: true})
+      this.setState({showBusTimes: true});
     }
 
     showBusTime(item){

@@ -53,7 +53,10 @@ export default class Search extends Component {
         <View style={styles.containerP}>
           <SearchBar
               placeholder='Type Here...'
-              onChangeText={(text) => {this.setState({searchTerm: text})}}
+              onChangeText={(text) => {
+                this.setState({searchTerm: text});
+                Log.info("Search term changed: " + text)
+              }}
               value={this.state.searchTerm} />
           <ScrollView contentContainerStyle={styles.scrollCont}>
             {this.state.isLoaded

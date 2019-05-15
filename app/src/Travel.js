@@ -91,19 +91,20 @@ export default class Travel extends Component {
         (position) => {
             this.setState({
               currentPos: {latitude: position.coords.latitude, longitude: position.coords.longitude}
-            }),
-            globalFollow ? this.viewPOI() : console.log("freecam")
-            //console.log("Get Location (Travel.js)")
+            });
+            if (globalFollow) {
+              this.viewPOI();
+            }
             AsyncStorage.getItem('Setting', (err,res) => {
               let obj = JSON.parse(res); this.setState({Settings: obj});
             })
-            .catch(err => console.log(err))
+            .catch(err => Log.error(err))
             AsyncStorage.getItem('VisPOIS', (err,res) => {
               if(JSON.parse(res) !== this.state.VisiblePois){
                 this.setState({VisiblePois: JSON.parse(res)})
               }
             })
-            .catch(err => console.log(err))
+            .catch(err => Log.error(err))
             AppMan.setRate(this.state.Settings.NotifRate)
             //Check if facticles are turned on
             if(this.state.Settings.Facticle)
@@ -125,7 +126,6 @@ export default class Travel extends Component {
               }
               })
             if(this.state.Settings.Direct){
-              //console.log(AppMan.state.journey.changes)
               AppMan.state.journey.changes.map( (item, i) => {
                   if(!item.hasOwnProperty('seen')){
                     let dir = item
@@ -144,7 +144,7 @@ export default class Travel extends Component {
         },
         (error) => {
             // See error code charts below.
-            console.log(error.code, error.message);
+            Log.error(error.code);
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
@@ -168,7 +168,7 @@ export default class Travel extends Component {
           AsyncStorage.setItem('facticles', JSON.stringify(data))
         )
       })
-      .catch(err => console.log(err))
+      .catch(err => Log.error(err))
     }
 
     componentDidMount(){
@@ -176,8 +176,11 @@ export default class Travel extends Component {
       PushNotification.configure({
         // (required) Called when a remote or local notification is opened or received
         onNotification: function(notification) {
+          Log.info({
+            message: "User selected notification",
+            notification: notification
+          })
           // Register all the valid actions for notifications here and add the action handler for each action
-          console.log(notification.data)
           globRef.animateCamera({
             center: {
               latitude: notification.data.lat,
@@ -195,6 +198,10 @@ export default class Travel extends Component {
         sound: true
       }
       })
+
+      this.props.navigation.addListener('didFocus', (payload) => {
+        Log.info('The Travel screen was activated');
+      });
 
       AsyncStorage.getItem(
         this.props.jKey
@@ -219,7 +226,7 @@ export default class Travel extends Component {
         this.props.jKey
       ) } )
       .then( () => this.getFacticles())
-      .catch(err => console.log(err))
+      .catch(err => Log.error(err))
 
       this.getLoc()
 

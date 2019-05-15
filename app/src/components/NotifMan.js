@@ -42,19 +42,15 @@ class Manager{
         }
       })
       //AsyncStorage.setItem("seenFacticles","[]")
-      AsyncStorage.getAllKeys( (err,res) => console.log(res) ).catch(err => console.log(err))
-      AsyncStorage.getItem('travel',(err,res)=>console.log(res))
       Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
       .then( response => this.state.categories = response.data )
-      .catch(err => console.log(err))
+      .catch(err => Log.error(err))
 
-      AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); console.log(obj); this.state.seenFacticles = obj })
-      .catch(err => console.log(err))
+      AsyncStorage.getItem("seenFacticles", (err,res)=>{ let obj = JSON.parse(res); this.state.seenFacticles = obj })
+      .catch(err => Log.error(err))
 
       if(this.state.timer.length < 1 ){
-        console.log("Setting timer")
         this.state.timer = BackgroundTimer.setInterval(() => {
-          //console.log(this.state.facticleQueue)
           let newTime = this.state.facticleQueue - 1
           if(newTime > 0){
             this.state.facticleQueue = newTime
@@ -79,12 +75,10 @@ class Manager{
   queue(){
     let free = false
     if( this.state.nextFacticle){
-      console.log("Current queue: " + this.state.facticleQueue)
       this.state.nextFacticle = false
       free = true
     }
     else {
-      console.log("Notif limit reached for now")
       free = false
     }
     return free
@@ -99,7 +93,10 @@ class Manager{
     for(let i = 0; i < this.state.seenFacticles.length; i++){
       //Stop checking seen facticles after a point
       if(i > this.state.seenLimit) break
-      if(this.state.seenFacticles[i].id === id){isSeen = true; console.log("Seen Facticle"); break}
+      if(this.state.seenFacticles[i].id === id) {
+        isSeen = true;
+        break
+      }
     }
     return isSeen
   }
@@ -123,7 +120,6 @@ class Manager{
     let setDate = {Date: TD + ":" + TM + ":" + TY , Time: TH + ":" + TMn}
 
     let newItem = Object.assign(item, setDate)
-    console.log(newItem)
     let temp = []
     temp.push(newItem)
     let newArr = temp.concat(this.state.seenFacticles)
@@ -159,9 +155,6 @@ class Manager{
             notif=true
           }
         }
-        else{
-          //console.log("Too far away")
-        }
       }
     }
 
@@ -171,26 +164,23 @@ class Manager{
   loadJourney(item){
     if(!this.state.loaded){
       var currJ = ''
-      console.log("Loading")
-      AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); /*console.log(obj);*/ this.state.facticles = obj } )
-      .catch(err => console.log(err))
+      AsyncStorage.getItem('facticles', (err,res) => { let obj = JSON.parse(res); this.state.facticles = obj } )
+      .catch(err => Log.error(err))
 
       if(item !== null){
         AsyncStorage.getItem(item,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj; this.state.loaded = true } )
-        .catch(err => console.log(err))
+        .catch(err => Log.error(err))
       }
       else{
-        AsyncStorage.getItem('CurrentJ', (err,res) => {console.log(res); currJ = res} )
+        AsyncStorage.getItem('CurrentJ', (err,res) => {currJ = res} )
       .then( () => {
         AsyncStorage.getItem(currJ,(err,res) =>{ let obj = JSON.parse(res); this.state.journey = obj; this.state.loaded = true } )
-        .catch(err => console.log(err))
+        .catch(err => Log.error(err))
       } )
-      .catch(err => console.log(err))
+      .catch(err => Log.error(err))
       }
 
     }
-    console.log("AppMan: ")
-    console.log(this.state.journey)
     return this.state.loaded
   }
 
@@ -209,7 +199,6 @@ class Manager{
     var isFacticle = false
     if(item.hasOwnProperty('category')) isFacticle = true
 
-    console.log(item)
     var notifSet = {
       title: isFacticle ? "Point of interest" : "Bus change",
       bigMess: isFacticle ? "Did you know you are near to " + (item.name.substring(0,2) === 'The' ? "" : "The ") + item.name : "Change to bus " + item.name,
@@ -217,6 +206,12 @@ class Manager{
       tag: isFacticle ? item.category : "bus_change",
       group: isFacticle ? "Facticle" : "BusChange"
     }
+
+    Log.info({
+      message: "Notification",
+      notification: notifSet,
+      item: item
+    })
 
     let data = {lat: item.latitude, lon: item.longitude}
     let desc = ''

@@ -52,7 +52,7 @@ export default class BusStopTimes extends Component{
         this.setState({BusList: list, loaded: true})
     })
     .then(this.forceUpdate())
-    .catch(err => console.log(err))
+    .catch(err => Log.error(err))
   }
 
   componentDidMount(){

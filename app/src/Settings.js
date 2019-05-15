@@ -33,6 +33,10 @@ export default class Info extends Component{
 
         this.saveSettings = this.saveSettings.bind(this)
         this.updateFilter = this.updateFilter.bind(this)
+
+        AsyncStorage.getItem("username", (err, res) => {
+            this.username = res;
+        });
     }
 
     changeLayout = (item) => {
@@ -68,6 +72,10 @@ export default class Info extends Component{
 
         Axios.get( "https://inmyseat.chronicle.horizon.ac.uk/api/v1/allcats" )
         .then( response => this.setState( {categories: response.data}) )
+
+        this.props.navigation.addListener('didFocus', (payload) => {
+            Log.info('The Settings screen was activated');
+          });
     }
 
     saveSettings(){
@@ -77,6 +85,10 @@ export default class Info extends Component{
             Filter:     this.state.filterList,      //Facticle Notification Filter
             NotifRate:  this.state.rateNotif        //Facticle Notification Display Rate
         }
+        Log.info({
+            message: "Saving settings",
+            settings: Settings
+        })
         AsyncStorage.setItem( 'Setting', JSON.stringify(Settings) )
     }
 
@@ -96,6 +108,7 @@ export default class Info extends Component{
     render(){
         return(
             <View style={{flex:1}}>
+            <Text>Your username: {this.username}</Text>
             <Selector
                 mode={'Settings'}                       //Tell component what to return
                 navigation={this.props.navigation}  //Pass Nav props
